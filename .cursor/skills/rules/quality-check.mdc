@@ -1,0 +1,44 @@
+---
+description: "Quality, security, and final check rules"
+alwaysApply: true
+---
+
+# Quality Check Rules
+
+Before finishing any task, check:
+
+Code:
+- No TypeScript errors
+- No unused imports
+- No broken paths
+- No duplicated components
+- No hardcoded secrets
+- No client-side service role usage
+
+UI:
+- Mobile responsive
+- Clear loading state
+- Clear empty state
+- Clear error state
+- Accessible labels
+- Consistent spacing
+
+Security:
+- Validate inputs with Zod
+- Check role permissions server-side
+- Protect dashboard routes
+- Avoid exposing private document URLs
+- Confirm destructive actions
+
+SEO:
+- Metadata exists for public pages
+- H1 exists
+- Internal links exist
+- CTA exists
+- Page content is useful
+
+After changes:
+- Run npm run lint
+- Run npm run build when possible
+- Explain what changed
+- Mention any remaining risks

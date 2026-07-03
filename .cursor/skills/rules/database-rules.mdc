@@ -1,0 +1,49 @@
+---
+description: "Supabase database, schema, and RLS rules"
+globs: ["supabase/**/*", "src/lib/supabase/**/*", "src/types/**/*"]
+alwaysApply: false
+---
+
+# Database Rules
+
+Use Supabase Postgres as the primary database.
+
+Core tables:
+- profiles
+- leads
+- students
+- counselors
+- countries
+- universities
+- courses
+- scholarships
+- applications
+- application_steps
+- documents
+- consultations
+- notes
+- notifications
+- blog_posts
+- testimonials
+- faqs
+
+Roles:
+- student
+- counselor
+- admin
+- super_admin
+
+Rules:
+- Enable Row Level Security on user-facing tables.
+- Use profiles table to store role and user metadata.
+- Use auth.users only for authentication identity.
+- Do not store sensitive document URLs publicly.
+- Use Supabase Storage for uploaded documents.
+- Use signed URLs for private documents.
+- Add created_at and updated_at where useful.
+- Use UUID primary keys.
+- Use foreign keys for relationships.
+- Keep database migrations clean and reversible where possible.
+- Generate TypeScript types after schema changes.
+
+Never use service role key in client-side code.

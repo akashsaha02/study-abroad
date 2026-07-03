@@ -1,0 +1,54 @@
+---
+description: "UI and design rules for the agency platform"
+globs: ["src/components/**/*", "src/app/**/*"]
+alwaysApply: true
+---
+
+# Design System
+
+Design style:
+- Clean
+- Minimal
+- Premium
+- Trustworthy
+- Mobile-first
+- Fast-loading
+- Conversion-focused
+
+Preferred visual style:
+- White background
+- Navy or blue primary color
+- Soft gray sections
+- Rounded cards
+- Clear CTA buttons
+- Simple icons
+- Large spacing
+- Professional typography
+- No unnecessary animation
+
+Every public page should include:
+- Strong headline
+- Short supporting text
+- Clear CTA
+- Trust signals
+- FAQ where useful
+- Contact/consultation CTA
+
+Use shadcn/ui components where helpful:
+- Button
+- Card
+- Input
+- Textarea
+- Select
+- Dialog
+- Table
+- Badge
+- Dropdown menu
+- Form
+
+Rules:
+- Keep layouts responsive.
+- Avoid visual clutter.
+- Do not use random colors.
+- Reuse Button, Section, Container, Card, and Form components.
+- Keep dashboard UI clean and data-focused.

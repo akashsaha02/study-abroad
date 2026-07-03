@@ -1,0 +1,64 @@
+---
+description: "Admin CRM and management dashboard rules"
+globs: ["src/app/(admin)/**/*", "src/components/dashboard/**/*"]
+alwaysApply: false
+---
+
+# Admin Dashboard Rules
+
+Admin dashboard modules:
+- Overview
+- Leads
+- Students
+- Applications
+- Documents
+- Counselors
+- Universities
+- Courses
+- Scholarships
+- Blog posts
+- Testimonials
+- FAQs
+- Settings
+
+Lead statuses:
+- new
+- contacted
+- qualified
+- not_qualified
+- converted_to_student
+- lost
+
+Application statuses:
+- profile_review
+- documents_pending
+- university_shortlisting
+- application_submitted
+- offer_received
+- tuition_payment
+- visa_documents
+- visa_submitted
+- visa_approved
+- pre_departure
+- completed
+- rejected
+
+Admin features:
+- View statistics
+- Filter leads
+- Assign counselor
+- Add notes
+- Convert lead to student
+- Manage applications
+- Review documents
+- Manage content
+- Export data where needed
+
+Rules:
+- Use tables for data-heavy pages.
+- Add filters and search early.
+- Keep actions explicit.
+- Confirm destructive actions.
+- Show empty states.
+- Show loading states.
+- Do not expose service role logic in components.

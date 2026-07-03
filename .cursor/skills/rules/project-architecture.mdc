@@ -1,0 +1,47 @@
+---
+description: "Core architecture rules for the full-stack study abroad agency platform"
+alwaysApply: true
+---
+
+# Project Architecture
+
+This is a full-stack study abroad agency platform, not a simple MVP.
+
+Use:
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Supabase Auth
+- Supabase Postgres
+- Supabase Storage
+- Resend
+- Vercel deployment
+
+Main modules:
+- Public SEO website
+- Country pages
+- University and course directory
+- Scholarship finder
+- Eligibility checker
+- Cost calculator
+- Lead CRM
+- Student authentication
+- Student dashboard
+- Application tracker
+- Document upload
+- Admin dashboard
+- Counselor dashboard
+- Email notifications
+
+Rules:
+- Use scalable folder structure.
+- Use route groups for public, student, admin, and counselor sections.
+- Keep business logic in lib/server or service files.
+- Keep UI components reusable.
+- Never mix admin logic inside public components.
+- Never expose Supabase service role key to client components.
+- Prefer server components unless client interactivity is required.
+- Use server actions or route handlers for mutations.
+- Validate all incoming data with Zod.
+- Always think about role-based access control.

@@ -1,0 +1,51 @@
+---
+description: "SEO rules for public study abroad pages"
+globs: ["src/app/(public)/**/*", "src/content/**/*"]
+alwaysApply: false
+---
+
+# SEO Content Rules
+
+Every public SEO page must have:
+- Unique title
+- Meta description
+- One H1
+- Proper H2/H3 structure
+- Internal links
+- CTA section
+- FAQ section where useful
+- Clean slug
+- Open Graph metadata
+- Schema markup where appropriate
+
+Country pages must include:
+- Why study in this country
+- Tuition cost range
+- Living cost range
+- Admission requirements
+- Language requirements
+- Intakes
+- Visa process
+- Scholarship opportunities
+- Popular universities
+- FAQ
+- Consultation CTA
+
+University pages must include:
+- University overview
+- Country and city
+- Popular courses
+- Tuition estimate
+- Entry requirements
+- Intakes
+- Scholarship availability
+- Apply/consultation CTA
+
+Blog pages must:
+- Solve one clear student problem
+- Use simple language
+- Include internal links
+- Avoid keyword stuffing
+- End with consultation CTA
+
+Never create thin pages with only generic text.

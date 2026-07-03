@@ -1,0 +1,40 @@
+---
+description: "Student dashboard and application tracking rules"
+globs: ["src/app/(student)/**/*"]
+alwaysApply: false
+---
+
+# Student Dashboard Rules
+
+Student dashboard pages:
+- /dashboard
+- /dashboard/profile
+- /dashboard/applications
+- /dashboard/documents
+- /dashboard/consultations
+- /dashboard/notifications
+- /dashboard/settings
+
+Student can:
+- View profile
+- Update basic information
+- View application status
+- Upload documents
+- See missing documents
+- View counselor notes meant for student
+- Book consultation
+- Receive notifications
+
+Document statuses:
+- pending_review
+- approved
+- rejected
+- needs_update
+
+Rules:
+- Students can only access their own data.
+- Students cannot edit application status directly.
+- Students cannot approve documents.
+- Students cannot view other students.
+- Use progress/timeline UI for application tracking.
+- Use clear labels and simple language.

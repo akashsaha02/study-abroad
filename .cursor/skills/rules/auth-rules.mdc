@@ -1,0 +1,33 @@
+---
+description: "Authentication and role-based access control rules"
+globs: ["src/app/(student)/**/*", "src/app/(admin)/**/*", "src/app/(counselor)/**/*", "src/lib/auth/**/*", "src/middleware.ts"]
+alwaysApply: false
+---
+
+# Auth and RBAC Rules
+
+Use Supabase Auth.
+
+User roles:
+- student
+- counselor
+- admin
+- super_admin
+
+Access rules:
+- Public pages are open.
+- Student dashboard requires student role.
+- Counselor dashboard requires counselor/admin/super_admin role.
+- Admin dashboard requires admin/super_admin role.
+- Super admin can manage admins and platform settings.
+
+Auth requirements:
+- Protect dashboards using middleware or server-side checks.
+- Never trust client-side role checks alone.
+- Fetch role from profiles table.
+- Redirect unauthenticated users to login.
+- Redirect unauthorized users to a safe page.
+- Use server-side Supabase clients for protected data access.
+- Validate user ownership before reading or mutating student/application/document records.
+
+Never expose private user data across roles.

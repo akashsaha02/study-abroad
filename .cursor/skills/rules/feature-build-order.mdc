@@ -1,0 +1,41 @@
+---
+description: "Required development order to keep the project on track"
+alwaysApply: true
+---
+
+# Feature Build Order
+
+Do not build features randomly.
+
+Build in this order:
+
+1. Project setup
+2. Folder structure
+3. Design system
+4. Supabase client setup
+5. Database schema
+6. Authentication
+7. Public layout
+8. Public SEO pages
+9. Lead form
+10. Admin lead dashboard
+11. Eligibility checker
+12. Cost calculator
+13. University/course directory
+14. Scholarship finder
+15. Student dashboard
+16. Application tracker
+17. Document upload
+18. Counselor dashboard
+19. Email notifications
+20. Blog/content management
+21. SEO polish
+22. Testing
+23. Deployment
+
+Before implementing any feature:
+- Create a short plan.
+- Identify affected files.
+- Implement small pieces.
+- Run type check and lint.
+- Do not skip validation.
