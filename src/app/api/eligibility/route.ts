@@ -81,6 +81,7 @@ export async function POST(request: Request) {
       email: parsed.data.email || undefined,
       phone: parsed.data.phone,
       preferred_country: parsed.data.preferred_country,
+      preferred_country_id: parsed.data.preferred_country_id,
       education_level: parsed.data.education_level,
       subject_interest: parsed.data.preferred_subject,
       last_result: parsed.data.last_result,

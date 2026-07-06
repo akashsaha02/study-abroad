@@ -4,11 +4,19 @@ import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { POPULAR_COUNTRIES } from "@/constants";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function ContactForm() {
+interface CountryOption {
+  id: string;
+  name: string;
+}
+
+interface ContactFormProps {
+  countries: CountryOption[];
+}
+
+export function ContactForm({ countries }: ContactFormProps) {
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -46,15 +54,15 @@ export function ContactForm() {
       <FormField label="Email" htmlFor="email">
         <Input id="email" name="email" type="email" />
       </FormField>
-      <FormField label="Preferred Country" htmlFor="preferred_country">
+      <FormField label="Preferred Country" htmlFor="preferred_country_id">
         <select
-          id="preferred_country"
-          name="preferred_country"
+          id="preferred_country_id"
+          name="preferred_country_id"
           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
         >
           <option value="">Select country</option>
-          {POPULAR_COUNTRIES.map((c) => (
-            <option key={c.slug} value={c.name}>
+          {countries.map((c) => (
+            <option key={c.id} value={c.id}>
               {c.name}
             </option>
           ))}

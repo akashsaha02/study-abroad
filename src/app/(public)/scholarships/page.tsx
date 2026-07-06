@@ -27,17 +27,24 @@ export default async function ScholarshipsPage() {
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {scholarships.map((s) => (
-            <Card key={s.id}>
-              <CardContent className="p-6">
-                <h3 className="font-semibold">{s.title}</h3>
-                <p className="text-sm text-muted-foreground">{s.amount}</p>
-                {s.deadline && (
-                  <p className="mt-2 text-sm">Deadline: {s.deadline}</p>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+          {scholarships.map((s) => {
+            const country = (s as { countries?: { name?: string } }).countries?.name;
+            const university = (s as { universities?: { name?: string } }).universities?.name;
+            const location = [university, country].filter(Boolean).join(" · ");
+
+            return (
+              <Card key={s.id}>
+                <CardContent className="p-6">
+                  <h3 className="font-semibold">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground">{s.amount}</p>
+                  {location && <p className="mt-1 text-sm">{location}</p>}
+                  {s.deadline && (
+                    <p className="mt-2 text-sm">Deadline: {s.deadline}</p>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </Container>

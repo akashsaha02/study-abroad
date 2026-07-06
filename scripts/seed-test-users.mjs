@@ -2,10 +2,13 @@
  * Seeds test users and sample CRM data for local/staging demos.
  * Requires SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL in .env.local
  *
+ * Depends on content seed (npm run seed:content) for country/university/course FKs.
+ *
  * Usage: npm run seed:test
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { applyFkPayload, detectFkColumns, warnIfMigrationMissing } from "./seed-fk-support.mjs";
 
 const TEST_PASSWORD = "Test@12345";
 
@@ -100,6 +103,9 @@ async function main() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  const fks = await detectFkColumns(admin);
+  warnIfMigrationMissing(fks);
+
   console.log("Seeding test users...\n");
 
   const ids = {};
@@ -128,6 +134,8 @@ async function main() {
   }
 
   console.log("Seeding student record...");
+  const { data: canada } = await admin.from("countries").select("id, name").eq("slug", "canada").maybeSingle();
+
   let studentRecordId;
   const { data: existingStudent } = await admin
     .from("students")
@@ -135,27 +143,28 @@ async function main() {
     .eq("profile_id", studentId)
     .maybeSingle();
 
+  const studentPayload = applyFkPayload(
+    fks,
+    {
+      assigned_counselor_id: counselorId,
+      preferred_country: canada?.name ?? "Canada",
+      preferred_country_id: canada?.id ?? null,
+      preferred_subject: "Computer Science",
+      highest_education: "Bachelor",
+    },
+    [["students", "preferred_country_id"]]
+  );
+
   if (existingStudent) {
     studentRecordId = existingStudent.id;
-    await admin
-      .from("students")
-      .update({
-        assigned_counselor_id: counselorId,
-        preferred_country: "Canada",
-        preferred_subject: "Computer Science",
-        highest_education: "Bachelor",
-      })
-      .eq("id", studentRecordId);
+    await admin.from("students").update(studentPayload).eq("id", studentRecordId);
   } else {
     const { data: studentRow, error } = await admin
       .from("students")
       .insert({
         profile_id: studentId,
-        assigned_counselor_id: counselorId,
-        preferred_country: "Canada",
-        preferred_subject: "Computer Science",
-        highest_education: "Bachelor",
         nationality: "Bangladesh",
+        ...studentPayload,
       })
       .select("id")
       .single();
@@ -178,12 +187,17 @@ async function main() {
       .eq("phone", lead.phone)
       .maybeSingle();
 
-    const payload = {
-      ...lead,
-      email: `lead${i + 1}@test.abroadly.com`,
-      preferred_country: "Canada",
-      assigned_counselor_id: i < 2 ? counselorId : null,
-    };
+    const payload = applyFkPayload(
+      fks,
+      {
+        ...lead,
+        email: `lead${i + 1}@test.abroadly.com`,
+        preferred_country: canada?.name ?? "Canada",
+        preferred_country_id: canada?.id ?? null,
+        assigned_counselor_id: i < 2 ? counselorId : null,
+      },
+      [["leads", "preferred_country_id"]]
+    );
 
     if (existing) {
       await admin.from("leads").update(payload).eq("id", existing.id);
@@ -191,6 +205,16 @@ async function main() {
       await admin.from("leads").insert(payload);
     }
   }
+
+  console.log("Linking application to demo content...");
+  const [{ data: uoft }, { data: mscCourse }] = await Promise.all([
+    admin.from("universities").select("id").eq("slug", "university-of-toronto").maybeSingle(),
+    admin
+      .from("courses")
+      .select("id")
+      .eq("slug", "msc-data-science")
+      .maybeSingle(),
+  ]);
 
   console.log("Seeding application...");
   let applicationId;
@@ -200,30 +224,55 @@ async function main() {
     .eq("student_id", studentRecordId)
     .maybeSingle();
 
+  const applicationPayload = {
+    counselor_id: counselorId,
+    status: "documents_pending",
+    intake: "Fall 2026",
+    country_id: canada?.id ?? null,
+    university_id: uoft?.id ?? null,
+    course_id: mscCourse?.id ?? null,
+    student_note: "Interested in data science programs in Toronto.",
+  };
+
   if (existingApp) {
     applicationId = existingApp.id;
-    await admin
-      .from("applications")
-      .update({
-        counselor_id: counselorId,
-        status: "documents_pending",
-        intake: "Fall 2026",
-      })
-      .eq("id", applicationId);
+    await admin.from("applications").update(applicationPayload).eq("id", applicationId);
   } else {
     const { data: appRow, error } = await admin
       .from("applications")
       .insert({
         student_id: studentRecordId,
-        counselor_id: counselorId,
-        status: "documents_pending",
-        intake: "Fall 2026",
         priority: "normal",
+        ...applicationPayload,
       })
       .select("id")
       .single();
     if (error) throw error;
     applicationId = appRow.id;
+  }
+
+  console.log("Seeding application steps...");
+  const stepSeeds = [
+    { title: "Profile review", description: "Verify student profile and goals", status: "completed", sort_order: 1 },
+    { title: "Document collection", description: "Gather transcripts and passport", status: "in_progress", sort_order: 2 },
+    { title: "University shortlisting", description: "Finalize program choices", status: "pending", sort_order: 3 },
+    { title: "Application submission", description: "Submit to selected universities", status: "pending", sort_order: 4 },
+  ];
+
+  for (const step of stepSeeds) {
+    const { data: existing } = await admin
+      .from("application_steps")
+      .select("id")
+      .eq("application_id", applicationId)
+      .eq("title", step.title)
+      .maybeSingle();
+
+    const payload = { application_id: applicationId, ...step };
+    if (existing) {
+      await admin.from("application_steps").update(payload).eq("id", existing.id);
+    } else {
+      await admin.from("application_steps").insert(payload);
+    }
   }
 
   console.log("Seeding documents...");
@@ -272,6 +321,32 @@ async function main() {
 
     if (!existing) {
       await admin.from("notifications").insert({ user_id: studentId, ...n, type: "info" });
+    }
+  }
+
+  console.log("Seeding lead notes...");
+  const { data: sampleLead } = await admin
+    .from("leads")
+    .select("id")
+    .eq("phone", "+8801722222222")
+    .maybeSingle();
+
+  if (sampleLead) {
+    const noteContent = "Followed up via phone — interested in Canada Fall 2026 intake.";
+    const { data: existingNote } = await admin
+      .from("notes")
+      .select("id")
+      .eq("lead_id", sampleLead.id)
+      .eq("content", noteContent)
+      .maybeSingle();
+
+    if (!existingNote) {
+      await admin.from("notes").insert({
+        author_id: counselorId,
+        lead_id: sampleLead.id,
+        content: noteContent,
+        visibility: "internal",
+      });
     }
   }
 

@@ -10,9 +10,12 @@ export default async function EditCostSettingPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("cost_settings").select("*").eq("id", id).single();
+  const [{ data }, { data: countries }] = await Promise.all([
+    supabase.from("cost_settings").select("*").eq("id", id).single(),
+    supabase.from("countries").select("id, name").order("name"),
+  ]);
 
   if (!data) notFound();
 
-  return <CostSettingForm initial={data as CostSetting} />;
+  return <CostSettingForm countries={countries ?? []} initial={data as CostSetting} />;
 }

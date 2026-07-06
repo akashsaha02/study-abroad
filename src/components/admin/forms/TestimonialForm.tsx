@@ -2,21 +2,30 @@
 
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
+import { selectClassName } from "@/components/admin/forms/select-class";
 import { FormField } from "@/components/forms/FormField";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
+
+interface SelectOption {
+  id: string;
+  name: string;
+  country_id?: string;
+}
 
 interface Testimonial {
   id: string;
   student_name: string;
   destination_country: string | null;
   university_name: string | null;
+  country_id: string | null;
+  university_id: string | null;
   quote: string;
   image_url: string | null;
   rating: number | null;
@@ -24,24 +33,35 @@ interface Testimonial {
 }
 
 interface TestimonialFormProps {
+  countries: SelectOption[];
+  universities: SelectOption[];
   initial?: Testimonial;
 }
 
 const FORM_ID = "testimonial-form";
 
-export function TestimonialForm({ initial }: TestimonialFormProps) {
+export function TestimonialForm({ countries, universities, initial }: TestimonialFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
   const [studentName, setStudentName] = useState(initial?.student_name ?? "");
-  const [destinationCountry, setDestinationCountry] = useState(
-    initial?.destination_country ?? ""
-  );
-  const [universityName, setUniversityName] = useState(initial?.university_name ?? "");
+  const [countryId, setCountryId] = useState(initial?.country_id ?? "");
+  const [universityId, setUniversityId] = useState(initial?.university_id ?? "");
   const [quote, setQuote] = useState(initial?.quote ?? "");
   const [imageUrl, setImageUrl] = useState(initial?.image_url ?? "");
   const [rating, setRating] = useState(initial?.rating?.toString() ?? "5");
   const [isPublished, setIsPublished] = useState(initial?.is_published ?? false);
+
+  const filteredUniversities = useMemo(
+    () => (countryId ? universities.filter((u) => u.country_id === countryId) : universities),
+    [countryId, universities]
+  );
+
+  function handleUniversityChange(value: string) {
+    setUniversityId(value);
+    const uni = universities.find((u) => u.id === value);
+    if (uni?.country_id) setCountryId(uni.country_id);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -65,8 +85,8 @@ export function TestimonialForm({ initial }: TestimonialFormProps) {
 
       const payload = {
         student_name: studentName,
-        destination_country: destinationCountry || null,
-        university_name: universityName || null,
+        country_id: countryId || null,
+        university_id: universityId || null,
         quote,
         image_url: nextImageUrl,
         rating: rating ? Number(rating) : 5,
@@ -113,19 +133,38 @@ export function TestimonialForm({ initial }: TestimonialFormProps) {
               />
             </FormField>
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Destination country" htmlFor="destination_country">
-                <Input
-                  id="destination_country"
-                  value={destinationCountry}
-                  onChange={(e) => setDestinationCountry(e.target.value)}
-                />
+              <FormField label="Destination country" htmlFor="country_id">
+                <select
+                  id="country_id"
+                  value={countryId}
+                  onChange={(e) => {
+                    setCountryId(e.target.value);
+                    setUniversityId("");
+                  }}
+                  className={selectClassName}
+                >
+                  <option value="">Select country</option>
+                  {countries.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               </FormField>
-              <FormField label="University name" htmlFor="university_name">
-                <Input
-                  id="university_name"
-                  value={universityName}
-                  onChange={(e) => setUniversityName(e.target.value)}
-                />
+              <FormField label="University" htmlFor="university_id">
+                <select
+                  id="university_id"
+                  value={universityId}
+                  onChange={(e) => handleUniversityChange(e.target.value)}
+                  className={selectClassName}
+                >
+                  <option value="">Select university</option>
+                  {filteredUniversities.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
+                </select>
               </FormField>
             </div>
             <FormField label="Quote" htmlFor="quote" required>

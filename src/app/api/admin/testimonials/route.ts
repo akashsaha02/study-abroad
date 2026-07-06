@@ -1,4 +1,5 @@
 import { requireApiRole } from "@/lib/auth/api-auth";
+import { enrichTestimonialPayload } from "@/lib/countries/enrich-payload";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSchema } from "@/lib/validations/admin";
 import { NextResponse } from "next/server";
@@ -18,9 +19,10 @@ export async function POST(request: Request) {
   if (!parsed.success) return validationError(parsed.error);
 
   const supabase = await createClient();
+  const payload = await enrichTestimonialPayload(supabase, parsed.data);
   const { data, error } = await supabase
     .from("testimonials")
-    .insert(parsed.data)
+    .insert(payload)
     .select("id")
     .single();
 

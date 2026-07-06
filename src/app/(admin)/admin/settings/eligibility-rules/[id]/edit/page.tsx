@@ -10,9 +10,14 @@ export default async function EditEligibilityRulePage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("eligibility_rules").select("*").eq("id", id).single();
+  const [{ data }, { data: countries }] = await Promise.all([
+    supabase.from("eligibility_rules").select("*").eq("id", id).single(),
+    supabase.from("countries").select("id, name").order("name"),
+  ]);
 
   if (!data) notFound();
 
-  return <EligibilityRuleForm initial={data as EligibilityRule} />;
+  return (
+    <EligibilityRuleForm countries={countries ?? []} initial={data as EligibilityRule} />
+  );
 }

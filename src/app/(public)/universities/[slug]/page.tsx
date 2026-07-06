@@ -63,7 +63,9 @@ export default async function UniversityDetailPage({ params }: Props) {
               <ul className="mt-4 space-y-2">
                 {courses.map((c) => (
                   <li key={c.id} className="rounded-lg border p-4">
-                    <p className="font-medium">{c.title}</p>
+                    <Link href={`${ROUTES.courses}/${c.slug}`} className="font-medium hover:underline">
+                      {c.title}
+                    </Link>
                     <p className="text-sm text-muted-foreground">
                       {c.degree_level} · {c.duration}
                     </p>

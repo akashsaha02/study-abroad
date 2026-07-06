@@ -1,4 +1,5 @@
 import { requireApiRole } from "@/lib/auth/api-auth";
+import { enrichEligibilityRulePayload } from "@/lib/countries/enrich-payload";
 import { createClient } from "@/lib/supabase/server";
 import { eligibilityRuleSchema } from "@/lib/validations/admin";
 import { NextResponse } from "next/server";
@@ -19,9 +20,10 @@ export async function POST(request: Request) {
 
   const supabase = await createClient();
   const now = new Date().toISOString();
+  const payload = await enrichEligibilityRulePayload(supabase, parsed.data);
   const { data, error } = await supabase
     .from("eligibility_rules")
-    .insert({ ...parsed.data, updated_at: now })
+    .insert({ ...payload, updated_at: now })
     .select("id")
     .single();
 

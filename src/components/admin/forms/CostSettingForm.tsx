@@ -2,6 +2,7 @@
 
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
+import { selectClassName } from "@/components/admin/forms/select-class";
 import { FormField } from "@/components/forms/FormField";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,17 +11,25 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+interface CountryOption {
+  id: string;
+  name: string;
+}
+
 interface CostSettingFormProps {
+  countries: CountryOption[];
   initial?: CostSetting;
 }
 
 const FORM_ID = "cost-setting-form";
 
-export function CostSettingForm({ initial }: CostSettingFormProps) {
+export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
-  const [country, setCountry] = useState(initial?.country ?? "");
+  const [countryId, setCountryId] = useState(
+    initial?.country_id ?? countries.find((c) => c.name === initial?.country)?.id ?? ""
+  );
   const [degreeLevel, setDegreeLevel] = useState(initial?.degree_level ?? "");
   const [tuitionMin, setTuitionMin] = useState(initial?.tuition_min?.toString() ?? "");
   const [tuitionMax, setTuitionMax] = useState(initial?.tuition_max?.toString() ?? "");
@@ -36,7 +45,7 @@ export function CostSettingForm({ initial }: CostSettingFormProps) {
 
     try {
       const payload = {
-        country,
+        country_id: countryId,
         degree_level: degreeLevel,
         tuition_min: tuitionMin ? Number(tuitionMin) : null,
         tuition_max: tuitionMax ? Number(tuitionMax) : null,
@@ -79,13 +88,21 @@ export function CostSettingForm({ initial }: CostSettingFormProps) {
         <Card>
           <CardContent className="space-y-4 p-6">
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Country" htmlFor="country" required>
-                <Input
-                  id="country"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+              <FormField label="Country" htmlFor="country_id" required>
+                <select
+                  id="country_id"
+                  value={countryId}
+                  onChange={(e) => setCountryId(e.target.value)}
+                  className={selectClassName}
                   required
-                />
+                >
+                  <option value="">Select country</option>
+                  {countries.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               </FormField>
               <FormField label="Degree level" htmlFor="degree_level" required>
                 <Input

@@ -51,6 +51,7 @@ export async function getUniversityBySlug(slug: string) {
 }
 
 export async function getPublishedCourses(filters?: {
+  countryId?: string;
   universityId?: string;
   degreeLevel?: string;
   subjectArea?: string;
@@ -58,16 +59,29 @@ export async function getPublishedCourses(filters?: {
   const supabase = await createClient();
   let query = supabase
     .from("courses")
-    .select("*, universities(name, slug, countries(name, slug))")
+    .select("*, universities(name, slug, country_id, countries(name, slug))")
     .eq("is_published", true)
     .order("title");
 
+  if (filters?.countryId) query = query.eq("universities.country_id", filters.countryId);
   if (filters?.universityId) query = query.eq("university_id", filters.universityId);
   if (filters?.degreeLevel) query = query.eq("degree_level", filters.degreeLevel);
   if (filters?.subjectArea) query = query.eq("subject_area", filters.subjectArea);
 
   const { data } = await query;
   return data ?? [];
+}
+
+export async function getCourseBySlug(slug: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("courses")
+    .select("*, universities(name, slug, country_id, countries(name, slug))")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .limit(1)
+    .maybeSingle();
+  return data;
 }
 
 export async function getPublishedScholarships() {

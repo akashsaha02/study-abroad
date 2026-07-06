@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCountryNameById, resolveCountryId } from "@/lib/countries/resolve";
 import { getUser } from "@/lib/auth/get-user";
 import { NextResponse } from "next/server";
 
@@ -10,6 +11,15 @@ export async function PATCH(request: Request) {
 
   const body = await request.json();
   const supabase = await createClient();
+
+  const preferredCountryId = await resolveCountryId(supabase, {
+    countryId: body.preferred_country_id,
+    countryName: body.preferred_country,
+  });
+  const preferredCountry =
+    (preferredCountryId ? await getCountryNameById(supabase, preferredCountryId) : null) ??
+    body.preferred_country ??
+    null;
 
   const { error: profileError } = await supabase
     .from("profiles")
@@ -39,7 +49,8 @@ export async function PATCH(request: Request) {
     cgpa: body.cgpa,
     english_test_type: body.english_test_type,
     english_test_score: body.english_test_score,
-    preferred_country: body.preferred_country,
+    preferred_country: preferredCountry,
+    preferred_country_id: preferredCountryId,
     preferred_subject: body.preferred_subject,
     current_address: body.current_address,
     updated_at: new Date().toISOString(),

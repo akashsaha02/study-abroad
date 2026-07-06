@@ -1,3 +1,4 @@
+import { ApplicationTargetForm } from "@/components/admin/ApplicationTargetForm";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ApplicationTimeline } from "@/components/dashboard/ApplicationTimeline";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -22,6 +23,12 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
     .single();
 
   if (!app) notFound();
+
+  const [{ data: countries }, { data: universities }, { data: courses }] = await Promise.all([
+    supabase.from("countries").select("id, name").order("name"),
+    supabase.from("universities").select("id, name, country_id").order("name"),
+    supabase.from("courses").select("id, title, university_id").order("title"),
+  ]);
 
   const { data: steps } = await supabase
     .from("application_steps")
@@ -53,6 +60,22 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
         </Card>
         <ApplicationStatusForm applicationId={app.id} currentStatus={app.status} />
       </div>
+
+      <ApplicationTargetForm
+        applicationId={app.id}
+        countries={countries ?? []}
+        universities={universities ?? []}
+        courses={(courses ?? []).map((c) => ({
+          id: c.id,
+          name: c.title,
+          university_id: c.university_id,
+        }))}
+        initial={{
+          country_id: app.country_id,
+          university_id: app.university_id,
+          course_id: app.course_id,
+        }}
+      />
 
       <Card>
         <CardContent className="p-6">

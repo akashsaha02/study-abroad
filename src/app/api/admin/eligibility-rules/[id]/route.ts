@@ -1,4 +1,5 @@
 import { requireApiRole } from "@/lib/auth/api-auth";
+import { enrichEligibilityRulePayload } from "@/lib/countries/enrich-payload";
 import { createClient } from "@/lib/supabase/server";
 import { eligibilityRuleSchema } from "@/lib/validations/admin";
 import { NextResponse } from "next/server";
@@ -22,9 +23,12 @@ export async function PATCH(
 
   const { id } = await params;
   const supabase = await createClient();
+  const payload = parsed.data.country_id
+    ? await enrichEligibilityRulePayload(supabase, parsed.data as { country_id: string; country?: string })
+    : parsed.data;
   const { data, error } = await supabase
     .from("eligibility_rules")
-    .update({ ...parsed.data, updated_at: new Date().toISOString() })
+    .update({ ...payload, updated_at: new Date().toISOString() })
     .eq("id", id)
     .select("id")
     .single();

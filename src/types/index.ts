@@ -60,6 +60,7 @@ export interface Lead {
   email: string | null;
   phone: string;
   preferred_country: string | null;
+  preferred_country_id: string | null;
   education_level: string | null;
   subject_interest: string | null;
   last_result: string | null;
@@ -88,6 +89,7 @@ export interface Student {
   english_test_type: string | null;
   english_test_score: string | null;
   preferred_country: string | null;
+  preferred_country_id: string | null;
   preferred_subject: string | null;
   budget: number | null;
   assigned_counselor_id: string | null;
@@ -283,6 +285,8 @@ export interface Testimonial {
   student_name: string;
   destination_country: string | null;
   university_name: string | null;
+  country_id: string | null;
+  university_id: string | null;
   quote: string;
   image_url: string | null;
   rating: number;
@@ -303,6 +307,7 @@ export interface Counselor {
 export interface EligibilityRule {
   id: string;
   country: string;
+  country_id: string | null;
   education_level: string;
   min_cgpa: number | null;
   min_ielts: number | null;
@@ -316,6 +321,7 @@ export interface EligibilityRule {
 export interface CostSetting {
   id: string;
   country: string;
+  country_id: string | null;
   degree_level: string;
   tuition_min: number | null;
   tuition_max: number | null;

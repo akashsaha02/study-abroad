@@ -25,7 +25,13 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
               <div className="mt-4">
                 <p className="font-semibold">{t.student_name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {t.university_name} · {t.destination_country}
+                  {(t as { universities?: { name?: string } }).universities?.name ??
+                    t.university_name ??
+                    "University"}
+                  {" · "}
+                  {(t as { countries?: { name?: string } }).countries?.name ??
+                    t.destination_country ??
+                    "Abroad"}
                 </p>
               </div>
             </CardContent>

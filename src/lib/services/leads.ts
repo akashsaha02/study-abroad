@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCountryNameById, resolveCountryId } from "@/lib/countries/resolve";
 import type { Lead, LeadSource } from "@/types";
 
 export interface CreateLeadInput {
@@ -6,6 +7,7 @@ export interface CreateLeadInput {
   email?: string;
   phone: string;
   preferred_country?: string;
+  preferred_country_id?: string;
   education_level?: string;
   subject_interest?: string;
   last_result?: string;
@@ -21,12 +23,22 @@ export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
   const source = input.source ?? "website";
   const now = new Date().toISOString();
 
+  const preferredCountryId = await resolveCountryId(supabase, {
+    countryId: input.preferred_country_id,
+    countryName: input.preferred_country,
+  });
+  const preferredCountry =
+    (preferredCountryId ? await getCountryNameById(supabase, preferredCountryId) : null) ??
+    input.preferred_country ??
+    null;
+
   const { error } = await supabase.from("leads").insert({
     id,
     name: input.name,
     email: input.email,
     phone: input.phone,
-    preferred_country: input.preferred_country,
+    preferred_country: preferredCountry,
+    preferred_country_id: preferredCountryId,
     education_level: input.education_level,
     subject_interest: input.subject_interest,
     last_result: input.last_result,
@@ -46,7 +58,8 @@ export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
     name: input.name,
     email: input.email ?? null,
     phone: input.phone,
-    preferred_country: input.preferred_country ?? null,
+    preferred_country: preferredCountry,
+    preferred_country_id: preferredCountryId,
     education_level: input.education_level ?? null,
     subject_interest: input.subject_interest ?? null,
     last_result: input.last_result ?? null,
@@ -66,6 +79,7 @@ export async function getLeads(filters?: {
   status?: string;
   source?: string;
   country?: string;
+  countryId?: string;
 }) {
   const supabase = await createClient();
   let query = supabase
@@ -75,7 +89,8 @@ export async function getLeads(filters?: {
 
   if (filters?.status) query = query.eq("status", filters.status);
   if (filters?.source) query = query.eq("source", filters.source);
-  if (filters?.country) query = query.eq("preferred_country", filters.country);
+  if (filters?.countryId) query = query.eq("preferred_country_id", filters.countryId);
+  else if (filters?.country) query = query.eq("preferred_country", filters.country);
 
   const { data, error } = await query;
   if (error) return [];

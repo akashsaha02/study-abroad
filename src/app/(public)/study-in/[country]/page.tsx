@@ -4,7 +4,7 @@ import { buildMetadata } from "@/components/seo/PageSEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROUTES } from "@/constants";
 import { FALLBACK_COUNTRIES } from "@/data/fallback";
-import { getPublishedCountries } from "@/lib/services/content";
+import { getCountryBySlug, getPublishedUniversities } from "@/lib/services/content";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -15,7 +15,7 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { country: slug } = await params;
   const country =
-    (await getPublishedCountries()).find((c) => c.slug === slug) ??
+    (await getCountryBySlug(slug)) ??
     FALLBACK_COUNTRIES.find((c) => c.slug === slug);
 
   if (!country) return { title: "Country Not Found" };
@@ -29,12 +29,14 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function CountryPage({ params }: Props) {
   const { country: slug } = await params;
-  const countries = await getPublishedCountries();
-  const country =
-    countries.find((c) => c.slug === slug) ??
-    FALLBACK_COUNTRIES.find((c) => c.slug === slug);
+  const dbCountry = await getCountryBySlug(slug);
+  const country = dbCountry ?? FALLBACK_COUNTRIES.find((c) => c.slug === slug);
 
   if (!country) notFound();
+
+  const universities = dbCountry?.id
+    ? await getPublishedUniversities({ countryId: dbCountry.id })
+    : [];
 
   return (
     <Container className="py-12">
@@ -61,6 +63,32 @@ export default async function CountryPage({ params }: Props) {
             <section>
               <h2 className="text-xl font-semibold">Visa Process</h2>
               <p className="mt-2 text-muted-foreground">{country.visa_summary}</p>
+            </section>
+          )}
+          {universities.length > 0 && (
+            <section>
+              <h2 className="text-xl font-semibold">Partner Universities</h2>
+              <ul className="mt-4 space-y-2">
+                {universities.map((uni) => (
+                  <li key={uni.id}>
+                    <Link
+                      href={`${ROUTES.universities}/${uni.slug}`}
+                      className="text-primary hover:underline"
+                    >
+                      {uni.name}
+                    </Link>
+                    {uni.city && (
+                      <span className="text-sm text-muted-foreground"> · {uni.city}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={`${ROUTES.universities}?country=${dbCountry?.id ?? ""}`}
+                className="mt-3 inline-block text-sm text-primary hover:underline"
+              >
+                View all universities in {country.name}
+              </Link>
             </section>
           )}
         </div>

@@ -9,9 +9,19 @@ export default async function EditTestimonialPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("testimonials").select("*").eq("id", id).single();
+  const [{ data }, { data: countries }, { data: universities }] = await Promise.all([
+    supabase.from("testimonials").select("*").eq("id", id).single(),
+    supabase.from("countries").select("id, name").order("name"),
+    supabase.from("universities").select("id, name, country_id").order("name"),
+  ]);
 
   if (!data) notFound();
 
-  return <TestimonialForm initial={data} />;
+  return (
+    <TestimonialForm
+      countries={countries ?? []}
+      universities={universities ?? []}
+      initial={data}
+    />
+  );
 }

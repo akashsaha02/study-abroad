@@ -10,7 +10,10 @@
     "check": "node scripts/ci-check.mjs",
     "check:ci": "node scripts/ci-check.mjs",
     "setup:hooks": "git config core.hooksPath .githooks",
-    "seed:test": "node --env-file=.env.local scripts/seed-test-users.mjs"
+    "seed:test": "node --env-file=.env.local scripts/seed-test-users.mjs",
+    "seed:content": "node --env-file=.env.local scripts/seed-demo-content.mjs",
+    "seed:all": "npm run seed:content && npm run seed:test",
+    "migrate:entity-relations": "node --env-file=.env.local scripts/run-entity-relations-migration.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -23,7 +26,7 @@
     "@tiptap/starter-kit": "^3.27.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "react-hook-form": "^7.80.0",
+    "next": "16.2.9",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.6.1",
     "react": "19.2.4",

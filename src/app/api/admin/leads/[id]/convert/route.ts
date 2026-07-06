@@ -52,6 +52,7 @@ export async function POST(
       .update({
         lead_id: leadId,
         preferred_country: lead.preferred_country,
+        preferred_country_id: lead.preferred_country_id,
         preferred_subject: lead.subject_interest,
         highest_education: lead.education_level,
         budget: lead.budget,
@@ -68,6 +69,7 @@ export async function POST(
       profile_id,
       lead_id: leadId,
       preferred_country: lead.preferred_country,
+      preferred_country_id: lead.preferred_country_id,
       preferred_subject: lead.subject_interest,
       highest_education: lead.education_level,
       budget: lead.budget,

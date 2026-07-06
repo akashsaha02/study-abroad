@@ -31,6 +31,8 @@ export const testimonialSchema = z.object({
   student_name: z.string().min(1),
   destination_country: z.string().optional().nullable(),
   university_name: z.string().optional().nullable(),
+  country_id: z.string().uuid().optional().nullable(),
+  university_id: z.string().uuid().optional().nullable(),
   quote: z.string().min(1),
   image_url: optionalUrl,
   rating: z.coerce.number().min(1).max(5).optional(),
@@ -110,7 +112,8 @@ export const counselorSchema = z.object({
 });
 
 export const costSettingSchema = z.object({
-  country: z.string().min(1),
+  country: z.string().min(1).optional(),
+  country_id: z.string().uuid(),
   degree_level: z.string().min(1),
   tuition_min: z.coerce.number().optional().nullable(),
   tuition_max: z.coerce.number().optional().nullable(),
@@ -122,7 +125,8 @@ export const costSettingSchema = z.object({
 });
 
 export const eligibilityRuleSchema = z.object({
-  country: z.string().min(1),
+  country: z.string().min(1).optional(),
+  country_id: z.string().uuid(),
   education_level: z.string().min(1),
   min_cgpa: z.coerce.number().optional().nullable(),
   min_ielts: z.coerce.number().optional().nullable(),
@@ -183,6 +187,12 @@ export const applicationStepSchema = z.object({
   description: z.string().optional().nullable(),
   status: z.enum(["pending", "in_progress", "completed"]).optional(),
   sort_order: z.coerce.number().optional(),
+});
+
+export const applicationTargetSchema = z.object({
+  country_id: z.string().uuid().nullable().optional(),
+  university_id: z.string().uuid().nullable().optional(),
+  course_id: z.string().uuid().nullable().optional(),
 });
 
 export const applicationStepUpdateSchema = z.object({

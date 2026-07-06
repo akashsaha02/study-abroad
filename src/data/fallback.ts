@@ -7,6 +7,8 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
     student_name: "Rahim Ahmed",
     destination_country: "Canada",
     university_name: "University of Toronto",
+    country_id: null,
+    university_id: null,
     quote:
       "Abroadly guided me from university shortlisting to visa approval. I couldn't have done it without them.",
     image_url: null,
@@ -19,6 +21,8 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
     student_name: "Fatima Khan",
     destination_country: "UK",
     university_name: "University of Manchester",
+    country_id: null,
+    university_id: null,
     quote:
       "The counselors were incredibly supportive throughout my application process. Highly recommended!",
     image_url: null,
@@ -31,6 +35,8 @@ export const FALLBACK_TESTIMONIALS: Testimonial[] = [
     student_name: "Karim Hassan",
     destination_country: "Australia",
     university_name: "Monash University",
+    country_id: null,
+    university_id: null,
     quote:
       "Got my scholarship with their help. The eligibility checker was spot on with recommendations.",
     image_url: null,

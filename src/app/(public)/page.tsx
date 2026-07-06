@@ -40,7 +40,7 @@ async function getHomeData() {
         .limit(3),
       supabase
         .from("testimonials")
-        .select("*")
+        .select("*, countries(name), universities(name)")
         .eq("is_published", true)
         .limit(3),
       supabase
