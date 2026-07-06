@@ -8,7 +8,7 @@ const DASHBOARD_ROLES: UserRole[] = ["student", "admin", "super_admin"];
 const COUNSELOR_ROLES: UserRole[] = ["counselor", "admin", "super_admin"];
 const ADMIN_ROLES: UserRole[] = ["admin", "super_admin"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { supabase, user, supabaseResponse } = await updateSession(request);
   const { pathname } = request.nextUrl;
 

@@ -1,6 +1,6 @@
 ---
 description: "Authentication and role-based access control rules"
-globs: ["src/app/(student)/**/*", "src/app/(admin)/**/*", "src/app/(counselor)/**/*", "src/lib/auth/**/*", "src/middleware.ts"]
+globs: ["src/app/(student)/**/*", "src/app/(admin)/**/*", "src/app/(counselor)/**/*", "src/lib/auth/**/*", "src/proxy.ts"]
 alwaysApply: false
 ---
 
