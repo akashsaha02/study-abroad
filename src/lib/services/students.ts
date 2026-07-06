@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { getUser } from "@/lib/auth/get-user";
 
 export async function getStudentByProfileId(profileId: string) {
   const supabase = await createClient();

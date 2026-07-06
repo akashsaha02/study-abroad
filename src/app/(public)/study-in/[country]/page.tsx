@@ -1,6 +1,5 @@
 import { Container } from "@/components/common/Container";
 import { PageHeader } from "@/components/common/PageHeader";
-import { EmptyState } from "@/components/common/EmptyState";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROUTES } from "@/constants";

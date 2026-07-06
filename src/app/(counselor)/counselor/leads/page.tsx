@@ -4,7 +4,6 @@ import { DataTable } from "@/components/tables/DataTable";
 import { getUser } from "@/lib/auth/get-user";
 import { createClient } from "@/lib/supabase/server";
 import type { Lead } from "@/types";
-import Link from "next/link";
 
 export default async function CounselorLeadsPage() {
   const user = await getUser();

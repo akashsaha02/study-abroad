@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check": "node scripts/ci-check.mjs",
+    "check:ci": "node scripts/ci-check.mjs",
+    "setup:hooks": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

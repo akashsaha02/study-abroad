@@ -1,5 +1,5 @@
 import { createLead } from "@/lib/services/leads";
-import { contactSchema, eligibilitySchema } from "@/lib/validations/leads";
+import { contactSchema } from "@/lib/validations/leads";
 import { sendNewLeadEmail } from "@/lib/emails/send";
 import { NextResponse } from "next/server";
 

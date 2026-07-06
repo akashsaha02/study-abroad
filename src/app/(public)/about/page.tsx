@@ -1,4 +1,3 @@
-import { Container } from "@/components/common/Container";
 import { PageHeader } from "@/components/common/PageHeader";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { Section } from "@/components/common/Section";

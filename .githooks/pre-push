@@ -1,0 +1,13 @@
+#!/bin/sh
+# Runs the same checks as .github/workflows/ci.yml before every push.
+
+echo "pre-push: running local CI checks..."
+npm run check:ci
+status=$?
+
+if [ $status -ne 0 ]; then
+  echo ""
+  echo "Push blocked: fix the errors above, then push again."
+  echo "To skip once: git push --no-verify"
+  exit $status
+fi
