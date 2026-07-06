@@ -3,6 +3,7 @@ import { DocumentUpload } from "@/components/forms/DocumentUpload";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Card, CardContent } from "@/components/ui/card";
+import { emptyStateIcons } from "@/constants/empty-state-icons";
 import { getUser } from "@/lib/auth/get-user";
 import { getStudentByProfileId, getStudentDocuments } from "@/lib/services/students";
 
@@ -16,7 +17,11 @@ export default async function StudentDocumentsPage() {
       <PageHeader title="Documents" description="Upload and manage your application documents." />
       {student && <DocumentUpload studentId={student.id} />}
       {documents.length === 0 ? (
-        <EmptyState title="No documents uploaded" description="Upload your first document above." />
+        <EmptyState
+          title="No documents uploaded"
+          description="Upload your first document above."
+          icon={emptyStateIcons.documents}
+        />
       ) : (
         <div className="space-y-3">
           {documents.map((doc) => (

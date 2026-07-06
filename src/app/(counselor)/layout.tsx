@@ -8,7 +8,10 @@ export default async function CounselorLayout({
 }) {
   const user = await getUser();
   return (
-    <CounselorShell userName={user?.profile?.full_name ?? undefined}>
+    <CounselorShell
+      userName={user?.profile?.full_name ?? undefined}
+      userRole={user?.profile?.role}
+    >
       {children}
     </CounselorShell>
   );

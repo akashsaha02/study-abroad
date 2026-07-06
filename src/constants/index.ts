@@ -61,6 +61,13 @@ export const LEAD_SOURCES: LeadSource[] = [
   "manual_admin_entry",
 ];
 
+export const CONSULTATION_STATUSES = [
+  "requested",
+  "scheduled",
+  "completed",
+  "cancelled",
+] as const;
+
 export const APPLICATION_STATUSES: ApplicationStatus[] = [
   "profile_review",
   "documents_pending",

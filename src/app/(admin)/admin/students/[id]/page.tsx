@@ -1,7 +1,9 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SendNotificationForm } from "./SendNotificationForm";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -12,7 +14,7 @@ export default async function AdminStudentDetailPage({ params }: Props) {
   const supabase = await createClient();
   const { data: student } = await supabase
     .from("students")
-    .select("*, profiles(full_name, email, phone)")
+    .select("*, profiles(full_name, email, phone, id)")
     .eq("id", id)
     .single();
 
@@ -28,7 +30,12 @@ export default async function AdminStudentDetailPage({ params }: Props) {
     .select("*")
     .eq("student_id", id);
 
-  const profile = student.profiles as { full_name?: string; email?: string; phone?: string };
+  const profile = student.profiles as {
+    id: string;
+    full_name?: string;
+    email?: string;
+    phone?: string;
+  };
 
   return (
     <div className="space-y-6">
@@ -49,10 +56,21 @@ export default async function AdminStudentDetailPage({ params }: Props) {
             <ul className="mt-2 space-y-2 text-sm">
               {applications?.map((a) => (
                 <li key={a.id}>
-                  {(a.universities as { name?: string })?.name} — {a.status}
+                  <Link
+                    href={`/admin/applications/${a.id}`}
+                    className="text-primary hover:underline"
+                  >
+                    {(a.universities as { name?: string })?.name}
+                  </Link>{" "}
+                  — {a.status}
                 </li>
               ))}
             </ul>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <SendNotificationForm userId={profile.id} />
           </CardContent>
         </Card>
         <Card className="lg:col-span-2">

@@ -3,6 +3,7 @@
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { Input } from "@/components/ui/input";
+import { GoogleAuthButton } from "@/components/forms/GoogleAuthButton";
 import { login, type AuthActionState } from "@/lib/auth/actions";
 import Link from "next/link";
 import { useActionState } from "react";
@@ -41,6 +42,17 @@ export function LoginForm() {
       <SubmitButton loading={pending} className="w-full">
         Sign in
       </SubmitButton>
+
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      <GoogleAuthButton />
 
       <div className="flex justify-between text-sm">
         <Link href="/forgot-password" className="text-primary hover:underline">

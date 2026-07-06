@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Card, CardContent } from "@/components/ui/card";
+import { emptyStateIcons } from "@/constants/empty-state-icons";
 import { getUser } from "@/lib/auth/get-user";
 import { getStudentNotifications } from "@/lib/services/students";
 
@@ -12,7 +13,11 @@ export default async function StudentNotificationsPage() {
     <div>
       <PageHeader title="Notifications" description="Stay updated on your application progress." />
       {notifications.length === 0 ? (
-        <EmptyState title="No notifications" description="You're all caught up!" />
+        <EmptyState
+          title="No notifications"
+          description="You're all caught up!"
+          icon={emptyStateIcons.notifications}
+        />
       ) : (
         <div className="space-y-3">
           {notifications.map((n) => (

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { getDashboardPathForRole } from "@/lib/auth/redirects";
 import type { UserRole } from "@/types";
 
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
@@ -26,8 +27,14 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && isAuthRoute) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    url.pathname = getDashboardPathForRole(profile?.role as UserRole);
     return NextResponse.redirect(url);
   }
 

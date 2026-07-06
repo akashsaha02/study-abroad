@@ -1,6 +1,8 @@
+import { ArrowRight01Icon } from "@/constants/nav-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROUTES } from "@/constants";
 import type { University } from "@/types";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { Section } from "../common/Section";
 
@@ -20,9 +22,10 @@ export function FeaturedUniversities({ universities }: FeaturedUniversitiesProps
         </div>
         <Link
           href={ROUTES.universities}
-          className="hidden text-sm font-medium text-primary hover:underline sm:block"
+          className="hidden items-center gap-1 text-sm font-medium text-primary hover:underline sm:inline-flex"
         >
-          View all →
+          View all
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
         </Link>
       </div>
       <div className="grid gap-4 md:grid-cols-3">

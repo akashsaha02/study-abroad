@@ -6,15 +6,34 @@ interface StatCardProps {
   value: string | number;
   description?: string;
   className?: string;
+  icon?: React.ReactNode;
+  iconClassName?: string;
 }
 
-export function StatCard({ title, value, description, className }: StatCardProps) {
+export function StatCard({
+  title,
+  value,
+  description,
+  className,
+  icon,
+  iconClassName,
+}: StatCardProps) {
   return (
     <Card className={cn(className)}>
-      <CardHeader className="pb-2">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
+        {icon && (
+          <div
+            className={cn(
+              "flex size-9 items-center justify-center rounded-lg",
+              iconClassName ?? "bg-primary/10 text-primary"
+            )}
+          >
+            {icon}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <p className="text-3xl font-bold">{value}</p>

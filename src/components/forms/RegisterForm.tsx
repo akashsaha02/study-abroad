@@ -3,6 +3,7 @@
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { Input } from "@/components/ui/input";
+import { GoogleAuthButton } from "@/components/forms/GoogleAuthButton";
 import { register, type AuthActionState } from "@/lib/auth/actions";
 import Link from "next/link";
 import { useActionState } from "react";
@@ -45,9 +46,24 @@ export function RegisterForm() {
         <p className="text-sm text-destructive">{state.error}</p>
       )}
 
+      {state.success && (
+        <p className="text-sm text-green-600 dark:text-green-400">{state.success}</p>
+      )}
+
       <SubmitButton loading={pending} className="w-full">
         Create account
       </SubmitButton>
+
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      <GoogleAuthButton />
 
       <p className="text-center text-sm">
         Already have an account?{" "}

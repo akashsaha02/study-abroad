@@ -3,8 +3,9 @@ import { ApplicationTimeline } from "@/components/dashboard/ApplicationTimeline"
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/server";
-import type { ApplicationStatus } from "@/types";
+import type { ApplicationStatus, ApplicationStep } from "@/types";
 import { notFound } from "next/navigation";
+import { ApplicationStepsSection } from "./ApplicationStepsSection";
 import { ApplicationStatusForm } from "./status-form";
 
 interface Props {
@@ -22,6 +23,12 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
 
   if (!app) notFound();
 
+  const { data: steps } = await supabase
+    .from("application_steps")
+    .select("*")
+    .eq("application_id", id)
+    .order("sort_order", { ascending: true });
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -36,7 +43,8 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
           <CardContent className="p-6">
             <h3 className="font-semibold">Student</h3>
             <p className="mt-2">
-              {(app.students as { profiles?: { full_name?: string; email?: string } })?.profiles?.full_name}
+              {(app.students as { profiles?: { full_name?: string; email?: string } })?.profiles
+                ?.full_name}
             </p>
             <p className="text-sm text-muted-foreground">
               {(app.students as { profiles?: { email?: string } })?.profiles?.email}
@@ -50,6 +58,15 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
         <CardContent className="p-6">
           <h3 className="mb-4 font-semibold">Progress Timeline</h3>
           <ApplicationTimeline currentStatus={app.status as ApplicationStatus} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-6">
+          <ApplicationStepsSection
+            applicationId={app.id}
+            steps={(steps as ApplicationStep[]) ?? []}
+          />
         </CardContent>
       </Card>
     </div>

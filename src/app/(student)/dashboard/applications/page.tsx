@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { ApplicationTimeline } from "@/components/dashboard/ApplicationTimeline";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Card, CardContent } from "@/components/ui/card";
+import { emptyStateIcons } from "@/constants/empty-state-icons";
 import { getUser } from "@/lib/auth/get-user";
 import { getStudentApplications, getStudentByProfileId } from "@/lib/services/students";
 import type { ApplicationStatus } from "@/types";
@@ -19,6 +20,7 @@ export default async function StudentApplicationsPage() {
         <EmptyState
           title="No applications yet"
           description="Your counselor will create applications for you."
+          icon={emptyStateIcons.applications}
         />
       ) : (
         <div className="space-y-6">

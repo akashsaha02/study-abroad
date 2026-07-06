@@ -8,7 +8,10 @@ export default async function AdminLayout({
 }) {
   const user = await getUser();
   return (
-    <AdminShell userName={user?.profile?.full_name ?? undefined}>
+    <AdminShell
+      userName={user?.profile?.full_name ?? undefined}
+      userRole={user?.profile?.role}
+    >
       {children}
     </AdminShell>
   );

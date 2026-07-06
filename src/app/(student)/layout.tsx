@@ -8,7 +8,10 @@ export default async function StudentLayout({
 }) {
   const user = await getUser();
   return (
-    <StudentShell userName={user?.profile?.full_name ?? undefined}>
+    <StudentShell
+      userName={user?.profile?.full_name ?? undefined}
+      userRole={user?.profile?.role}
+    >
       {children}
     </StudentShell>
   );

@@ -1,24 +1,29 @@
+import { SettingsTabs } from "@/components/admin/SettingsTabs";
 import { PageHeader } from "@/components/common/PageHeader";
-import { DataTable } from "@/components/tables/DataTable";
+import { getUser } from "@/lib/auth/get-user";
 import { createClient } from "@/lib/supabase/server";
+import type { CostSetting, EligibilityRule } from "@/types";
 
 export default async function AdminSettingsPage() {
   const supabase = await createClient();
-  const { data } = await supabase.from("cost_settings").select("*").order("country");
-  const columns = [
-    { key: "country", header: "Country", cell: (r: NonNullable<typeof data>[0]) => r.country },
-    { key: "level", header: "Degree", cell: (r: NonNullable<typeof data>[0]) => r.degree_level },
-    {
-      key: "tuition",
-      header: "Tuition Range",
-      cell: (r: NonNullable<typeof data>[0]) =>
-        `$${r.tuition_min?.toLocaleString()} – $${r.tuition_max?.toLocaleString()}`,
-    },
-  ];
+  const user = await getUser();
+
+  const [{ data: costSettings }, { data: eligibilityRules }] = await Promise.all([
+    supabase.from("cost_settings").select("*").order("country"),
+    supabase.from("eligibility_rules").select("*").order("country"),
+  ]);
+
   return (
-    <div>
-      <PageHeader title="Settings" description="Cost calculator and platform settings." />
-      <DataTable columns={columns} data={data ?? []} emptyMessage="No cost settings configured" />
+    <div className="space-y-6">
+      <PageHeader
+        title="Settings"
+        description="Cost calculator and eligibility checker configuration."
+      />
+      <SettingsTabs
+        costSettings={(costSettings as CostSetting[]) ?? []}
+        eligibilityRules={(eligibilityRules as EligibilityRule[]) ?? []}
+        isSuperAdmin={user?.profile?.role === "super_admin"}
+      />
     </div>
   );
 }

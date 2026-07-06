@@ -290,6 +290,29 @@ export interface Testimonial {
   created_at: string;
 }
 
+export interface Counselor {
+  id: string;
+  profile_id: string;
+  specialization: string | null;
+  bio: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EligibilityRule {
+  id: string;
+  country: string;
+  education_level: string;
+  min_cgpa: number | null;
+  min_ielts: number | null;
+  min_budget: number | null;
+  recommendation: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CostSetting {
   id: string;
   country: string;

@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getDashboardPathForRole } from "@/lib/auth/redirects";
+import type { UserRole } from "@/types";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -14,6 +16,35 @@ export type AuthActionState = {
   error?: string;
   success?: string;
 };
+
+function getAppUrl() {
+  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+}
+
+async function redirectAfterAuth(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  fallbackPath?: string
+): Promise<never> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(fallbackPath ?? "/dashboard");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (fallbackPath && fallbackPath !== "/dashboard" && fallbackPath !== "/login") {
+    redirect(fallbackPath);
+  }
+
+  redirect(getDashboardPathForRole(profile?.role as UserRole));
+}
 
 export async function login(
   _prev: AuthActionState,
@@ -38,8 +69,8 @@ export async function login(
     return { error: error.message };
   }
 
-  const redirectTo = formData.get("redirect")?.toString() || "/dashboard";
-  redirect(redirectTo);
+  const redirectTo = formData.get("redirect")?.toString();
+  return redirectAfterAuth(supabase, redirectTo);
 }
 
 export async function register(
@@ -71,6 +102,13 @@ export async function register(
     return { error: error.message };
   }
 
+  if (data.user && !data.session) {
+    return {
+      success:
+        "Account created. Check your email to confirm your account before signing in.",
+    };
+  }
+
   if (data.user) {
     await supabase.from("profiles").upsert({
       id: data.user.id,
@@ -81,7 +119,27 @@ export async function register(
     });
   }
 
-  redirect("/dashboard");
+  return redirectAfterAuth(supabase);
+}
+
+export async function signInWithGoogle() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${getAppUrl()}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    redirect(`/login?error=${encodeURIComponent(error.message)}`);
+  }
+
+  if (data.url) {
+    redirect(data.url);
+  }
+
+  redirect("/login?error=oauth_failed");
 }
 
 export async function forgotPassword(
@@ -98,7 +156,7 @@ export async function forgotPassword(
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
+    redirectTo: `${getAppUrl()}/reset-password`,
   });
 
   if (error) {

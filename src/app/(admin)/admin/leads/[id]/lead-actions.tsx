@@ -1,19 +1,41 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LEAD_STATUSES } from "@/constants";
 import type { LeadStatus } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { LeadAssignCounselor } from "./LeadAssignCounselor";
+import { LeadConvertButton } from "./LeadConvertButton";
+
+interface CounselorOption {
+  profile_id: string;
+  name: string;
+}
+
+interface ProfileOption {
+  id: string;
+  label: string;
+}
 
 interface LeadActionsProps {
   leadId: string;
   currentStatus: LeadStatus;
+  assignedCounselorId: string | null;
+  isConverted: boolean;
+  counselors: CounselorOption[];
+  studentProfiles: ProfileOption[];
 }
 
-export function LeadActions({ leadId, currentStatus }: LeadActionsProps) {
+export function LeadActions({
+  leadId,
+  currentStatus,
+  assignedCounselorId,
+  isConverted,
+  counselors,
+  studentProfiles,
+}: LeadActionsProps) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
@@ -39,7 +61,7 @@ export function LeadActions({ leadId, currentStatus }: LeadActionsProps) {
 
   return (
     <Card>
-      <CardContent className="space-y-4 p-6">
+      <CardContent className="space-y-6 p-6">
         <h3 className="font-semibold">Actions</h3>
         <div>
           <label className="text-sm font-medium">Update Status</label>
@@ -56,14 +78,16 @@ export function LeadActions({ leadId, currentStatus }: LeadActionsProps) {
             ))}
           </select>
         </div>
-        <Button
-          variant="outline"
-          className="w-full"
-          disabled={loading}
-          onClick={() => updateStatus("converted_to_student")}
-        >
-          Convert to Student
-        </Button>
+        <LeadAssignCounselor
+          leadId={leadId}
+          counselors={counselors}
+          currentCounselorId={assignedCounselorId}
+        />
+        <LeadConvertButton
+          leadId={leadId}
+          studentProfiles={studentProfiles}
+          isConverted={isConverted}
+        />
       </CardContent>
     </Card>
   );

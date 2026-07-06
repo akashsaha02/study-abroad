@@ -1,4 +1,5 @@
 import { APPLICATION_STATUSES, APPLICATION_STATUS_LABELS } from "@/constants";
+import { StatIcon, CheckmarkCircle02Icon } from "@/constants/nav-icons";
 import type { ApplicationStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +36,11 @@ export function ApplicationTimeline({
                   isRejected && "border-muted-foreground/30 text-muted-foreground"
                 )}
               >
-                {isComplete ? "✓" : index + 1}
+                {isComplete ? (
+                  <StatIcon icon={CheckmarkCircle02Icon} className="size-4" />
+                ) : (
+                  index + 1
+                )}
               </div>
               {index < steps.length - 1 && (
                 <div
