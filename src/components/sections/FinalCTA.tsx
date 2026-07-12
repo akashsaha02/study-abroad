@@ -4,17 +4,28 @@ import { Link } from "@/i18n/navigation";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "antd";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 export async function FinalCTA() {
   const t = await getTranslations("home.cta");
 
   return (
-    <section className="relative pb-24">
+    <section className="pb-24 pt-8 md:pt-12">
       <Container>
-        <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground md:px-16">
-          <div className="absolute inset-0 z-0 bg-mesh opacity-40" aria-hidden />
-          <div className="relative">
+        <div className="relative overflow-hidden rounded-3xl px-6 py-14 text-center text-primary-foreground md:px-16">
+          <Image
+            src="/images/doodle-bg-img3.png"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 1200px"
+            className="object-cover object-center"
+            aria-hidden
+          />
+          <div className="absolute inset-0 bg-primary/85" aria-hidden />
+          <div className="absolute inset-0 bg-mesh opacity-35" aria-hidden />
+
+          <div className="relative z-10">
             <h2 className="text-3xl font-bold tracking-tight text-balance md:text-4xl">
               {t("title")}
             </h2>
