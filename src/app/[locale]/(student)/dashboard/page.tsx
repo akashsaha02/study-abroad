@@ -24,7 +24,7 @@ import {
   getStudentDocuments,
   getStudentNotifications,
 } from "@/lib/services/students";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export default async function StudentDashboardPage() {
   const user = await getUser();
@@ -57,7 +57,7 @@ export default async function StudentDashboardPage() {
       </PageHeader>
 
       <div className="flex flex-wrap gap-2">
-        <Link href={ROUTES.dashboardProfile}>
+        <Link href={ROUTES.accountProfile}>
           <Button  size="small">Update profile</Button>
         </Link>
         <Link href={ROUTES.dashboardDocuments}>
@@ -73,7 +73,7 @@ export default async function StudentDashboardPage() {
           title="Complete your profile"
           description="Your student profile is being set up. Contact your counselor if you need help."
           actionLabel="Update profile"
-          actionHref={ROUTES.dashboardProfile}
+          actionHref={ROUTES.accountProfile}
           icon={emptyStateIcons.profile}
         />
       ) : (

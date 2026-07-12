@@ -6,6 +6,7 @@ import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import type { EligibilityRule } from "@/types";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
@@ -14,14 +15,21 @@ interface CountryOption {
   name: string;
 }
 
-interface EligibilityRuleFormProps {
+interface EligibilityRuleFormProps extends AdminFormBaseProps {
   countries: CountryOption[];
   initial?: EligibilityRule;
 }
 
 const FORM_ID = "eligibility-rule-form";
 
-export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormProps) {
+export function EligibilityRuleForm({
+  countries,
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: EligibilityRuleFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -39,6 +47,7 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -63,12 +72,17 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save rule"));
 
       message.success(isEdit ? "Rule updated" : "Rule created");
-      router.push("/admin/settings");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/settings",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -78,6 +92,7 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
       backHref="/admin/settings"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

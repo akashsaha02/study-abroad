@@ -10,10 +10,10 @@ export async function FinalCTA() {
   const t = await getTranslations("home.cta");
 
   return (
-    <section className="pb-24">
+    <section className="relative pb-24">
       <Container>
         <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground md:px-16">
-          <div className="absolute inset-0 z-0 bg-grid opacity-10" aria-hidden />
+          <div className="absolute inset-0 z-0 bg-mesh opacity-40" aria-hidden />
           <div className="relative">
             <h2 className="text-3xl font-bold tracking-tight text-balance md:text-4xl">
               {t("title")}

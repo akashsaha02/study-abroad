@@ -6,6 +6,7 @@ import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import type { Counselor } from "@/types";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
@@ -15,14 +16,21 @@ interface ProfileOption {
   email: string | null;
 }
 
-interface CounselorFormProps {
+interface CounselorFormProps extends AdminFormBaseProps {
   initial?: Counselor;
   profileOptions: ProfileOption[];
 }
 
 const FORM_ID = "counselor-form";
 
-export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
+export function CounselorForm({
+  initial,
+  profileOptions,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: CounselorFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -35,6 +43,7 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = isEdit
@@ -62,12 +71,17 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save counselor"));
 
       message.success(isEdit ? "Counselor updated" : "Counselor created");
-      router.push("/admin/counselors");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/counselors",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -77,6 +91,7 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
       backHref="/admin/counselors"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

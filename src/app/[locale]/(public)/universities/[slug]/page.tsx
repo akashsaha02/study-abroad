@@ -1,19 +1,16 @@
 import { Button } from "antd";
-import { PageHeader } from "@/components/common/PageHeader";
+import { CoverImage } from "@/components/common/CoverImage";
 import { PageLayout } from "@/components/common/PageLayout";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { CourseCard } from "@/components/public/CourseCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
 import { FALLBACK_UNIVERSITIES } from "@/data/fallback";
+import { Link } from "@/i18n/navigation";
+import { getUniversityImage } from "@/lib/images/public-assets";
 import { getPublishedCourses, getUniversityBySlug } from "@/lib/services/content";
-import {
-  ArrowRight01Icon,
-  GraduationScrollIcon,
-  Money01Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, Money01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -58,28 +55,40 @@ export default async function UniversityDetailPage({ params }: Props) {
     .filter(Boolean)
     .join(", ");
 
+  const heroImage = getUniversityImage({
+    slug: university.slug,
+    logo_url: university.logo_url,
+  });
+
   return (
     <PageLayout>
-      <PageHeader
-        eyebrow="University"
-        eyebrowIcon={GraduationScrollIcon}
-        title={university.name!}
-        description={location}
-      />
+      <div className="relative mb-8 overflow-hidden rounded-3xl">
+        <CoverImage
+          src={heroImage}
+          alt={university.name!}
+          className="h-48 md:h-56"
+          priority
+          fallback={
+            <span className="text-3xl font-bold text-primary">
+              {monogram(university.name!)}
+            </span>
+          }
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-background/90 via-background/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 p-6 md:p-8">
+          <p className="text-sm font-medium text-primary">University</p>
+          <h1 className="text-2xl font-bold md:text-3xl">{university.name}</h1>
+          <p className="mt-1 text-muted-foreground">{location}</p>
+        </div>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <SurfaceCard hover={false} padding="lg" className="flex-row items-center gap-4">
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl border bg-muted/50 text-lg font-bold text-primary">
-              {monogram(university.name!)}
-            </span>
-            <div>
-              <p className="text-sm text-muted-foreground">{location}</p>
-              {university.ranking && (
-                <p className="mt-1 text-sm font-medium">World ranking: {university.ranking}</p>
-              )}
-            </div>
-          </SurfaceCard>
+          {university.ranking && (
+            <SurfaceCard hover={false} padding="lg">
+              <p className="text-sm font-medium">World ranking: {university.ranking}</p>
+            </SurfaceCard>
+          )}
 
           {university.description && (
             <SurfaceCard hover={false} padding="lg">

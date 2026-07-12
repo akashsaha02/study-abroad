@@ -7,6 +7,7 @@ import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { useRouter } from "@/i18n/navigation";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useState } from "react";
 
 interface UniversityOption {
@@ -30,7 +31,7 @@ interface Course {
   is_published: boolean;
 }
 
-interface CourseFormProps {
+interface CourseFormProps extends AdminFormBaseProps {
   universities: UniversityOption[];
   initial?: Course;
 }
@@ -49,7 +50,14 @@ function parseIntakes(value: string) {
   return items.length ? items : null;
 }
 
-export function CourseForm({ universities, initial }: CourseFormProps) {
+export function CourseForm({
+  universities,
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: CourseFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -78,6 +86,7 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -107,12 +116,17 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save course"));
 
       message.success(isEdit ? "Course updated" : "Course created");
-      router.push("/admin/courses");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/courses",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -122,6 +136,7 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
       backHref="/admin/courses"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

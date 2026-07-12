@@ -175,9 +175,11 @@ export function Navbar({ user }: { user?: NavbarUser | null }) {
 
           <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex">
             <NavItemLink
-              href={ROUTES.studyIn("uk")}
+              href={ROUTES.studyAbroad}
               label={t("studyAbroad")}
-              active={pathname.startsWith("/study-in")}
+              active={
+                pathname.startsWith("/study-abroad") || pathname.startsWith("/study-in")
+              }
             />
             {NAV_GROUPS.map((group) => (
               <NavDropdown
@@ -352,18 +354,14 @@ function NavbarUserMenu({ user }: { user: NavbarUser }) {
         </Link>
       ),
     },
-    ...(user.role === "student"
-      ? [
-          {
-            key: "profile",
-            label: (
-              <Link href={ROUTES.dashboardProfile} className="block">
-                {t("myProfile")}
-              </Link>
-            ),
-          },
-        ]
-      : []),
+    {
+      key: "profile",
+      label: (
+        <Link href={user.profileHref} className="block">
+          {t("myProfile")}
+        </Link>
+      ),
+    },
     { type: "divider" as const },
     {
       key: "signout",
@@ -458,15 +456,13 @@ function MobileNav({
             <LanguageSwitcher className="w-full justify-center" />
             {user ? (
               <>
-                {user.role === "student" && (
-                  <Link
-                    href={ROUTES.dashboardProfile}
-                    onClick={() => setOpen(false)}
-                    className="block"
-                  >
-                    <Button block>{t("myProfile")}</Button>
-                  </Link>
-                )}
+                <Link
+                  href={user.profileHref}
+                  onClick={() => setOpen(false)}
+                  className="block"
+                >
+                  <Button block>{t("myProfile")}</Button>
+                </Link>
                 <form action={signOut}>
                   <Button block htmlType="submit">
                     {t("signOut")}
@@ -488,11 +484,11 @@ function MobileNav({
       >
         <nav className="space-y-6 pb-4">
           <Link
-            href={ROUTES.studyIn("uk")}
+            href={ROUTES.studyAbroad}
             onClick={() => setOpen(false)}
             className={cn(
               "block rounded-xl px-3 py-2.5 text-sm font-semibold",
-              pathname.startsWith("/study-in")
+              pathname.startsWith("/study-abroad") || pathname.startsWith("/study-in")
                 ? "bg-primary/8 text-primary"
                 : "hover:bg-muted"
             )}

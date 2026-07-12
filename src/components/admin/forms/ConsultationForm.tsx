@@ -7,6 +7,7 @@ import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { CONSULTATION_STATUSES } from "@/constants";
 import type { Consultation, ConsultationStatus } from "@/types";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
@@ -25,7 +26,7 @@ interface CounselorOption {
   name: string;
 }
 
-interface ConsultationFormProps {
+interface ConsultationFormProps extends AdminFormBaseProps {
   initial?: Consultation;
   leads?: LeadOption[];
   students?: StudentOption[];
@@ -41,6 +42,10 @@ export function ConsultationForm({
   students = [],
   counselors = [],
   backHref = "/admin/consultations",
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
 }: ConsultationFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
@@ -60,6 +65,7 @@ export function ConsultationForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -85,12 +91,17 @@ export function ConsultationForm({
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save consultation"));
 
       message.success(isEdit ? "Consultation updated" : "Consultation scheduled");
-      router.push(backHref);
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref,
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -100,6 +111,7 @@ export function ConsultationForm({
       backHref={backHref}
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

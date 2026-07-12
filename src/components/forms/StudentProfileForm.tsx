@@ -5,6 +5,8 @@ import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { PanelCard } from "@/components/common/PanelCard";
 import type { Profile, Student } from "@/types";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 interface StudentProfileFormProps {
@@ -14,6 +16,8 @@ interface StudentProfileFormProps {
 
 export function StudentProfileForm({ profile, student }: StudentProfileFormProps) {
   const { message } = App.useApp();
+  const router = useRouter();
+  const t = useTranslations("dashboard");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,16 +33,17 @@ export function StudentProfileForm({ profile, student }: StudentProfileFormProps
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Failed to save");
-      message.success("Profile updated");
+      message.success(t("profileSaved"));
+      router.refresh();
     } catch {
-      message.error("Failed to update profile");
+      message.error(t("profileSaveFailed"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <PanelCard title="Personal & education details">
+    <PanelCard title={t("personalInfo")}>
       <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
           <FormField label="Full Name" htmlFor="full_name" required>
             <Input id="full_name" name="full_name" defaultValue={profile?.full_name ?? ""} />
@@ -77,7 +82,7 @@ export function StudentProfileForm({ profile, student }: StudentProfileFormProps
             <Input.TextArea id="current_address" name="current_address" defaultValue={student?.current_address ?? ""} />
           </FormField>
           <div className="md:col-span-2">
-            <SubmitButton loading={loading}>Save Profile</SubmitButton>
+            <SubmitButton loading={loading}>{t("saveProfile")}</SubmitButton>
           </div>
         </form>
     </PanelCard>

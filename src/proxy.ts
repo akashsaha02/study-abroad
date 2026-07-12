@@ -48,10 +48,24 @@ export async function proxy(request: NextRequest) {
   const isAuthRoute = AUTH_ROUTES.some((route) =>
     pathWithoutLocale.startsWith(route)
   );
+
+  const legacyProfilePaths = [
+    "/dashboard/profile",
+    "/dashboard/settings",
+    "/admin/profile",
+    "/counselor/profile",
+  ];
+  if (legacyProfilePaths.includes(pathWithoutLocale)) {
+    const url = request.nextUrl.clone();
+    url.pathname = withLocale("/account/profile", locale);
+    return NextResponse.redirect(url);
+  }
+
   const isProtected =
     pathWithoutLocale.startsWith("/dashboard") ||
     pathWithoutLocale.startsWith("/counselor") ||
-    pathWithoutLocale.startsWith("/admin");
+    pathWithoutLocale.startsWith("/admin") ||
+    pathWithoutLocale.startsWith("/account");
 
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
@@ -124,6 +138,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json)$).*)",
   ],
 };

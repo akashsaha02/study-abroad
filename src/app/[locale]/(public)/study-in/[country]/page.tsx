@@ -1,24 +1,25 @@
 import { Button } from "antd";
-import { PageHeader } from "@/components/common/PageHeader";
+import { CoverImage } from "@/components/common/CoverImage";
 import { PageLayout } from "@/components/common/PageLayout";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { UniversityCard } from "@/components/public/UniversityCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { ROUTES } from "@/constants";
+import { POPULAR_COUNTRIES, ROUTES } from "@/constants";
 import { FALLBACK_COUNTRIES } from "@/data/fallback";
+import { Link } from "@/i18n/navigation";
+import { getCountryImage } from "@/lib/images/public-assets";
 import { getCountryBySlug, getPublishedUniversities } from "@/lib/services/content";
-import {
-  ArrowRight01Icon,
-  Globe02Icon,
-  Money01Icon,
-} from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, Money01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ country: string }>;
 }
+
+const FLAG_BY_SLUG = Object.fromEntries(
+  POPULAR_COUNTRIES.map((c) => [c.slug, c.flag])
+);
 
 export async function generateMetadata({ params }: Props) {
   const { country: slug } = await params;
@@ -52,14 +53,33 @@ export default async function CountryPage({ params }: Props) {
     { title: "Visa Process", content: country.visa_summary },
   ].filter((s) => s.content);
 
+  const flag = FLAG_BY_SLUG[slug];
+
   return (
     <PageLayout>
-      <PageHeader
-        eyebrow="Destination"
-        eyebrowIcon={Globe02Icon}
-        title={country.hero_title ?? `Study in ${country.name}`}
-        description={country.hero_subtitle ?? country.description ?? undefined}
-      />
+      <div className="relative mb-8 overflow-hidden rounded-3xl">
+        <CoverImage
+          src={getCountryImage(slug)}
+          alt={country.name ?? "Country"}
+          className="h-52 md:h-64"
+          priority
+          fallback={
+            <span className="text-6xl" aria-hidden>
+              {flag ?? "🌍"}
+            </span>
+          }
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 p-6 md:p-8">
+          <p className="text-sm font-medium text-primary">Destination</p>
+          <h1 className="text-2xl font-bold md:text-4xl">
+            {country.hero_title ?? `Study in ${country.name}`}
+          </h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground">
+            {country.hero_subtitle ?? country.description}
+          </p>
+        </div>
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
@@ -92,6 +112,7 @@ export default async function CountryPage({ params }: Props) {
                     countryName={country.name}
                     ranking={uni.ranking}
                     tuitionMin={uni.tuition_min}
+                    logoUrl={uni.logo_url}
                   />
                 ))}
               </div>
@@ -127,8 +148,8 @@ export default async function CountryPage({ params }: Props) {
               </div>
             )}
             <Link href={ROUTES.contact}>
-          <Button className="w-full">Book Free Consultation</Button>
-        </Link>
+              <Button className="w-full">Book Free Consultation</Button>
+            </Link>
           </SurfaceCard>
         </aside>
       </div>

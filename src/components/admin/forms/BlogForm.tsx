@@ -10,6 +10,7 @@ import { FormField } from "@/components/forms/FormField";
 import { PanelCard } from "@/components/common/PanelCard";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useRouter } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
 
@@ -25,13 +26,19 @@ interface BlogPost {
   is_published: boolean;
 }
 
-interface BlogFormProps {
+interface BlogFormProps extends AdminFormBaseProps {
   initial?: BlogPost;
 }
 
 const FORM_ID = "blog-form";
 
-export function BlogForm({ initial }: BlogFormProps) {
+export function BlogForm({
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: BlogFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -74,6 +81,7 @@ export function BlogForm({ initial }: BlogFormProps) {
     }
 
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const formData = new FormData(e.currentTarget);
@@ -114,12 +122,17 @@ export function BlogForm({ initial }: BlogFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save blog post"));
 
       message.success(isEdit ? "Blog post updated" : "Blog post created");
-      router.push("/admin/blog");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/blog",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -129,6 +142,7 @@ export function BlogForm({ initial }: BlogFormProps) {
       backHref="/admin/blog"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">

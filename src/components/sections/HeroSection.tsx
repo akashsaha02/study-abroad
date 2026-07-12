@@ -12,19 +12,19 @@ export async function HeroSection() {
   const t = await getTranslations("home.hero");
 
   return (
-    <section className="relative flex min-h-[min(88vh,720px)] items-center overflow-hidden">
+    <section className="relative flex min-h-[min(60vh,720px)] md:min-h-[min(80vh,720px)] lg:min-h-[min(90vh,720px)] items-center overflow-hidden">
       <Image
-        src="/images/hero-students.png"
+        src="/images/hero_img.png"
         alt={t("imageAlt")}
         fill
         priority
         sizes="100vw"
         className="object-cover object-center"
       />
-      <div
+      {/* <div
         className="absolute inset-0 bg-linear-to-r from-background via-background/92 to-background/55 dark:from-background dark:via-background/95 dark:to-background/70"
         aria-hidden
-      />
+      /> */}
       <div className="absolute inset-0 bg-grid opacity-20" aria-hidden />
 
       <Container className="relative z-10 py-20 md:py-28">

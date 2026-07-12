@@ -6,6 +6,7 @@ import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import type { CostSetting } from "@/types";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
@@ -14,14 +15,21 @@ interface CountryOption {
   name: string;
 }
 
-interface CostSettingFormProps {
+interface CostSettingFormProps extends AdminFormBaseProps {
   countries: CountryOption[];
   initial?: CostSetting;
 }
 
 const FORM_ID = "cost-setting-form";
 
-export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
+export function CostSettingForm({
+  countries,
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: CostSettingFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -41,6 +49,7 @@ export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -67,12 +76,17 @@ export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save cost setting"));
 
       message.success(isEdit ? "Cost setting updated" : "Cost setting created");
-      router.push("/admin/settings");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/settings",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -82,6 +96,7 @@ export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
       backHref="/admin/settings"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

@@ -1,84 +1,33 @@
+import { DecorativeBackground } from "@/components/common/DecorativeBackground";
+import { Container } from "@/components/common/Container";
 import { SectionHeader } from "@/components/common/SectionHeader";
+import { TestimonialsCarousel } from "@/components/sections/TestimonialsCarousel";
 import type { Testimonial } from "@/types";
-import {
-  Message01Icon,
-  QuoteUpIcon,
-  StarIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Tag } from "antd";
-import { Section } from "../common/Section";
+import { Message01Icon } from "@hugeicons/core-free-icons";
+import { getTranslations } from "next-intl/server";
 
 interface TestimonialsSectionProps {
   testimonials: Testimonial[];
 }
 
-function initials(name?: string) {
-  if (!name) return "S";
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
-}
-
-export function TestimonialsSection({
+export async function TestimonialsSection({
   testimonials,
 }: TestimonialsSectionProps) {
+  const t = await getTranslations("home.testimonials");
+
+  if (testimonials.length === 0) return null;
+
   return (
-    <Section variant="muted">
-      <SectionHeader
-        eyebrow="Success stories"
-        eyebrowIcon={Message01Icon}
-        title="Students who made it abroad"
-        description="Real journeys from students we've guided from first inquiry to visa approval."
-      />
-      <div className="grid gap-6 md:grid-cols-3">
-        {testimonials.map((t) => {
-          const university =
-            (t as { universities?: { name?: string } }).universities?.name ??
-            t.university_name ??
-            "University";
-          const country =
-            (t as { countries?: { name?: string } }).countries?.name ??
-            t.destination_country ??
-            "Abroad";
-          return (
-            <figure
-              key={t.id}
-              className="flex flex-col rounded-2xl border bg-card p-6 ring-1 ring-foreground/5 transition-shadow duration-200 hover:shadow-lg"
-            >
-              <HugeiconsIcon
-                icon={QuoteUpIcon}
-                className="size-7 text-primary/25"
-              />
-              <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-foreground/90">
-                {t.quote}
-              </blockquote>
-              <div className="mt-5 flex items-center gap-3 border-t pt-4">
-                <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                  {initials(t.student_name)}
-                </span>
-                <figcaption className="min-w-0">
-                  <p className="truncate text-sm font-semibold">
-                    {t.student_name}
-                  </p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {university} · {country}
-                  </p>
-                </figcaption>
-                <Tag className="ml-auto gap-1">
-                  <HugeiconsIcon
-                    icon={StarIcon}
-                    className="size-3 text-amber-500"
-                  />
-                  5.0
-                </Tag>
-              </div>
-            </figure>
-          );
-        })}
-      </div>
-    </Section>
+    <DecorativeBackground variant="muted" className="py-16 md:py-24">
+      <Container>
+        <SectionHeader
+          eyebrow={t("eyebrow")}
+          eyebrowIcon={Message01Icon}
+          title={t("title")}
+          description={t("description")}
+        />
+        <TestimonialsCarousel testimonials={testimonials} />
+      </Container>
+    </DecorativeBackground>
   );
 }

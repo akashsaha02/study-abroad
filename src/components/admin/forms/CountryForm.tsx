@@ -6,6 +6,7 @@ import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
 import { FormField } from "@/components/forms/FormField";
 import { useRouter } from "@/i18n/navigation";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useState } from "react";
 
 interface Country {
@@ -26,7 +27,7 @@ interface Country {
   is_published: boolean;
 }
 
-interface CountryFormProps {
+interface CountryFormProps extends AdminFormBaseProps {
   initial?: Country;
 }
 
@@ -44,7 +45,13 @@ function parseIntakes(value: string) {
   return items.length ? items : null;
 }
 
-export function CountryForm({ initial }: CountryFormProps) {
+export function CountryForm({
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: CountryFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -71,6 +78,7 @@ export function CountryForm({ initial }: CountryFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -102,12 +110,17 @@ export function CountryForm({ initial }: CountryFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save country"));
 
       message.success(isEdit ? "Country updated" : "Country created");
-      router.push("/admin/countries");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/countries",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -117,6 +130,7 @@ export function CountryForm({ initial }: CountryFormProps) {
       backHref="/admin/countries"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

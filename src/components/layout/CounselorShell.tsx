@@ -1,5 +1,6 @@
 import { DashboardShell } from "./DashboardShell";
 import type { NavItem } from "./DashboardShell";
+import { ROUTES } from "@/constants";
 import { NavIcon } from "@/constants/nav-icons";
 import type { UserRole } from "@/types";
 import { getTranslations } from "next-intl/server";
@@ -16,7 +17,7 @@ async function buildCounselorNav(): Promise<NavItem[]> {
   const tDash = await getTranslations("dashboard");
 
   return withIcon([
-    { href: "/counselor", label: tDash("overview"), section: "Main" },
+    { href: "/counselor", label: tDash("overview"), section: tDash("mainSection") },
     { href: "/counselor/leads", label: t("leads") },
     { href: "/counselor/students", label: t("students") },
     { href: "/counselor/applications", label: t("applications") },
@@ -29,10 +30,12 @@ export async function CounselorShell({
   children,
   userName,
   userRole,
+  avatarUrl,
 }: {
   children: React.ReactNode;
   userName?: string;
   userRole?: UserRole;
+  avatarUrl?: string | null;
 }) {
   const tDash = await getTranslations("dashboard");
   const navItems = await buildCounselorNav();
@@ -41,8 +44,10 @@ export async function CounselorShell({
     <DashboardShell
       title={tDash("counselorTitle")}
       navItems={navItems}
+      profileHref={ROUTES.accountProfile}
       userName={userName}
       userRole={userRole}
+      avatarUrl={avatarUrl}
     >
       {children}
     </DashboardShell>

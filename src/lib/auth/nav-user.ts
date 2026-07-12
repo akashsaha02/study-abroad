@@ -1,4 +1,4 @@
-import { getDashboardPathForRole } from "@/lib/auth/redirects";
+import { getDashboardPathForRole, getProfilePathForRole } from "@/lib/auth/redirects";
 import type { AuthUser, UserRole } from "@/types";
 
 export interface NavbarUser {
@@ -7,6 +7,7 @@ export interface NavbarUser {
   avatarUrl: string | null;
   role: UserRole;
   dashboardHref: string;
+  profileHref: string;
 }
 
 export function toNavbarUser(user: AuthUser): NavbarUser {
@@ -17,6 +18,7 @@ export function toNavbarUser(user: AuthUser): NavbarUser {
     avatarUrl: user.profile?.avatar_url ?? null,
     role,
     dashboardHref: getDashboardPathForRole(role),
+    profileHref: getProfilePathForRole(role),
   };
 }
 

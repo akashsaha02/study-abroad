@@ -11,6 +11,7 @@ export default async function CounselorLayout({
     <CounselorShell
       userName={user?.profile?.full_name ?? undefined}
       userRole={user?.profile?.role}
+      avatarUrl={user?.profile?.avatar_url}
     >
       {children}
     </CounselorShell>

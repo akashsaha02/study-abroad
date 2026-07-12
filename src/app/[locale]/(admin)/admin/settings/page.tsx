@@ -8,10 +8,12 @@ export default async function AdminSettingsPage() {
   const supabase = await createClient();
   const user = await getUser();
 
-  const [{ data: costSettings }, { data: eligibilityRules }] = await Promise.all([
-    supabase.from("cost_settings").select("*").order("country"),
-    supabase.from("eligibility_rules").select("*").order("country"),
-  ]);
+  const [{ data: costSettings }, { data: eligibilityRules }, { data: countries }] =
+    await Promise.all([
+      supabase.from("cost_settings").select("*").order("country"),
+      supabase.from("eligibility_rules").select("*").order("country"),
+      supabase.from("countries").select("id, name").order("name"),
+    ]);
 
   return (
     <div className="space-y-6">
@@ -22,6 +24,7 @@ export default async function AdminSettingsPage() {
       <SettingsTabs
         costSettings={(costSettings as CostSetting[]) ?? []}
         eligibilityRules={(eligibilityRules as EligibilityRule[]) ?? []}
+        countries={countries ?? []}
         isSuperAdmin={user?.profile?.role === "super_admin"}
       />
     </div>

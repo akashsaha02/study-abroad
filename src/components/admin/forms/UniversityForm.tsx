@@ -8,6 +8,7 @@ import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 
@@ -36,7 +37,7 @@ interface University {
   is_published: boolean;
 }
 
-interface UniversityFormProps {
+interface UniversityFormProps extends AdminFormBaseProps {
   countries: CountryOption[];
   initial?: University;
 }
@@ -55,7 +56,14 @@ function parseIntakes(value: string) {
   return items.length ? items : null;
 }
 
-export function UniversityForm({ countries, initial }: UniversityFormProps) {
+export function UniversityForm({
+  countries,
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: UniversityFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -84,6 +92,7 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const formData = new FormData(e.currentTarget);
@@ -132,12 +141,17 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save university"));
 
       message.success(isEdit ? "University updated" : "University created");
-      router.push("/admin/universities");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/universities",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -147,6 +161,7 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
       backHref="/admin/universities"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

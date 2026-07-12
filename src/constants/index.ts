@@ -22,6 +22,7 @@ export const ROUTES = {
   universities: "/universities",
   courses: "/courses",
   compare: "/compare",
+  studyAbroad: "/study-abroad",
   ielts: "/ielts",
   ieltsMockTest: "/ielts/mock-test",
   scholarships: "/scholarships",
@@ -29,7 +30,9 @@ export const ROUTES = {
   services: "/services",
   studyIn: (country: string) => `/study-in/${country}`,
   dashboard: "/dashboard",
-  dashboardProfile: "/dashboard/profile",
+  accountProfile: "/account/profile",
+  /** @deprecated Use accountProfile */
+  dashboardProfile: "/account/profile",
   dashboardApplications: "/dashboard/applications",
   dashboardDocuments: "/dashboard/documents",
   dashboardConsultations: "/dashboard/consultations",

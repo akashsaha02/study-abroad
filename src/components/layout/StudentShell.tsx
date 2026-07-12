@@ -1,5 +1,6 @@
 import { DashboardShell } from "./DashboardShell";
 import type { NavItem } from "./DashboardShell";
+import { ROUTES } from "@/constants";
 import { NavIcon } from "@/constants/nav-icons";
 import type { UserRole } from "@/types";
 import { getTranslations } from "next-intl/server";
@@ -15,8 +16,7 @@ async function buildStudentNav(): Promise<NavItem[]> {
   const t = await getTranslations("dashboard");
 
   return withIcon([
-    { href: "/dashboard", label: t("overview"), section: "Main" },
-    { href: "/dashboard/profile", label: t("profile") },
+    { href: "/dashboard", label: t("overview"), section: t("mainSection") },
     { href: "/dashboard/applications", label: t("applications") },
     { href: "/dashboard/documents", label: t("documents") },
     { href: "/dashboard/consultations", label: t("consultations") },
@@ -42,6 +42,7 @@ export async function StudentShell({
     <DashboardShell
       title={t("studentTitle")}
       navItems={navItems}
+      profileHref={ROUTES.accountProfile}
       userName={userName}
       userRole={userRole}
       avatarUrl={avatarUrl}

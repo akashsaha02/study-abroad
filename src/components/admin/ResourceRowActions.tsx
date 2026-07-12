@@ -11,6 +11,7 @@ interface ResourceRowActionsProps {
   editHref: string;
   isPublished: boolean;
   itemName: string;
+  onEdit?: (id: string) => void;
 }
 
 export function ResourceRowActions({
@@ -19,12 +20,19 @@ export function ResourceRowActions({
   editHref,
   isPublished,
   itemName,
+  onEdit,
 }: ResourceRowActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Link href={editHref}>
-          <Button  size="small">Edit</Button>
+      {onEdit ? (
+        <Button size="small" onClick={() => onEdit(id)}>
+          Edit
+        </Button>
+      ) : (
+        <Link href={editHref}>
+          <Button size="small">Edit</Button>
         </Link>
+      )}
       <PublishToggle apiUrl={`${apiPath}/${id}`} isPublished={isPublished} />
       <AdminDeleteButton apiUrl={`${apiPath}/${id}`} itemName={itemName} />
     </div>

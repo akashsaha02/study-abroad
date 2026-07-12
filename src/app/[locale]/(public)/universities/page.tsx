@@ -74,6 +74,7 @@ export default async function UniversitiesPage({ searchParams }: Props) {
                 countryName={countryName}
                 ranking={uni.ranking}
                 tuitionMin={uni.tuition_min}
+                logoUrl={uni.logo_url}
               />
             );
           })}

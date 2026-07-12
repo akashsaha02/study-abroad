@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/eligibility-checker",
     "/cost-calculator",
     "/compare",
+    "/study-abroad",
     "/ielts",
     "/ielts/mock-test",
     "/login",

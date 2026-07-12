@@ -6,6 +6,7 @@ import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { useRouter } from "@/i18n/navigation";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useState } from "react";
 
 interface CountryOption {
@@ -23,14 +24,21 @@ interface Faq {
   is_published: boolean;
 }
 
-interface FaqFormProps {
+interface FaqFormProps extends AdminFormBaseProps {
   countries: CountryOption[];
   initial?: Faq;
 }
 
 const FORM_ID = "faq-form";
 
-export function FaqForm({ countries, initial }: FaqFormProps) {
+export function FaqForm({
+  countries,
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: FaqFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -45,6 +53,7 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -68,12 +77,17 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save FAQ"));
 
       message.success(isEdit ? "FAQ updated" : "FAQ created");
-      router.push("/admin/faqs");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/faqs",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -83,6 +97,7 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
       backHref="/admin/faqs"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

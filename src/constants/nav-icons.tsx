@@ -28,7 +28,7 @@ import type { IconSvgElement } from "@hugeicons/react";
 
 const NAV_ICON_MAP: Record<string, IconSvgElement> = {
   "/dashboard": DashboardSquare01Icon,
-  "/dashboard/profile": UserAccountIcon,
+  "/account/profile": UserAccountIcon,
   "/dashboard/applications": FileValidationIcon,
   "/dashboard/documents": File01Icon,
   "/dashboard/consultations": Calendar01Icon,

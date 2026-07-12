@@ -5,3 +5,7 @@ export function getDashboardPathForRole(role?: UserRole | null): string {
   if (role === "admin" || role === "super_admin") return "/admin";
   return "/dashboard";
 }
+
+export function getProfilePathForRole(_role?: UserRole | null): string {
+  return "/account/profile";
+}

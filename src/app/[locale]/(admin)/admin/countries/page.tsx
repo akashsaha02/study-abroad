@@ -1,14 +1,12 @@
-import { AdminPageActions } from "@/components/admin/AdminPageActions";
-import { PageHeader } from "@/components/common/PageHeader";
-import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
+import { CountriesAdminPanel } from "@/components/admin/resource-admin-panels";
 import { buildPublishedFilters } from "@/lib/table-helpers";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 
-async function getContent(table: string) {
+async function getCountries() {
   const supabase = await createClient();
   const { data } = await supabase
-    .from(table)
+    .from("countries")
     .select("*")
     .order("created_at", { ascending: false });
   return data ?? [];
@@ -19,7 +17,7 @@ export default async function AdminCountriesPage() {
   const tCommon = await getTranslations("common");
   const locale = await getLocale();
   const dateLocale = locale === "bn" ? "bn-BD" : "en-US";
-  const countries = await getContent("countries");
+  const countries = await getCountries();
 
   const rows = countries.map((r) => ({
     id: r.id,
@@ -30,54 +28,56 @@ export default async function AdminCountriesPage() {
   }));
 
   return (
-    <div>
-      <PageHeader title={t("title")} description={t("description")}>
-        <AdminPageActions href="/admin/countries/new" label="New country" />
-      </PageHeader>
-      <FilterableDataTable
-        columns={[
-          {
-            key: "name",
-            title: t("columns.name"),
-            dataIndex: "name",
-            searchable: true,
-            sortable: true,
+    <CountriesAdminPanel
+      title={t("title")}
+      description={t("description")}
+      addLabel="New country"
+      formId="country-form"
+      formTitleAdd="New country"
+      formTitleEdit="Edit country"
+      records={countries}
+      data={rows}
+      emptyText={t("empty")}
+      modalWidth={800}
+      columns={[
+        {
+          key: "name",
+          title: t("columns.name"),
+          dataIndex: "name",
+          searchable: true,
+          sortable: true,
+        },
+        {
+          key: "slug",
+          title: t("columns.slug"),
+          dataIndex: "slug",
+          searchable: true,
+        },
+        {
+          key: "published",
+          title: t("columns.published"),
+          dataIndex: "is_published",
+          filters: buildPublishedFilters(tCommon),
+          cell: { type: "published" },
+        },
+        {
+          key: "created",
+          title: t("columns.created"),
+          dataIndex: "created_at",
+          sortable: "date",
+          cell: { type: "date", locale: dateLocale },
+        },
+        {
+          key: "actions",
+          title: tCommon("actions"),
+          cell: {
+            type: "resource-actions",
+            apiPath: "/api/admin/countries",
+            publishedKey: "is_published",
+            nameKey: "name",
           },
-          {
-            key: "slug",
-            title: t("columns.slug"),
-            dataIndex: "slug",
-            searchable: true,
-          },
-          {
-            key: "published",
-            title: t("columns.published"),
-            dataIndex: "is_published",
-            filters: buildPublishedFilters(tCommon),
-            cell: { type: "published" },
-          },
-          {
-            key: "created",
-            title: t("columns.created"),
-            dataIndex: "created_at",
-            sortable: "date",
-            cell: { type: "date", locale: dateLocale },
-          },
-          {
-            key: "actions",
-            title: tCommon("actions"),
-            cell: {
-              type: "resource-actions",
-              apiPath: "/api/admin/countries",
-              editPathTemplate: "/admin/countries/{id}/edit",
-              publishedKey: "is_published",
-              nameKey: "name",
-            },
-          },
-        ]}
-        data={rows}
-        emptyText={t("empty")}
-      />
-    </div>
+        },
+      ]}
+    />
   );
 }

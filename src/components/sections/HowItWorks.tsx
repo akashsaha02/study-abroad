@@ -1,5 +1,7 @@
+import { DecorativeBackground } from "@/components/common/DecorativeBackground";
 import { IconBadge } from "@/components/common/IconBadge";
 import { SectionHeader } from "@/components/common/SectionHeader";
+import { Container } from "@/components/common/Container";
 import {
   Calendar01Icon,
   FileValidationIcon,
@@ -9,7 +11,6 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 import { getTranslations } from "next-intl/server";
-import { Section } from "../common/Section";
 
 type Tone = "sky" | "violet" | "success" | "amber";
 
@@ -30,29 +31,31 @@ export async function HowItWorks() {
   const t = await getTranslations("home.howItWorks");
 
   return (
-    <Section variant="muted">
-      <SectionHeader
-        eyebrow={t("eyebrow")}
-        eyebrowIcon={RocketIcon}
-        title={t("title")}
-        description={t("description")}
-      />
+    <DecorativeBackground variant="primary" className="py-16 md:py-24">
+      <Container>
+        <SectionHeader
+          eyebrow={t("eyebrow")}
+          eyebrowIcon={RocketIcon}
+          title={t("title")}
+          description={t("description")}
+        />
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {stepConfig.map((item) => (
-          <div
-            key={item.step}
-            className="flex flex-col rounded-2xl border bg-card p-6 ring-1 ring-foreground/5"
-          >
-            <div className="flex items-center justify-between">
-              <IconBadge icon={item.icon} tone={item.tone} />
-              <span className="text-2xl font-bold text-primary/15">{item.step}</span>
+        <div className="stagger-children grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {stepConfig.map((item) => (
+            <div
+              key={item.step}
+              className="flex flex-col rounded-2xl border bg-card/90 p-6 ring-1 ring-foreground/5 backdrop-blur-sm"
+            >
+              <div className="flex items-center justify-between">
+                <IconBadge icon={item.icon} tone={item.tone} />
+                <span className="text-2xl font-bold text-primary/15">{item.step}</span>
+              </div>
+              <h3 className="mt-4 text-lg font-semibold">{t(item.titleKey)}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{t(item.descKey)}</p>
             </div>
-            <h3 className="mt-4 text-lg font-semibold">{t(item.titleKey)}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{t(item.descKey)}</p>
-          </div>
-        ))}
-      </div>
-    </Section>
+          ))}
+        </div>
+      </Container>
+    </DecorativeBackground>
   );
 }

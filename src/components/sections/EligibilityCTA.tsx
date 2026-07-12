@@ -13,7 +13,6 @@ export function EligibilityCTA() {
     <section className="py-16 md:py-24">
       <Container>
         <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-14 text-primary-foreground md:px-16">
-          <div className="absolute inset-0 z-0 bg-grid opacity-10" aria-hidden />
           <div className="relative mx-auto max-w-2xl text-center">
             <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-primary-foreground/15">
               <HugeiconsIcon icon={FileValidationIcon} className="size-6" />

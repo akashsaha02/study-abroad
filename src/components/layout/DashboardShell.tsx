@@ -7,14 +7,10 @@ import { signOut } from "@/lib/auth/actions";
 import { getInitials } from "@/lib/auth/nav-user";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
-import {
-  GraduationScrollIcon,
-  Menu01Icon,
-} from "@hugeicons/core-free-icons";
+import { GraduationScrollIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button, Drawer, Avatar } from "antd";
+import { Avatar, Button } from "antd";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 
 export interface NavItem {
   href: string;
@@ -27,6 +23,7 @@ interface DashboardShellProps {
   children: React.ReactNode;
   title: string;
   navItems: NavItem[];
+  profileHref: string;
   userName?: string;
   userRole?: UserRole;
   avatarUrl?: string | null;
@@ -44,11 +41,9 @@ function withSectionFlags(items: NavItem[]) {
 function NavLinks({
   items,
   pathname,
-  onNavigate,
 }: {
   items: NavItem[];
   pathname: string;
-  onNavigate?: () => void;
 }) {
   const navEntries = withSectionFlags(items);
 
@@ -71,7 +66,6 @@ function NavLinks({
             )}
             <Link
               href={item.href}
-              onClick={onNavigate}
               className={cn(
                 "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
@@ -93,92 +87,76 @@ export function DashboardShell({
   children,
   title,
   navItems,
+  profileHref,
   userName,
   userRole,
   avatarUrl,
 }: DashboardShellProps) {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const tNav = useTranslations("nav");
   const t = useTranslations("common");
+  const tDash = useTranslations("dashboard");
+  const isProfileActive = pathname === profileHref;
 
   return (
     <div className="flex min-h-screen bg-muted/20">
-      <aside className="hidden w-64 shrink-0 border-r bg-card lg:block">
-        <div className="flex h-16 items-center border-b px-5">
+      <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r bg-card sm:w-64">
+        <div className="flex h-16 shrink-0 items-center border-b px-4 sm:px-5">
           <Link
             href="/"
-            className="flex items-center gap-2 text-lg font-bold tracking-tight"
+            className="flex min-w-0 items-center gap-2 text-lg font-bold tracking-tight"
           >
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <HugeiconsIcon icon={GraduationScrollIcon} className="size-5" />
             </span>
-            Abroadly
+            <span className="truncate">Abroadly</span>
           </Link>
         </div>
-        <div className="p-3">
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-3">
           <NavLinks items={navItems} pathname={pathname} />
         </div>
-      </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/70 sm:px-6">
-          <div className="flex items-center gap-3">
-            <Button
-              className="lg:hidden"
-              icon={<HugeiconsIcon icon={Menu01Icon} className="size-5" />}
-              onClick={() => setOpen(true)}
-              aria-label={tNav("openMenu")}
-            />
-            <Drawer
-              title={
-                <span className="flex items-center gap-2 text-lg font-bold">
-                  <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <HugeiconsIcon
-                      icon={GraduationScrollIcon}
-                      className="size-4"
-                    />
-                  </span>
-                  Abroadly
-                </span>
-              }
-              placement="left"
-              onClose={() => setOpen(false)}
-              open={open}
-              width={256}
-              className="lg:hidden"
+        {userName && (
+          <div className="shrink-0 space-y-2 border-t p-3">
+            <Link
+              href={profileHref}
+              className={cn(
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-muted",
+                isProfileActive && "bg-primary/10"
+              )}
             >
-              <NavLinks
-                items={navItems}
-                pathname={pathname}
-                onNavigate={() => setOpen(false)}
-              />
-            </Drawer>
-            <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <LanguageSwitcher />
-            {userName && (
               <Avatar
-                size={32}
+                size={40}
                 src={avatarUrl ?? undefined}
-                className="hidden border border-border bg-primary/10 text-xs font-semibold text-primary sm:inline-flex"
+                className="shrink-0 border border-border bg-primary/10 text-xs font-semibold text-primary"
               >
                 {getInitials(userName)}
               </Avatar>
-            )}
-            {userName && (
-              <span className="hidden text-sm text-muted-foreground sm:inline">
-                {userName}
-              </span>
-            )}
-            {userRole && <RoleBadge role={userRole} />}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{userName}</p>
+                {userRole && (
+                  <div className="mt-1">
+                    <RoleBadge role={userRole} />
+                  </div>
+                )}
+                <p className="mt-1 truncate text-xs text-muted-foreground">
+                  {tDash("editProfile")}
+                </p>
+              </div>
+            </Link>
             <form action={signOut}>
-              <Button size="small" htmlType="submit">
+              <Button block size="small" htmlType="submit">
                 {t("signOut")}
               </Button>
             </form>
           </div>
+        )}
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/70 sm:px-6">
+          <h2 className="truncate text-lg font-semibold tracking-tight">{title}</h2>
+          <LanguageSwitcher />
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>

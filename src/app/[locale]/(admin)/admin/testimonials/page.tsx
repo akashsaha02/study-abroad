@@ -1,22 +1,44 @@
-import { AdminPageActions } from "@/components/admin/AdminPageActions";
-import { PageHeader } from "@/components/common/PageHeader";
-import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
+import { TestimonialsAdminPanel } from "@/components/admin/resource-admin-panels";
 import { buildPublishedFilters, buildUniqueFilters } from "@/lib/table-helpers";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
+
+async function getTestimonials() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("testimonials")
+    .select("*")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
+
+async function getCountries() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("countries").select("id, name").order("name");
+  return data ?? [];
+}
+
+async function getUniversities() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("universities")
+    .select("id, name, country_id")
+    .order("name");
+  return data ?? [];
+}
 
 export default async function AdminTestimonialsPage() {
   const t = await getTranslations("adminPages.testimonials");
   const tCommon = await getTranslations("common");
   const locale = await getLocale();
   const dateLocale = locale === "bn" ? "bn-BD" : "en-US";
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("testimonials")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [testimonials, countries, universities] = await Promise.all([
+    getTestimonials(),
+    getCountries(),
+    getUniversities(),
+  ]);
 
-  const rows = (data ?? []).map((r) => ({
+  const rows = testimonials.map((r) => ({
     id: r.id,
     name: r.student_name,
     country: r.destination_country ?? "—",
@@ -26,60 +48,64 @@ export default async function AdminTestimonialsPage() {
   }));
 
   return (
-    <div>
-      <PageHeader title={t("title")} description={t("description")}>
-        <AdminPageActions href="/admin/testimonials/new" label="New testimonial" />
-      </PageHeader>
-      <FilterableDataTable
-        columns={[
-          {
-            key: "name",
-            title: t("columns.name"),
-            dataIndex: "name",
-            searchable: true,
-            sortable: true,
+    <TestimonialsAdminPanel
+      countries={countries}
+      universities={universities}
+      title={t("title")}
+      description={t("description")}
+      addLabel="New testimonial"
+      formId="testimonial-form"
+      formTitleAdd="New testimonial"
+      formTitleEdit="Edit testimonial"
+      records={testimonials}
+      data={rows}
+      emptyText={t("empty")}
+      modalWidth={800}
+      columns={[
+        {
+          key: "name",
+          title: t("columns.name"),
+          dataIndex: "name",
+          searchable: true,
+          sortable: true,
+        },
+        {
+          key: "country",
+          title: t("columns.country"),
+          dataIndex: "country",
+          filters: buildUniqueFilters(rows.map((r) => r.country)),
+        },
+        {
+          key: "rating",
+          title: t("columns.rating"),
+          dataIndex: "rating",
+          sortable: "number",
+        },
+        {
+          key: "published",
+          title: t("columns.published"),
+          dataIndex: "is_published",
+          filters: buildPublishedFilters(tCommon),
+          cell: { type: "published" },
+        },
+        {
+          key: "created",
+          title: t("columns.created"),
+          dataIndex: "created_at",
+          sortable: "date",
+          cell: { type: "date", locale: dateLocale },
+        },
+        {
+          key: "actions",
+          title: tCommon("actions"),
+          cell: {
+            type: "resource-actions",
+            apiPath: "/api/admin/testimonials",
+            publishedKey: "is_published",
+            nameKey: "name",
           },
-          {
-            key: "country",
-            title: t("columns.country"),
-            dataIndex: "country",
-            filters: buildUniqueFilters(rows.map((r) => r.country)),
-          },
-          {
-            key: "rating",
-            title: t("columns.rating"),
-            dataIndex: "rating",
-            sortable: "number",
-          },
-          {
-            key: "published",
-            title: t("columns.published"),
-            dataIndex: "is_published",
-            filters: buildPublishedFilters(tCommon),
-            cell: { type: "published" },
-          },
-          {
-            key: "created",
-            title: t("columns.created"),
-            dataIndex: "created_at",
-            sortable: "date",
-            cell: { type: "date", locale: dateLocale },
-          },
-          {
-            key: "actions",
-            title: tCommon("actions"),
-            cell: {
-              type: "resource-actions",
-              apiPath: "/api/admin/testimonials",
-              editPathTemplate: "/admin/testimonials/{id}/edit",
-              publishedKey: "is_published",
-              nameKey: "name",
-            },
-          },
-        ]}
-        data={rows}
-        emptyText={t("empty")}
-      />
-    </div>
+        },
+      ]}
+    />
   );
 }

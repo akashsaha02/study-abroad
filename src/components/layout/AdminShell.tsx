@@ -1,5 +1,6 @@
 import { DashboardShell } from "./DashboardShell";
 import type { NavItem } from "./DashboardShell";
+import { ROUTES } from "@/constants";
 import { NavIcon } from "@/constants/nav-icons";
 import type { UserRole } from "@/types";
 import { getTranslations } from "next-intl/server";
@@ -44,10 +45,12 @@ export async function AdminShell({
   children,
   userName,
   userRole,
+  avatarUrl,
 }: {
   children: React.ReactNode;
   userName?: string;
   userRole?: UserRole;
+  avatarUrl?: string | null;
 }) {
   const tDash = await getTranslations("dashboard");
   const navItems = await buildAdminNav(userRole);
@@ -56,8 +59,10 @@ export async function AdminShell({
     <DashboardShell
       title={tDash("adminTitle")}
       navItems={navItems}
+      profileHref={ROUTES.accountProfile}
       userName={userName}
       userRole={userRole}
+      avatarUrl={avatarUrl}
     >
       {children}
     </DashboardShell>

@@ -132,7 +132,21 @@
     "avatarRemoved": "Profile photo removed",
     "avatarFailed": "Failed to update profile photo",
     "avatarInvalidType": "Please choose a JPEG, PNG, WebP, or GIF image",
-    "avatarTooLarge": "Image must be 2 MB or smaller"
+    "avatarTooLarge": "Image must be 2 MB or smaller",
+    "profileDescription": "Manage your personal information and account settings.",
+    "mainSection": "Main",
+    "accountSection": "Account",
+    "personalInfo": "Personal information",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "emailLabel": "Email",
+    "roleLabel": "Role",
+    "saveProfile": "Save profile",
+    "profileSaved": "Profile updated",
+    "profileSaveFailed": "Failed to update profile",
+    "passwordHint": "To change your password, use the forgot password flow from the login page.",
+    "signOutAccount": "Sign out",
+    "editProfile": "Edit profile"
   },
   "admin": {
     "crm": "CRM",
@@ -389,10 +403,31 @@
       "explore": "Explore",
       "fromPerYear": "From ${price}/yr"
     },
+    "serviceMap": {
+      "eyebrow": "Global reach",
+      "title": "Where we guide students",
+      "description": "We provide end-to-end study abroad support across these destinations. Select a country on the map to explore.",
+      "explore": "Explore",
+      "backToWorld": "Back to world",
+      "studyOptions": "Universities, visas, scholarships & more",
+      "exploreCountry": "Explore study options in {country}"
+    },
     "faq": {
       "eyebrow": "FAQ",
       "title": "Common questions",
       "description": "Quick answers about studying abroad with Abroadly."
+    },
+    "testimonials": {
+      "eyebrow": "Success stories",
+      "title": "Students who made it abroad",
+      "description": "Real journeys from students we've guided from first inquiry to visa approval."
+    },
+    "universities": {
+      "eyebrow": "Partners",
+      "title": "Featured universities",
+      "description": "A selection of our top partner institutions worldwide.",
+      "viewAll": "View all",
+      "fromPerYear": "From ${price}/yr"
     },
     "cta": {
       "title": "Ready to start your journey?",
@@ -449,6 +484,13 @@
       "eyebrow": "Decision tool",
       "title": "Compare universities",
       "description": "Put up to 3 universities head-to-head on tuition, ranking, and living costs."
+    },
+    "studyAbroad": {
+      "eyebrow": "Choose your path",
+      "title": "Where do you want to study?",
+      "description": "Pick a destination to explore universities, costs, visa steps, and scholarships.",
+      "ctaEligibility": "Not sure yet? Check eligibility",
+      "explore": "Explore guide"
     },
     "ielts": {
       "eyebrow": "Test prep",

@@ -1,75 +1,62 @@
-import { PageHeader } from "@/components/common/PageHeader";
-import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
+import { UsersAdminPanel } from "@/components/admin/UsersAdminPanel";
 import { requireRole } from "@/lib/auth/get-user";
-import { buildUniqueFilters } from "@/lib/table-helpers";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export default async function AdminUsersPage() {
   await requireRole(["super_admin"]);
 
   const t = await getTranslations("adminPages.users");
   const tCommon = await getTranslations("common");
+  const locale = await getLocale();
+  const dateLocale = locale === "bn" ? "bn-BD" : "en-US";
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
     .select("*")
     .order("created_at", { ascending: false });
 
-  const rows = ((data as Profile[]) ?? []).map((r) => ({
+  const profiles = (data as Profile[]) ?? [];
+
+  const records = profiles.map((r) => ({
+    id: r.id,
+    name: r.full_name ?? "—",
+    email: r.email ?? "—",
+    role: r.role,
+    isActive: r.is_active,
+    phone: r.phone,
+  }));
+
+  const rows = profiles.map((r) => ({
     id: r.id,
     name: r.full_name ?? "—",
     email: r.email ?? "—",
     role: r.role,
     is_active: String(r.is_active),
-    isActive: r.is_active,
     currentRole: r.role,
+    isActive: r.is_active,
+    created_at: r.created_at,
   }));
 
   return (
-    <div>
-      <PageHeader title={t("title")} description={t("description")} />
-      <FilterableDataTable
-        columns={[
-          {
-            key: "name",
-            title: t("columns.name"),
-            dataIndex: "name",
-            searchable: true,
-            sortable: true,
-          },
-          {
-            key: "email",
-            title: t("columns.email"),
-            dataIndex: "email",
-            searchable: true,
-          },
-          {
-            key: "role",
-            title: t("columns.role"),
-            dataIndex: "role",
-            filters: buildUniqueFilters(rows.map((r) => r.role)),
-          },
-          {
-            key: "active",
-            title: t("columns.active"),
-            dataIndex: "is_active",
-            filters: [
-              { text: tCommon("yes"), value: "true" },
-              { text: tCommon("no"), value: "false" },
-            ],
-            cell: { type: "yesNo" },
-          },
-          {
-            key: "actions",
-            title: t("columns.actions"),
-            cell: { type: "user-actions", roleKey: "currentRole", activeKey: "isActive" },
-          },
-        ]}
-        data={rows}
-        emptyText={t("empty")}
-      />
-    </div>
+    <UsersAdminPanel
+      title={t("title")}
+      description={t("description")}
+      emptyText={t("empty")}
+      dateLocale={dateLocale}
+      labels={{
+        name: t("columns.name"),
+        email: t("columns.email"),
+        role: t("columns.role"),
+        active: t("columns.active"),
+        created: t("columns.created"),
+        actions: t("columns.actions"),
+        yes: tCommon("yes"),
+        no: tCommon("no"),
+      }}
+      rows={rows}
+      records={records}
+    />
   );
 }

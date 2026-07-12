@@ -23,7 +23,6 @@ export default function AuthLayout({
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Brand panel */}
       <div className="relative hidden overflow-hidden bg-primary text-primary-foreground lg:flex lg:flex-col">
-        <div className="absolute inset-0 z-0 bg-grid opacity-10" aria-hidden />
         <Image
           src="/images/hero-students.png"
           alt=""

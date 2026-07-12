@@ -7,6 +7,7 @@ import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { useRouter } from "@/i18n/navigation";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useState } from "react";
 
 interface SelectOption {
@@ -29,7 +30,7 @@ interface Scholarship {
   is_published: boolean;
 }
 
-interface ScholarshipFormProps {
+interface ScholarshipFormProps extends AdminFormBaseProps {
   universities: SelectOption[];
   countries: SelectOption[];
   initial?: Scholarship;
@@ -41,6 +42,10 @@ export function ScholarshipForm({
   universities,
   countries,
   initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
 }: ScholarshipFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
@@ -61,6 +66,7 @@ export function ScholarshipForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const payload = {
@@ -91,12 +97,17 @@ export function ScholarshipForm({
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save scholarship"));
 
       message.success(isEdit ? "Scholarship updated" : "Scholarship created");
-      router.push("/admin/scholarships");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/scholarships",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -106,6 +117,7 @@ export function ScholarshipForm({
       backHref="/admin/scholarships"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

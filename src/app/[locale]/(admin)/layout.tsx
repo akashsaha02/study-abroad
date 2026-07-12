@@ -1,6 +1,8 @@
 import { AdminShell } from "@/components/layout/AdminShell";
 import { getUser } from "@/lib/auth/get-user";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {
@@ -11,6 +13,7 @@ export default async function AdminLayout({
     <AdminShell
       userName={user?.profile?.full_name ?? undefined}
       userRole={user?.profile?.role}
+      avatarUrl={user?.profile?.avatar_url}
     >
       {children}
     </AdminShell>

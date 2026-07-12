@@ -7,6 +7,7 @@ import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
+import { finishAdminSave, type AdminFormBaseProps } from "@/lib/admin/form-utils";
 import { useMemo, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
@@ -29,7 +30,7 @@ interface Testimonial {
   is_published: boolean;
 }
 
-interface TestimonialFormProps {
+interface TestimonialFormProps extends AdminFormBaseProps {
   countries: SelectOption[];
   universities: SelectOption[];
   initial?: Testimonial;
@@ -37,7 +38,15 @@ interface TestimonialFormProps {
 
 const FORM_ID = "testimonial-form";
 
-export function TestimonialForm({ countries, universities, initial }: TestimonialFormProps) {
+export function TestimonialForm({
+  countries,
+  universities,
+  initial,
+  variant = "page",
+  onSuccess,
+  onClose,
+  onSavingChange,
+}: TestimonialFormProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
@@ -64,6 +73,7 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    onSavingChange?.(true);
 
     try {
       const formData = new FormData(e.currentTarget);
@@ -103,12 +113,17 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save testimonial"));
 
       message.success(isEdit ? "Testimonial updated" : "Testimonial created");
-      router.push("/admin/testimonials");
-      router.refresh();
+      finishAdminSave(router, {
+        variant,
+        onSuccess,
+        onClose,
+        backHref: "/admin/testimonials",
+      });
     } catch (err) {
       message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
+      onSavingChange?.(false);
     }
   }
 
@@ -118,6 +133,7 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
       backHref="/admin/testimonials"
       formId={FORM_ID}
       saving={loading}
+      variant={variant}
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>

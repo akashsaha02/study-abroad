@@ -196,7 +196,7 @@ export function ProgramFinder({ programs = SAMPLE_PROGRAMS }: ProgramFinderProps
               placement="left"
               open={mobileOpen}
               onClose={() => setMobileOpen(false)}
-              width={300}
+              size={300}
               className="overflow-y-auto"
             >
               {filterPanel}

@@ -4,15 +4,20 @@ import { App, Button } from "antd";
 import { AdminDeleteButton } from "@/components/admin/AdminDeleteButton";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
 
 interface CounselorRowActionsProps {
   id: string;
   name: string;
   isActive: boolean;
+  onEdit?: (id: string) => void;
 }
 
-export function CounselorRowActions({ id, name, isActive }: CounselorRowActionsProps) {
+export function CounselorRowActions({
+  id,
+  name,
+  isActive,
+  onEdit,
+}: CounselorRowActionsProps) {
   const { message } = App.useApp();
   const router = useRouter();
   const [active, setActive] = useState(isActive);
@@ -41,9 +46,11 @@ export function CounselorRowActions({ id, name, isActive }: CounselorRowActionsP
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Link href={`/admin/counselors/${id}/edit`}>
-          <Button  size="small">Edit</Button>
-        </Link>
+      {onEdit ? (
+        <Button size="small" onClick={() => onEdit(id)}>
+          Edit
+        </Button>
+      ) : null}
       <Button
         size="small"
         type={active ? "primary" : "default"}

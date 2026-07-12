@@ -4,6 +4,7 @@ import { ConsultationStatusSelect } from "@/components/admin/ConsultationStatusS
 import { CounselorRowActions } from "@/components/admin/CounselorRowActions";
 import { ResourceRowActions } from "@/components/admin/ResourceRowActions";
 import { UserRowActions } from "@/components/admin/UserRowActions";
+import { RoleBadge } from "@/components/common/RoleBadge";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { formatDate } from "@/lib/i18n-format";
 import { Link } from "@/i18n/navigation";
@@ -23,17 +24,19 @@ export type TableColumnCell =
   | { type: "date"; locale: string }
   | { type: "published" }
   | { type: "yesNo" }
+  | { type: "role-badge"; roleKey: string }
   | {
       type: "resource-actions";
       apiPath: string;
-      editPathTemplate: string;
+      editPathTemplate?: string;
       publishedKey: string;
       nameKey: string;
+      onEdit?: (id: string) => void;
     }
   | { type: "consultation-status"; statusKey?: string }
   | { type: "document-review" }
-  | { type: "user-actions"; roleKey: string; activeKey: string }
-  | { type: "counselor-actions"; nameKey: string; activeKey: string };
+  | { type: "user-actions"; roleKey: string; activeKey: string; onEdit?: (id: string) => void }
+  | { type: "counselor-actions"; nameKey: string; activeKey: string; onEdit?: (id: string) => void };
 
 export type FilterableColumnDef = {
   key: string;
@@ -100,14 +103,17 @@ function renderCell(
       return value === "true" ? labels.published : labels.draft;
     case "yesNo":
       return value === "true" ? labels.yes : labels.no;
+    case "role-badge":
+      return <RoleBadge role={String(row[cell.roleKey] ?? value) as UserRole} />;
     case "resource-actions":
       return (
         <ResourceRowActions
           id={row.id}
           apiPath={cell.apiPath}
-          editHref={resolvePath(cell.editPathTemplate, row)}
+          editHref={cell.editPathTemplate ? resolvePath(cell.editPathTemplate, row) : ""}
           isPublished={row[cell.publishedKey] === true || row[cell.publishedKey] === "true"}
           itemName={String(row[cell.nameKey] ?? "")}
+          onEdit={cell.onEdit}
         />
       );
     case "consultation-status":
@@ -123,8 +129,7 @@ function renderCell(
       return (
         <UserRowActions
           userId={row.id}
-          currentRole={row[cell.roleKey] as UserRole}
-          isActive={row[cell.activeKey] === true}
+          onEdit={cell.onEdit}
         />
       );
     case "counselor-actions":
@@ -133,6 +138,7 @@ function renderCell(
           id={row.id}
           name={String(row[cell.nameKey] ?? "")}
           isActive={row[cell.activeKey] === true}
+          onEdit={cell.onEdit}
         />
       );
     case "text": {
