@@ -2,7 +2,7 @@
 
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
-import { Card, CardContent } from "@/components/ui/card";
+import { PanelCard } from "@/components/common/PanelCard";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { Profile, Student } from "@/types";
@@ -39,9 +39,8 @@ export function StudentProfileForm({ profile, student }: StudentProfileFormProps
   }
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+    <PanelCard title="Personal & education details">
+      <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
           <FormField label="Full Name" htmlFor="full_name" required>
             <Input id="full_name" name="full_name" defaultValue={profile?.full_name ?? ""} />
           </FormField>
@@ -82,7 +81,6 @@ export function StudentProfileForm({ profile, student }: StudentProfileFormProps
             <SubmitButton loading={loading}>Save Profile</SubmitButton>
           </div>
         </form>
-      </CardContent>
-    </Card>
+    </PanelCard>
   );
 }

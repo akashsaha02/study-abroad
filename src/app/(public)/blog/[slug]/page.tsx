@@ -1,4 +1,5 @@
-import { Container } from "@/components/common/Container";
+import { PageLayout } from "@/components/common/PageLayout";
+import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { getBlogPostBySlug } from "@/lib/services/content";
 import { notFound } from "next/navigation";
@@ -25,19 +26,33 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   return (
-    <Container className="py-12">
+    <PageLayout>
       <article className="mx-auto max-w-3xl">
-        <h1 className="text-4xl font-bold">{post.title}</h1>
-        {post.published_at && (
-          <p className="mt-2 text-sm text-muted-foreground">
-            {new Date(post.published_at).toLocaleDateString()}
-          </p>
-        )}
-        <div
-          className="prose prose-neutral mt-8 max-w-none dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: post.content ?? "" }}
-        />
+        <SurfaceCard hover={false} padding="lg" className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-balance md:text-4xl">
+            {post.title}
+          </h1>
+          {post.excerpt && (
+            <p className="mt-3 text-lg text-muted-foreground">{post.excerpt}</p>
+          )}
+          {post.published_at && (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Published {new Date(post.published_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          )}
+        </SurfaceCard>
+
+        <SurfaceCard hover={false} padding="lg">
+          <div
+            className="prose prose-neutral max-w-none dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: post.content ?? "" }}
+          />
+        </SurfaceCard>
       </article>
-    </Container>
+    </PageLayout>
   );
 }

@@ -1,10 +1,18 @@
-import { Container } from "@/components/common/Container";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageLayout } from "@/components/common/PageLayout";
+import { PanelCard } from "@/components/common/PanelCard";
+import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { Card, CardContent } from "@/components/ui/card";
 import { POPULAR_COUNTRIES } from "@/constants";
 import { getPublishedCountries } from "@/lib/services/content";
+import {
+  Location01Icon,
+  Mail01Icon,
+  Message01Icon,
+  SmartPhone01Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export const metadata = buildMetadata({
   title: "Contact Us",
@@ -20,32 +28,51 @@ export default async function ContactPage() {
       : POPULAR_COUNTRIES.map((c, i) => ({ id: String(i), name: c.name }));
 
   return (
-    <Container className="py-12">
+    <PageLayout>
       <PageHeader
-        title="Contact Us"
+        eyebrow="Get in touch"
+        eyebrowIcon={Message01Icon}
+        title="Contact us"
         description="Book a free consultation or send us a message. We typically respond within 24 hours."
       />
-      <div className="grid gap-8 lg:grid-cols-2">
-        <Card>
-          <CardContent className="p-6">
-            <ContactForm countries={countries} />
-          </CardContent>
-        </Card>
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-semibold">Office</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Dhaka, Bangladesh</p>
-          </div>
-          <div>
-            <h3 className="font-semibold">Phone / WhatsApp</h3>
-            <p className="mt-2 text-sm text-muted-foreground">+880 1XXX-XXXXXX</p>
-          </div>
-          <div>
-            <h3 className="font-semibold">Email</h3>
-            <p className="mt-2 text-sm text-muted-foreground">info@abroadly.com</p>
-          </div>
+      <div className="grid gap-8 lg:grid-cols-5">
+        <PanelCard title="Send a message" className="lg:col-span-3">
+          <ContactForm countries={countries} />
+        </PanelCard>
+        <div className="space-y-5 lg:col-span-2">
+          {[
+            {
+              icon: Location01Icon,
+              title: "Office",
+              value: "Dhaka, Bangladesh",
+            },
+            {
+              icon: SmartPhone01Icon,
+              title: "Phone / WhatsApp",
+              value: "+880 1XXX-XXXXXX",
+            },
+            {
+              icon: Mail01Icon,
+              title: "Email",
+              value: "info@abroadly.com",
+            },
+          ].map((item) => (
+            <SurfaceCard key={item.title} hover={false}>
+              <div className="flex items-start gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <HugeiconsIcon icon={item.icon} className="size-5" />
+                </span>
+                <div>
+                  <h3 className="font-semibold">{item.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {item.value}
+                  </p>
+                </div>
+              </div>
+            </SurfaceCard>
+          ))}
         </div>
       </div>
-    </Container>
+    </PageLayout>
   );
 }

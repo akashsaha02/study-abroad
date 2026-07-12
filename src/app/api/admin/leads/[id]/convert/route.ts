@@ -46,34 +46,34 @@ export async function POST(
     .eq("profile_id", profile_id)
     .maybeSingle();
 
+  const studentFields = {
+    lead_id: leadId,
+    preferred_country: lead.preferred_country,
+    preferred_country_id: lead.preferred_country_id,
+    preferred_subject: lead.subject_interest,
+    highest_education: lead.education_level,
+    cgpa: lead.last_result,
+    english_test_score: lead.ielts_score?.toString() ?? null,
+    budget: lead.budget,
+    assigned_counselor_id: lead.assigned_counselor_id,
+    updated_at: now,
+  };
+
   if (existingStudent) {
     const { error: studentError } = await supabase
       .from("students")
-      .update({
-        lead_id: leadId,
-        preferred_country: lead.preferred_country,
-        preferred_country_id: lead.preferred_country_id,
-        preferred_subject: lead.subject_interest,
-        highest_education: lead.education_level,
-        budget: lead.budget,
-        assigned_counselor_id: lead.assigned_counselor_id,
-        updated_at: now,
-      })
+      .update(studentFields)
       .eq("id", existingStudent.id);
 
     if (studentError) {
       return NextResponse.json({ error: studentError.message }, { status: 500 });
     }
   } else {
+    const { lead_id, updated_at, ...insertFields } = studentFields;
     const { error: studentError } = await supabase.from("students").insert({
       profile_id,
       lead_id: leadId,
-      preferred_country: lead.preferred_country,
-      preferred_country_id: lead.preferred_country_id,
-      preferred_subject: lead.subject_interest,
-      highest_education: lead.education_level,
-      budget: lead.budget,
-      assigned_counselor_id: lead.assigned_counselor_id,
+      ...insertFields,
     });
 
     if (studentError) {

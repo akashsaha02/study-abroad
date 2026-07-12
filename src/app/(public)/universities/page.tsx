@@ -1,11 +1,14 @@
-import { Container } from "@/components/common/Container";
-import { PageHeader } from "@/components/common/PageHeader";
 import { EmptyState } from "@/components/common/EmptyState";
+import { FilterChips } from "@/components/common/FilterChips";
+import { PageHeader } from "@/components/common/PageHeader";
+import { PageLayout } from "@/components/common/PageLayout";
+import { UniversityCard } from "@/components/public/UniversityCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants";
 import { FALLBACK_UNIVERSITIES } from "@/data/fallback";
 import { getPublishedCountries, getPublishedUniversities } from "@/lib/services/content";
+import { UniversityIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 
 export const metadata = buildMetadata({
@@ -26,57 +29,56 @@ export default async function UniversitiesPage({ searchParams }: Props) {
   ]);
   const list = universities.length ? universities : countryId ? [] : FALLBACK_UNIVERSITIES;
 
+  const chips = [
+    { label: "All", value: "", href: ROUTES.universities },
+    ...countries.map((c) => ({
+      label: c.name,
+      value: c.id,
+      href: `${ROUTES.universities}?country=${c.id}`,
+    })),
+  ];
+
   return (
-    <Container className="py-12">
+    <PageLayout>
       <PageHeader
+        eyebrow="Explore"
+        eyebrowIcon={UniversityIcon}
         title="Universities"
         description="Browse our partner universities across top study destinations."
-      />
+      >
+        <Button asChild variant="outline">
+          <Link href={ROUTES.compare}>Compare universities</Link>
+        </Button>
+      </PageHeader>
 
       {countries.length > 0 && (
-        <div className="mb-8 flex flex-wrap gap-2">
-          <Link
-            href={ROUTES.universities}
-            className={`rounded-full border px-3 py-1 text-sm ${!countryId ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
-          >
-            All
-          </Link>
-          {countries.map((c) => (
-            <Link
-              key={c.id}
-              href={`${ROUTES.universities}?country=${c.id}`}
-              className={`rounded-full border px-3 py-1 text-sm ${countryId === c.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
-            >
-              {c.name}
-            </Link>
-          ))}
-        </div>
+        <FilterChips chips={chips} activeValue={countryId ?? ""} />
       )}
 
       {list.length === 0 ? (
-        <EmptyState title="No universities yet" description="Check back soon." />
+        <EmptyState
+          title="No universities yet"
+          description="Try another country filter or check back soon."
+        />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((uni) => {
-            const countryName = (uni as { countries?: { name?: string } }).countries?.name;
+            const countryName = (uni as { countries?: { name?: string } })
+              .countries?.name;
             return (
-              <Link key={uni.slug} href={`${ROUTES.universities}/${uni.slug}`}>
-                <Card className="h-full transition-shadow hover:shadow-md">
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold">{uni.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {[uni.city, countryName].filter(Boolean).join(" · ")}
-                    </p>
-                    {uni.ranking && (
-                      <p className="mt-2 text-sm text-primary">{uni.ranking}</p>
-                    )}
-                  </CardContent>
-                </Card>
-              </Link>
+              <UniversityCard
+                key={uni.slug}
+                slug={uni.slug!}
+                name={uni.name!}
+                city={uni.city}
+                countryName={countryName}
+                ranking={uni.ranking}
+                tuitionMin={uni.tuition_min}
+              />
             );
           })}
         </div>
       )}
-    </Container>
+    </PageLayout>
   );
 }

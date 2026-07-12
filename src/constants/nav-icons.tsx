@@ -33,7 +33,6 @@ const NAV_ICON_MAP: Record<string, IconSvgElement> = {
   "/dashboard/documents": File01Icon,
   "/dashboard/consultations": Calendar01Icon,
   "/dashboard/notifications": Notification01Icon,
-  "/dashboard/settings": Settings01Icon,
   "/counselor": DashboardSquare01Icon,
   "/counselor/leads": UserMultiple02Icon,
   "/counselor/students": UserGroupIcon,

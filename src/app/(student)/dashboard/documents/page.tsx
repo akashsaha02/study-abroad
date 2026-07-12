@@ -1,11 +1,10 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import { DocumentUpload } from "@/components/forms/DocumentUpload";
-import { StatusBadge } from "@/components/common/StatusBadge";
+import { DocumentVault } from "@/components/dashboard/DocumentVault";
 import { EmptyState } from "@/components/common/EmptyState";
-import { Card, CardContent } from "@/components/ui/card";
 import { emptyStateIcons } from "@/constants/empty-state-icons";
 import { getUser } from "@/lib/auth/get-user";
 import { getStudentByProfileId, getStudentDocuments } from "@/lib/services/students";
+import type { Document } from "@/types";
 
 export default async function StudentDocumentsPage() {
   const user = await getUser();
@@ -14,33 +13,21 @@ export default async function StudentDocumentsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Documents" description="Upload and manage your application documents." />
-      {student && <DocumentUpload studentId={student.id} />}
-      {documents.length === 0 ? (
-        <EmptyState
-          title="No documents uploaded"
-          description="Upload your first document above."
-          icon={emptyStateIcons.documents}
+      <PageHeader
+        title="Document Vault"
+        description="Securely upload and track passports, transcripts, LORs, and more."
+      />
+      {student ? (
+        <DocumentVault
+          studentId={student.id}
+          documents={documents as Document[]}
         />
       ) : (
-        <div className="space-y-3">
-          {documents.map((doc) => (
-            <Card key={doc.id}>
-              <CardContent className="flex items-center justify-between p-4">
-                <div>
-                  <p className="font-medium">{doc.document_type}</p>
-                  <p className="text-sm text-muted-foreground">{doc.file_name}</p>
-                  {doc.review_note && (
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Note: {doc.review_note}
-                    </p>
-                  )}
-                </div>
-                <StatusBadge status={doc.status} />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <EmptyState
+          title="Complete your profile first"
+          description="Your document vault unlocks once your student profile is set up."
+          icon={emptyStateIcons.documents}
+        />
       )}
     </div>
   );

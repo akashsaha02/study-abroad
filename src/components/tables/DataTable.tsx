@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/common/EmptyState";
 import {
   Table,
   TableBody,
@@ -6,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EmptyState } from "@/components/common/EmptyState";
 
 export interface Column<T> {
   key: string;
@@ -30,18 +30,20 @@ export function DataTable<T extends { id: string }>({
   }
 
   return (
-    <div className="rounded-lg border">
+    <div className="overflow-hidden rounded-2xl border bg-card ring-1 ring-foreground/5">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-muted/40 hover:bg-muted/40">
             {columns.map((col) => (
-              <TableHead key={col.key}>{col.header}</TableHead>
+              <TableHead key={col.key} className="font-semibold">
+                {col.header}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.id} className="transition-colors">
               {columns.map((col) => (
                 <TableCell key={col.key}>{col.cell(row)}</TableCell>
               ))}

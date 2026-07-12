@@ -4,7 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { SectionHeader } from "@/components/common/SectionHeader";
 import type { Faq } from "@/types";
+import { HelpCircleIcon } from "@hugeicons/core-free-icons";
 import { Section } from "../common/Section";
 
 interface FAQSectionProps {
@@ -14,18 +16,22 @@ interface FAQSectionProps {
 export function FAQSection({ faqs }: FAQSectionProps) {
   return (
     <Section>
-      <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold">Frequently Asked Questions</h2>
-        <p className="mt-2 text-muted-foreground">
-          Everything you need to know about studying abroad
-        </p>
-      </div>
-      <div className="mx-auto max-w-2xl">
-        <Accordion type="single" collapsible className="w-full">
+      <SectionHeader
+        eyebrow="FAQ"
+        eyebrowIcon={HelpCircleIcon}
+        title="Frequently asked questions"
+        description="Everything you need to know about studying abroad with Abroadly."
+      />
+      <div className="mx-auto max-w-3xl">
+        <Accordion type="single" collapsible className="bg-card ring-1 ring-foreground/5">
           {faqs.map((faq) => (
             <AccordionItem key={faq.id} value={faq.id}>
-              <AccordionTrigger>{faq.question}</AccordionTrigger>
-              <AccordionContent>{faq.answer}</AccordionContent>
+              <AccordionTrigger className="text-left font-medium">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                {faq.answer}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

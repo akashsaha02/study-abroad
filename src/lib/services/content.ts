@@ -121,6 +121,16 @@ export async function getCostSettings() {
   return data ?? [];
 }
 
+export async function getEligibilityRules() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("eligibility_rules")
+    .select("*")
+    .eq("is_active", true)
+    .order("country");
+  return data ?? [];
+}
+
 export async function getAdminStats() {
   const supabase = await createClient();
 

@@ -17,7 +17,6 @@ const studentNav = withIcon([
   { href: "/dashboard/documents", label: "Documents" },
   { href: "/dashboard/consultations", label: "Consultations" },
   { href: "/dashboard/notifications", label: "Notifications" },
-  { href: "/dashboard/settings", label: "Settings", section: "Account" },
 ]);
 
 export function StudentShell({

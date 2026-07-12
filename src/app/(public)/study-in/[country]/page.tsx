@@ -1,10 +1,18 @@
-import { Container } from "@/components/common/Container";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageLayout } from "@/components/common/PageLayout";
+import { SurfaceCard } from "@/components/common/SurfaceCard";
+import { UniversityCard } from "@/components/public/UniversityCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants";
 import { FALLBACK_COUNTRIES } from "@/data/fallback";
 import { getCountryBySlug, getPublishedUniversities } from "@/lib/services/content";
+import {
+  ArrowRight01Icon,
+  Globe02Icon,
+  Money01Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -38,87 +46,92 @@ export default async function CountryPage({ params }: Props) {
     ? await getPublishedUniversities({ countryId: dbCountry.id })
     : [];
 
+  const sections = [
+    { title: `Why Study in ${country.name}?`, content: country.description },
+    { title: "Admission Requirements", content: country.admission_requirements },
+    { title: "Visa Process", content: country.visa_summary },
+  ].filter((s) => s.content);
+
   return (
-    <Container className="py-12">
+    <PageLayout>
       <PageHeader
+        eyebrow="Destination"
+        eyebrowIcon={Globe02Icon}
         title={country.hero_title ?? `Study in ${country.name}`}
         description={country.hero_subtitle ?? country.description ?? undefined}
       />
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-8">
-          {country.description && (
-            <section>
-              <h2 className="text-xl font-semibold">Why Study in {country.name}?</h2>
-              <p className="mt-2 text-muted-foreground">{country.description}</p>
-            </section>
-          )}
-          {country.admission_requirements && (
-            <section>
-              <h2 className="text-xl font-semibold">Admission Requirements</h2>
-              <p className="mt-2 text-muted-foreground">{country.admission_requirements}</p>
-            </section>
-          )}
-          {country.visa_summary && (
-            <section>
-              <h2 className="text-xl font-semibold">Visa Process</h2>
-              <p className="mt-2 text-muted-foreground">{country.visa_summary}</p>
-            </section>
-          )}
+        <div className="space-y-6 lg:col-span-2">
+          {sections.map((section) => (
+            <SurfaceCard key={section.title} hover={false} padding="lg">
+              <h2 className="text-xl font-semibold">{section.title}</h2>
+              <p className="mt-3 text-muted-foreground leading-relaxed">{section.content}</p>
+            </SurfaceCard>
+          ))}
+
           {universities.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold">Partner Universities</h2>
-              <ul className="mt-4 space-y-2">
-                {universities.map((uni) => (
-                  <li key={uni.id}>
-                    <Link
-                      href={`${ROUTES.universities}/${uni.slug}`}
-                      className="text-primary hover:underline"
-                    >
-                      {uni.name}
-                    </Link>
-                    {uni.city && (
-                      <span className="text-sm text-muted-foreground"> · {uni.city}</span>
-                    )}
-                  </li>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Partner Universities</h2>
+                <Link
+                  href={`${ROUTES.universities}?country=${dbCountry?.id ?? ""}`}
+                  className="inline-flex items-center gap-1 text-sm font-medium text-primary"
+                >
+                  View all
+                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                </Link>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {universities.slice(0, 6).map((uni) => (
+                  <UniversityCard
+                    key={uni.id}
+                    slug={uni.slug}
+                    name={uni.name}
+                    city={uni.city}
+                    countryName={country.name}
+                    ranking={uni.ranking}
+                    tuitionMin={uni.tuition_min}
+                  />
                 ))}
-              </ul>
-              <Link
-                href={`${ROUTES.universities}?country=${dbCountry?.id ?? ""}`}
-                className="mt-3 inline-block text-sm text-primary hover:underline"
-              >
-                View all universities in {country.name}
-              </Link>
+              </div>
             </section>
           )}
         </div>
 
-        <div className="space-y-4">
-          <Card>
-            <CardContent className="p-6 space-y-3">
-              <h3 className="font-semibold">Cost Overview</h3>
-              {country.tuition_min && (
-                <p className="text-sm">
-                  Tuition: ${country.tuition_min?.toLocaleString()} – $
-                  {country.tuition_max?.toLocaleString()}/year
-                </p>
-              )}
-              {country.living_cost_min && (
-                <p className="text-sm">
-                  Living: ${country.living_cost_min?.toLocaleString()} – $
-                  {country.living_cost_max?.toLocaleString()}/month
-                </p>
-              )}
-            </CardContent>
-          </Card>
-          <Link
-            href={ROUTES.contact}
-            className="block rounded-lg bg-primary px-4 py-3 text-center text-sm font-medium text-primary-foreground"
-          >
-            Book Free Consultation
-          </Link>
-        </div>
+        <aside>
+          <SurfaceCard hover={false} padding="lg" className="sticky top-24 space-y-4">
+            <h3 className="font-semibold">Cost Overview</h3>
+            {country.tuition_min && (
+              <div className="flex items-start gap-3">
+                <HugeiconsIcon icon={Money01Icon} className="mt-0.5 size-5 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Tuition / year</p>
+                  <p className="text-sm font-semibold">
+                    ${country.tuition_min?.toLocaleString()} – $
+                    {country.tuition_max?.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            )}
+            {country.living_cost_min && (
+              <div className="flex items-start gap-3">
+                <HugeiconsIcon icon={Money01Icon} className="mt-0.5 size-5 text-primary" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Living costs / month</p>
+                  <p className="text-sm font-semibold">
+                    ${country.living_cost_min?.toLocaleString()} – $
+                    {country.living_cost_max?.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            )}
+            <Button asChild className="w-full">
+              <Link href={ROUTES.contact}>Book Free Consultation</Link>
+            </Button>
+          </SurfaceCard>
+        </aside>
       </div>
-    </Container>
+    </PageLayout>
   );
 }

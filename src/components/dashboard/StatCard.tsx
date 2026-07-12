@@ -1,13 +1,17 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IconBadge } from "@/components/common/IconBadge";
+import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { cn } from "@/lib/utils";
+import type { IconSvgElement } from "@hugeicons/react";
+
+type StatTone = "primary" | "success" | "sky" | "violet" | "amber" | "rose";
 
 interface StatCardProps {
   title: string;
   value: string | number;
   description?: string;
   className?: string;
-  icon?: React.ReactNode;
-  iconClassName?: string;
+  icon?: IconSvgElement;
+  tone?: StatTone;
 }
 
 export function StatCard({
@@ -16,31 +20,18 @@ export function StatCard({
   description,
   className,
   icon,
-  iconClassName,
+  tone = "primary",
 }: StatCardProps) {
   return (
-    <Card className={cn(className)}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        {icon && (
-          <div
-            className={cn(
-              "flex size-9 items-center justify-center rounded-lg",
-              iconClassName ?? "bg-primary/10 text-primary"
-            )}
-          >
-            {icon}
-          </div>
-        )}
-      </CardHeader>
-      <CardContent>
-        <p className="text-3xl font-bold">{value}</p>
-        {description && (
-          <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-        )}
-      </CardContent>
-    </Card>
+    <SurfaceCard hover={false} className={cn("gap-3", className)}>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        {icon && <IconBadge icon={icon} tone={tone} size="sm" />}
+      </div>
+      <p className="text-3xl font-bold tracking-tight">{value}</p>
+      {description && (
+        <p className="text-xs text-muted-foreground">{description}</p>
+      )}
+    </SurfaceCard>
   );
 }

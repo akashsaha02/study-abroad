@@ -1,17 +1,18 @@
 "use client";
 
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
-import { BlogEditor } from "@/components/admin/BlogEditor";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
+import { RichTextEditor } from "@/components/editor/RichTextEditor";
+import { SeoPreview } from "@/components/editor/SeoPreview";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
+import { PanelCard } from "@/components/common/PanelCard";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface BlogPost {
@@ -40,13 +41,39 @@ export function BlogForm({ initial }: BlogFormProps) {
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
+  const [plainText, setPlainText] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState(initial?.cover_image_url ?? "");
   const [metaTitle, setMetaTitle] = useState(initial?.meta_title ?? "");
   const [metaDescription, setMetaDescription] = useState(initial?.meta_description ?? "");
   const [isPublished, setIsPublished] = useState(initial?.is_published ?? false);
 
+  const wordCount = useMemo(
+    () => (plainText.trim() ? plainText.trim().split(/\s+/).length : 0),
+    [plainText]
+  );
+
+  const uploadBlogImage = useCallback(async (file: File) => {
+    const path = `content/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+    const { publicUrl } = await uploadPublicFile(
+      STORAGE_BUCKETS.blogImages,
+      file,
+      path
+    );
+    return publicUrl;
+  }, []);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!title.trim()) {
+      toast.error("Add a title before saving");
+      return;
+    }
+    if (!content.trim() || content === "<p></p>") {
+      toast.error("Add some content to your post");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -55,7 +82,7 @@ export function BlogForm({ initial }: BlogFormProps) {
       let nextCoverUrl = coverImageUrl || null;
 
       if (file?.size) {
-        const path = `${Date.now()}-${file.name}`;
+        const path = `covers/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
         const { publicUrl } = await uploadPublicFile(
           STORAGE_BUCKETS.blogImages,
           file,
@@ -66,7 +93,7 @@ export function BlogForm({ initial }: BlogFormProps) {
       }
 
       const payload = {
-        title,
+        title: title.trim(),
         slug,
         excerpt: excerpt || null,
         content: content || null,
@@ -104,70 +131,104 @@ export function BlogForm({ initial }: BlogFormProps) {
       formId={FORM_ID}
       saving={loading}
     >
-      <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
-        <Card>
-          <CardContent className="space-y-4 p-6">
-            <FormField label="Title" htmlFor="title" required>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </FormField>
-            <SlugField title={title} value={slug} onChange={setSlug} />
-            <FormField label="Excerpt" htmlFor="excerpt">
-              <Textarea
-                id="excerpt"
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                rows={3}
-              />
-            </FormField>
-            <FormField label="Content" htmlFor="content">
-              <BlogEditor content={content} onChange={setContent} />
-            </FormField>
-            <FormField label="Cover image" htmlFor="cover_image">
-              {coverImageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={coverImageUrl}
-                  alt="Cover"
-                  className="mb-2 h-32 w-auto rounded-md border object-cover"
+      <form id={FORM_ID} onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-6">
+          <PanelCard title="Post details">
+            <div className="space-y-4">
+              <FormField label="Title" htmlFor="title" required>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Your post title"
+                  required
                 />
-              )}
+              </FormField>
+              <SlugField title={title} value={slug} onChange={setSlug} />
+              <FormField label="Excerpt" htmlFor="excerpt">
+                <Textarea
+                  id="excerpt"
+                  value={excerpt}
+                  onChange={(e) => setExcerpt(e.target.value)}
+                  rows={3}
+                  placeholder="Short summary shown on the blog listing page"
+                />
+              </FormField>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Content" description="Use the toolbar or type '/' for blocks">
+            <RichTextEditor
+              content={content}
+              onChange={(html, text) => {
+                setContent(html);
+                if (text !== undefined) setPlainText(text);
+              }}
+              onImageUpload={async (file) => {
+                try {
+                  return await uploadBlogImage(file);
+                } catch {
+                  toast.error("Failed to upload image");
+                  throw new Error("upload failed");
+                }
+              }}
+              placeholder="Write your blog post…"
+              minHeight={480}
+            />
+          </PanelCard>
+
+          <PanelCard title="Cover image">
+            {coverImageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={coverImageUrl}
+                alt="Cover"
+                className="mb-4 h-40 w-full rounded-xl border object-cover"
+              />
+            )}
+            <FormField label="Upload cover" htmlFor="cover_image">
               <Input id="cover_image" name="cover_image" type="file" accept="image/*" />
             </FormField>
-            <label className="flex items-center gap-2 text-sm">
+            <label className="mt-4 flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={isPublished}
                 onChange={(e) => setIsPublished(e.target.checked)}
               />
-              Published
+              Publish immediately
             </label>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="space-y-4 p-6">
-            <h2 className="font-semibold">SEO</h2>
-            <FormField label="Meta title" htmlFor="meta_title">
-              <Input
-                id="meta_title"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
-              />
-            </FormField>
-            <FormField label="Meta description" htmlFor="meta_description">
-              <Textarea
-                id="meta_description"
-                value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
-                rows={3}
-              />
-            </FormField>
-          </CardContent>
-        </Card>
+          </PanelCard>
+        </div>
+
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <SeoPreview
+            title={metaTitle || title}
+            metaDescription={metaDescription || excerpt}
+            slug={slug}
+            wordCount={wordCount}
+          />
+          <PanelCard title="SEO">
+            <div className="space-y-4">
+              <FormField label="Meta title" htmlFor="meta_title">
+                <Input
+                  id="meta_title"
+                  value={metaTitle}
+                  onChange={(e) => setMetaTitle(e.target.value)}
+                  placeholder={title || "Defaults to post title"}
+                />
+              </FormField>
+              <FormField label="Meta description" htmlFor="meta_description">
+                <Textarea
+                  id="meta_description"
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  rows={4}
+                  placeholder="Shown in Google search results"
+                />
+              </FormField>
+            </div>
+          </PanelCard>
+        </aside>
       </form>
     </AdminFormShell>
   );

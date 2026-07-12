@@ -1,5 +1,7 @@
 "use client";
 
+import { PageHeader } from "@/components/common/PageHeader";
+import { PanelCard } from "@/components/common/PanelCard";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -20,15 +22,14 @@ export function AdminFormShell({
   children,
 }: AdminFormShellProps) {
   return (
-    <div>
+    <div className="space-y-6">
       <Link
         href={backHref}
-        className="text-sm text-muted-foreground hover:text-foreground"
+        className="inline-block text-sm text-muted-foreground hover:text-foreground"
       >
-        ← Back
+        ← Back to list
       </Link>
-      <div className="mt-4 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+      <PageHeader title={title}>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link href={backHref}>Cancel</Link>
@@ -37,8 +38,8 @@ export function AdminFormShell({
             Save
           </SubmitButton>
         </div>
-      </div>
-      {children}
+      </PageHeader>
+      <PanelCard>{children}</PanelCard>
     </div>
   );
 }

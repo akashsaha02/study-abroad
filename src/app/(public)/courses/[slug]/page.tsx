@@ -1,9 +1,18 @@
-import { Container } from "@/components/common/Container";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageLayout } from "@/components/common/PageLayout";
+import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants";
 import { getCourseBySlug } from "@/lib/services/content";
+import {
+  ArrowRight01Icon,
+  BookOpen01Icon,
+  Clock01Icon,
+  Globe02Icon,
+  Money01Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -35,15 +44,22 @@ export default async function CourseDetailPage({ params }: Props) {
     countries?: { name?: string; slug?: string };
   };
 
+  const details = [
+    { label: "Degree", value: course.degree_level, icon: BookOpen01Icon },
+    { label: "Subject", value: course.subject_area, icon: Globe02Icon },
+    { label: "Duration", value: course.duration, icon: Clock01Icon },
+    { label: "Language", value: course.language_requirement, icon: Globe02Icon },
+  ].filter((d) => d.value);
+
   return (
-    <Container className="py-12">
-      <nav className="mb-6 text-sm text-muted-foreground">
+    <PageLayout>
+      <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
         {university?.countries?.slug && (
           <>
             <Link href={ROUTES.studyIn(university.countries.slug)} className="hover:text-foreground">
               {university.countries.name}
             </Link>
-            <span className="mx-2">/</span>
+            <span>/</span>
           </>
         )}
         {university?.slug && (
@@ -51,64 +67,72 @@ export default async function CourseDetailPage({ params }: Props) {
             <Link href={`${ROUTES.universities}/${university.slug}`} className="hover:text-foreground">
               {university.name}
             </Link>
-            <span className="mx-2">/</span>
+            <span>/</span>
           </>
         )}
         <span className="text-foreground">{course.title}</span>
       </nav>
 
       <PageHeader
+        eyebrow="Course"
+        eyebrowIcon={BookOpen01Icon}
         title={course.title}
         description={[university?.name, university?.countries?.name].filter(Boolean).join(" · ")}
       />
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-          <section className="grid gap-3 sm:grid-cols-2">
-            {course.degree_level && (
-              <p className="text-sm">
-                <span className="font-medium">Degree:</span> {course.degree_level}
-              </p>
-            )}
-            {course.subject_area && (
-              <p className="text-sm">
-                <span className="font-medium">Subject:</span> {course.subject_area}
-              </p>
-            )}
-            {course.duration && (
-              <p className="text-sm">
-                <span className="font-medium">Duration:</span> {course.duration}
-              </p>
-            )}
-            {course.language_requirement && (
-              <p className="text-sm">
-                <span className="font-medium">Language:</span> {course.language_requirement}
-              </p>
-            )}
-          </section>
+        <div className="space-y-6 lg:col-span-2">
+          {details.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {details.map((d) => (
+                <SurfaceCard key={d.label} hover={false} padding="md">
+                  <div className="flex items-center gap-3">
+                    <HugeiconsIcon icon={d.icon} className="size-5 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">{d.label}</p>
+                      <p className="font-semibold">{d.value}</p>
+                    </div>
+                  </div>
+                </SurfaceCard>
+              ))}
+            </div>
+          )}
+
           {course.academic_requirement && (
-            <section>
+            <SurfaceCard hover={false} padding="lg">
               <h2 className="text-lg font-semibold">Academic requirements</h2>
-              <p className="mt-2 text-muted-foreground">{course.academic_requirement}</p>
-            </section>
+              <p className="mt-3 text-muted-foreground leading-relaxed">{course.academic_requirement}</p>
+            </SurfaceCard>
           )}
         </div>
-        <div className="space-y-4">
-          {course.tuition_fee && (
-            <p className="text-sm">
-              Tuition: <span className="font-semibold text-primary">${course.tuition_fee.toLocaleString()}/year</span>
-            </p>
-          )}
-          {university?.slug && (
-            <Button variant="outline" asChild className="w-full">
-              <Link href={`${ROUTES.universities}/${university.slug}`}>View university</Link>
+
+        <aside>
+          <SurfaceCard hover={false} padding="lg" className="sticky top-24">
+            {course.tuition_fee && (
+              <div className="flex items-start gap-3">
+                <HugeiconsIcon icon={Money01Icon} className="mt-0.5 size-5 text-primary" />
+                <div>
+                  <p className="text-sm font-medium">Annual tuition</p>
+                  <p className="text-2xl font-bold text-primary">
+                    ${course.tuition_fee.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            )}
+            {university?.slug && (
+              <Button variant="outline" asChild className="mt-6 w-full">
+                <Link href={`${ROUTES.universities}/${university.slug}`}>View university</Link>
+              </Button>
+            )}
+            <Button asChild className="mt-2 w-full">
+              <Link href={ROUTES.contact}>
+                Apply with Abroadly
+                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" data-icon="inline-end" />
+              </Link>
             </Button>
-          )}
-          <Button asChild className="w-full">
-            <Link href={ROUTES.contact}>Apply with Abroadly</Link>
-          </Button>
-        </div>
+          </SurfaceCard>
+        </aside>
       </div>
-    </Container>
+    </PageLayout>
   );
 }

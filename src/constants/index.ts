@@ -21,6 +21,9 @@ export const ROUTES = {
   costCalculator: "/cost-calculator",
   universities: "/universities",
   courses: "/courses",
+  compare: "/compare",
+  ielts: "/ielts",
+  ieltsMockTest: "/ielts/mock-test",
   scholarships: "/scholarships",
   blog: "/blog",
   services: "/services",
@@ -31,7 +34,6 @@ export const ROUTES = {
   dashboardDocuments: "/dashboard/documents",
   dashboardConsultations: "/dashboard/consultations",
   dashboardNotifications: "/dashboard/notifications",
-  dashboardSettings: "/dashboard/settings",
   counselor: "/counselor",
   admin: "/admin",
 } as const;
@@ -157,14 +159,3 @@ export const STORAGE_BUCKETS = {
   blogImages: "blog-images",
   testimonialImages: "testimonial-images",
 } as const;
-
-export const NAV_LINKS = [
-  { href: ROUTES.studyIn("uk"), label: "Study Abroad" },
-  { href: ROUTES.universities, label: "Universities" },
-  { href: ROUTES.courses, label: "Courses" },
-  { href: ROUTES.scholarships, label: "Scholarships" },
-  { href: ROUTES.services, label: "Services" },
-  { href: ROUTES.blog, label: "Blog" },
-  { href: ROUTES.about, label: "About" },
-  { href: ROUTES.contact, label: "Contact" },
-] as const;

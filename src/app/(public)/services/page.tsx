@@ -1,9 +1,9 @@
-import { Container } from "@/components/common/Container";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageLayout } from "@/components/common/PageLayout";
+import { ServiceCard } from "@/components/public/ServiceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { Card, CardContent } from "@/components/ui/card";
-import { ROUTES, SERVICES } from "@/constants";
-import Link from "next/link";
+import { SERVICES } from "@/constants";
+import { Briefcase01Icon } from "@hugeicons/core-free-icons";
 
 export const metadata = buildMetadata({
   title: "Our Services",
@@ -13,25 +13,23 @@ export const metadata = buildMetadata({
 
 export default function ServicesPage() {
   return (
-    <Container className="py-12">
+    <PageLayout>
       <PageHeader
-        title="Our Services"
+        eyebrow="What we do"
+        eyebrowIcon={Briefcase01Icon}
+        title="Our services"
         description="End-to-end support for your international education journey."
       />
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {SERVICES.map((service) => (
-          <Link key={service.slug} href={`${ROUTES.services}/${service.slug}`}>
-            <Card className="h-full transition-shadow hover:shadow-md">
-              <CardContent className="p-6">
-                <h3 className="font-semibold">{service.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {service.description}
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <ServiceCard
+            key={service.slug}
+            slug={service.slug}
+            title={service.title}
+            description={service.description}
+          />
         ))}
       </div>
-    </Container>
+    </PageLayout>
   );
 }

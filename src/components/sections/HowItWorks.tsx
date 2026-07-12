@@ -1,63 +1,89 @@
-import { Section } from "../common/Section";
+import { IconBadge } from "@/components/common/IconBadge";
+import { SectionHeader } from "@/components/common/SectionHeader";
 import {
   Calendar01Icon,
   FileValidationIcon,
   GraduationScrollIcon,
   PassportIcon,
+  RocketIcon,
 } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
+import { Section } from "../common/Section";
 
-const steps = [
+type Tone = "sky" | "violet" | "success" | "amber";
+
+const steps: {
+  step: string;
+  title: string;
+  description: string;
+  icon: IconSvgElement;
+  tone: Tone;
+}[] = [
   {
     step: "01",
-    title: "Check Eligibility",
-    description: "Use our free tool to see which countries and programs match your profile.",
+    title: "Check eligibility",
+    description:
+      "Use our free tool to see which countries and programs match your profile.",
     icon: FileValidationIcon,
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+    tone: "sky",
   },
   {
     step: "02",
-    title: "Free Consultation",
-    description: "Meet with an expert counselor to plan your study abroad journey.",
+    title: "Free consultation",
+    description:
+      "Meet an expert counselor to plan your study abroad journey.",
     icon: Calendar01Icon,
-    color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+    tone: "violet",
   },
   {
     step: "03",
-    title: "Apply & Get Offer",
-    description: "We handle applications, documents, and university communications.",
+    title: "Apply & get offer",
+    description:
+      "We handle applications, documents, and university communications.",
     icon: GraduationScrollIcon,
-    color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+    tone: "success",
   },
   {
     step: "04",
-    title: "Visa & Departure",
-    description: "Complete visa process and pre-departure support until you fly.",
+    title: "Visa & departure",
+    description:
+      "Complete the visa process with pre-departure support until you fly.",
     icon: PassportIcon,
-    color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+    tone: "amber",
   },
 ];
 
 export function HowItWorks() {
   return (
     <Section variant="muted">
-      <div className="mb-10 text-center">
-        <h2 className="text-3xl font-bold">How It Works</h2>
-        <p className="mt-2 text-muted-foreground">
-          Your path to studying abroad in 4 simple steps
-        </p>
-      </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <SectionHeader
+        eyebrow="How it works"
+        eyebrowIcon={RocketIcon}
+        title="Your path abroad in 4 simple steps"
+        description="A clear, guided process so you always know exactly what comes next."
+      />
+
+      <div className="relative grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* Connecting rail (desktop) */}
+        <div
+          className="absolute left-0 right-0 top-[2.6rem] hidden h-px bg-border lg:block"
+          aria-hidden
+        />
         {steps.map((item) => (
-          <div key={item.step} className="rounded-xl bg-background p-6 shadow-sm">
-            <div
-              className={`mb-4 flex size-11 items-center justify-center rounded-lg ${item.color}`}
-            >
-              <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
+          <div
+            key={item.step}
+            className="relative flex flex-col rounded-2xl border bg-card p-6 ring-1 ring-foreground/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <IconBadge icon={item.icon} tone={item.tone} />
+              <span className="text-2xl font-bold text-primary/15">
+                {item.step}
+              </span>
             </div>
-            <span className="text-sm font-semibold text-primary/50">{item.step}</span>
-            <h3 className="mt-1 text-lg font-semibold">{item.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
+            <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {item.description}
+            </p>
           </div>
         ))}
       </div>

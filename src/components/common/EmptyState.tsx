@@ -22,14 +22,20 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border border-dashed bg-muted/30 px-6 py-16 text-center",
+        "flex flex-col items-center justify-center rounded-2xl border border-dashed bg-muted/30 px-6 py-16 text-center ring-1 ring-foreground/5",
         className
       )}
     >
-      {icon && <div className="mb-4 text-muted-foreground">{icon}</div>}
+      {icon && (
+        <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+          {icon}
+        </div>
+      )}
       <h3 className="text-lg font-semibold">{title}</h3>
       {description && (
-        <p className="mt-2 max-w-sm text-sm text-muted-foreground">{description}</p>
+        <p className="mt-2 max-w-sm text-sm text-pretty text-muted-foreground">
+          {description}
+        </p>
       )}
       {actionLabel && actionHref && (
         <Button asChild className="mt-6">

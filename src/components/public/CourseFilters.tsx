@@ -1,5 +1,7 @@
 "use client";
 
+import { SurfaceCard } from "@/components/common/SurfaceCard";
+import { selectClassName } from "@/lib/styles";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
@@ -31,7 +33,7 @@ export function CourseFilters({ countries, degreeLevels }: CourseFiltersProps) {
   );
 
   return (
-    <div className="mb-8 flex flex-wrap gap-4">
+    <SurfaceCard hover={false} className="mb-8 flex flex-wrap gap-4">
       <div className="min-w-[200px] flex-1">
         <label htmlFor="filter-country" className="text-sm font-medium">
           Country
@@ -40,7 +42,7 @@ export function CourseFilters({ countries, degreeLevels }: CourseFiltersProps) {
           id="filter-country"
           value={countryId}
           onChange={(e) => updateFilter("country", e.target.value)}
-          className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+          className={`mt-1.5 ${selectClassName}`}
         >
           <option value="">All countries</option>
           {countries.map((c) => (
@@ -58,7 +60,7 @@ export function CourseFilters({ countries, degreeLevels }: CourseFiltersProps) {
           id="filter-degree"
           value={degreeLevel}
           onChange={(e) => updateFilter("degree", e.target.value)}
-          className="mt-1 flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+          className={`mt-1.5 ${selectClassName}`}
         >
           <option value="">All levels</option>
           {degreeLevels.map((level) => (
@@ -68,6 +70,6 @@ export function CourseFilters({ countries, degreeLevels }: CourseFiltersProps) {
           ))}
         </select>
       </div>
-    </div>
+    </SurfaceCard>
   );
 }

@@ -1,10 +1,31 @@
-import { Container } from "@/components/common/Container";
+import { IconBadge } from "@/components/common/IconBadge";
 import { PageHeader } from "@/components/common/PageHeader";
+import { PageLayout } from "@/components/common/PageLayout";
+import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { Button } from "@/components/ui/button";
 import { ROUTES, SERVICES } from "@/constants";
+import {
+  ArrowRight01Icon,
+  BookOpen01Icon,
+  Briefcase01Icon,
+  FileValidationIcon,
+  Globe02Icon,
+  GraduationScrollIcon,
+  PassportIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+const SERVICE_ICONS: Record<string, IconSvgElement> = {
+  "admission-processing": GraduationScrollIcon,
+  "student-visa-support": PassportIcon,
+  "sop-lor-guidance": FileValidationIcon,
+  "scholarship-guidance": BookOpen01Icon,
+  "pre-departure-support": Globe02Icon,
+  "career-counseling": Briefcase01Icon,
+};
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -21,30 +42,60 @@ export async function generateMetadata({ params }: Props) {
   });
 }
 
+const SERVICE_FEATURES = [
+  "Personalized consultation and planning",
+  "Document preparation and review",
+  "Application submission support",
+  "Regular progress updates",
+];
+
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
   const service = SERVICES.find((s) => s.slug === slug);
   if (!service) notFound();
 
+  const icon = SERVICE_ICONS[slug] ?? Globe02Icon;
+
   return (
-    <Container className="py-12">
-      <PageHeader title={service.title} description={service.description} />
-      <div className="prose prose-neutral max-w-3xl dark:prose-invert">
-        <p>
-          Our {service.title.toLowerCase()} service provides comprehensive support
-          tailored to your study abroad goals. Our experienced counselors guide you
-          through every step of the process.
-        </p>
-        <ul>
-          <li>Personalized consultation and planning</li>
-          <li>Document preparation and review</li>
-          <li>Application submission support</li>
-          <li>Regular progress updates</li>
-        </ul>
+    <PageLayout>
+      <PageHeader
+        eyebrow="Service"
+        eyebrowIcon={icon}
+        title={service.title}
+        description={service.description}
+      />
+
+      <div className="mx-auto max-w-3xl space-y-6">
+        <SurfaceCard hover={false} padding="lg">
+          <div className="flex items-start gap-4">
+            <IconBadge icon={icon} tone="primary" size="lg" />
+            <p className="text-muted-foreground leading-relaxed">
+              Our {service.title.toLowerCase()} service provides comprehensive support
+              tailored to your study abroad goals. Our experienced counselors guide you
+              through every step of the process.
+            </p>
+          </div>
+        </SurfaceCard>
+
+        <SurfaceCard hover={false} padding="lg">
+          <h2 className="text-lg font-semibold">What&apos;s included</h2>
+          <ul className="mt-4 space-y-3">
+            {SERVICE_FEATURES.map((feature) => (
+              <li key={feature} className="flex items-center gap-3 text-sm">
+                <span className="size-1.5 shrink-0 rounded-full bg-primary" />
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </SurfaceCard>
+
+        <Button asChild size="lg">
+          <Link href={ROUTES.contact}>
+            Get Started
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" data-icon="inline-end" />
+          </Link>
+        </Button>
       </div>
-      <Button asChild className="mt-8">
-        <Link href={ROUTES.contact}>Get Started</Link>
-      </Button>
-    </Container>
+    </PageLayout>
   );
 }

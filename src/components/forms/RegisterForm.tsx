@@ -1,5 +1,6 @@
 "use client";
 
+import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,8 @@ export function RegisterForm() {
   const [state, action, pending] = useActionState(register, initialState);
 
   return (
-    <form action={action} className="space-y-4">
+    <SurfaceCard hover={false} padding="lg">
+      <form action={action} className="space-y-4">
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold">Create account</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -72,5 +74,6 @@ export function RegisterForm() {
         </Link>
       </p>
     </form>
+    </SurfaceCard>
   );
 }
