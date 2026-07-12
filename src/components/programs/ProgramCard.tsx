@@ -1,8 +1,6 @@
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { matchTier, type Program } from "@/data/programs";
+import { Button, Tag } from "antd";import { matchTier, type Program } from "@/data/programs";
 import {
   ArrowRight01Icon,
   Calendar01Icon,
@@ -45,12 +43,12 @@ export function ProgramCard({ program, matchScore }: ProgramCardProps) {
             </p>
           </div>
         </div>
-        <Badge
+        <Tag
           className={cn("shrink-0 gap-1 font-semibold", tier.className)}
           title={tier.label}
         >
           {matchScore}% match
-        </Badge>
+        </Tag>
       </div>
 
       <div>
@@ -58,12 +56,12 @@ export function ProgramCard({ program, matchScore }: ProgramCardProps) {
           {program.name}
         </h3>
         <div className="mt-2 flex flex-wrap gap-1.5">
-          <Badge variant="outline">{program.degreeLevel}</Badge>
-          <Badge variant="outline">{program.subjectArea}</Badge>
+          <Tag>{program.degreeLevel}</Tag>
+          <Tag>{program.subjectArea}</Tag>
           {program.ranking && (
-            <Badge variant="outline" className="gap-1">
+            <Tag className="gap-1">
               <HugeiconsIcon icon={StarIcon} className="size-3" />#{program.ranking} world
-            </Badge>
+            </Tag>
           )}
         </div>
       </div>
@@ -105,8 +103,7 @@ export function ProgramCard({ program, matchScore }: ProgramCardProps) {
       </dl>
 
       <Button
-        variant="outline"
-        size="sm"
+        size="small"
         className="mt-4 w-full justify-center transition-colors group-hover:border-primary/40 group-hover:text-primary"
       >
         View program

@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { Container } from "@/components/common/Container";
 import { ROUTES } from "@/constants";
+import { Link } from "@/i18n/navigation";
 import {
   ArrowRight01Icon,
   FileValidationIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
+import { Button } from "antd";
 
 export function EligibilityCTA() {
   return (
@@ -25,16 +25,19 @@ export function EligibilityCTA() {
               Take our free eligibility check and get personalized country and
               university recommendations in minutes.
             </p>
-            <Button size="lg" variant="secondary" className="mt-8" asChild>
-              <Link href={ROUTES.eligibilityChecker}>
+            <Link href={ROUTES.eligibilityChecker}>
+              <Button
+                size="large"
+                className="mt-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+              >
                 Check your eligibility
                 <HugeiconsIcon
                   icon={ArrowRight01Icon}
                   className="size-4"
                   data-icon="inline-end"
                 />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </Container>

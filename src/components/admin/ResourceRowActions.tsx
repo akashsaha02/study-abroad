@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "antd";
 import { AdminDeleteButton } from "@/components/admin/AdminDeleteButton";
 import { PublishToggle } from "@/components/admin/PublishToggle";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface ResourceRowActionsProps {
   id: string;
@@ -22,9 +22,9 @@ export function ResourceRowActions({
 }: ResourceRowActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button variant="outline" size="sm" asChild>
-        <Link href={editHref}>Edit</Link>
-      </Button>
+      <Link href={editHref}>
+          <Button  size="small">Edit</Button>
+        </Link>
       <PublishToggle apiUrl={`${apiPath}/${id}`} isPublished={isPublished} />
       <AdminDeleteButton apiUrl={`${apiPath}/${id}`} itemName={itemName} />
     </div>

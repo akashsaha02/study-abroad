@@ -1,19 +1,21 @@
 "use client";
 
+import { App, Card } from "antd";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
-import { Card, CardContent } from "@/components/ui/card";
 import { DOCUMENT_TYPES, STORAGE_BUCKETS } from "@/constants";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface DocumentUploadProps {
   studentId: string;
 }
 
 export function DocumentUpload({ studentId }: DocumentUploadProps) {
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
+  const [documentType, setDocumentType] = useState<string>(DOCUMENT_TYPES[0] ?? "");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,10 +23,9 @@ export function DocumentUpload({ studentId }: DocumentUploadProps) {
     setLoading(true);
     const formData = new FormData(form);
     const file = formData.get("file") as File;
-    const documentType = formData.get("document_type") as string;
 
     if (!file?.size) {
-      toast.error("Please select a file");
+      message.error("Please select a file");
       setLoading(false);
       return;
     }
@@ -54,11 +55,12 @@ export function DocumentUpload({ studentId }: DocumentUploadProps) {
 
       if (!res.ok) throw new Error("Failed to save document");
 
-      toast.success("Document uploaded");
+      message.success("Document uploaded");
       form.reset();
+      setDocumentType(DOCUMENT_TYPES[0] ?? "");
       window.location.reload();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed");
+      message.error(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setLoading(false);
     }
@@ -66,21 +68,17 @@ export function DocumentUpload({ studentId }: DocumentUploadProps) {
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <div className="p-6">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <FormField label="Document Type" htmlFor="document_type" className="flex-1">
-            <select
+            <AppSelect
               id="document_type"
-              name="document_type"
-              required
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-            >
-              {DOCUMENT_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+              value={documentType}
+              onChange={setDocumentType}
+              allowClear={false}
+              size="middle"
+              options={DOCUMENT_TYPES.map((t) => ({ value: t, label: t }))}
+            />
           </FormField>
           <FormField label="File" htmlFor="file" className="flex-1">
             <input
@@ -88,12 +86,12 @@ export function DocumentUpload({ studentId }: DocumentUploadProps) {
               name="file"
               type="file"
               required
-              className="flex h-9 w-full text-sm"
+              className="flex h-10 w-full text-sm"
             />
           </FormField>
           <SubmitButton loading={loading}>Upload</SubmitButton>
         </form>
-      </CardContent>
+      </div>
     </Card>
   );
 }

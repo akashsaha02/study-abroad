@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "@/i18n/navigation";
 import {
   LISTENING_QUESTIONS,
   READING_PASSAGE,
@@ -17,7 +17,7 @@ import {
   VolumeHighIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
+import { Button } from "antd";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Section = "reading" | "listening" | "writing";
@@ -89,16 +89,16 @@ export function MockTest() {
           {formatTime(remaining)}
         </div>
 
-        <Button asChild variant="ghost" size="sm">
-          <Link href="/ielts">
+        <Link href="/ielts">
+          <Button type="text" size="small">
             <HugeiconsIcon
               icon={Cancel01Icon}
               className="size-4"
               data-icon="inline-start"
             />
             Exit
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </header>
 
       {/* Section switcher */}
@@ -143,7 +143,7 @@ export function MockTest() {
           <span className="font-semibold text-foreground">{answeredCount}</span>{" "}
           of {totalQuestions} questions answered
         </p>
-        <Button size="sm">Submit test</Button>
+        <Button size="small">Submit test</Button>
       </footer>
     </div>
   );
@@ -267,7 +267,7 @@ function AudioPlayer({ durationSeconds }: { durationSeconds: number }) {
     <div className="shrink-0 border-b bg-muted/30 px-4 py-4 sm:px-8">
       <div className="mx-auto flex max-w-3xl items-center gap-4">
         <Button
-          size="icon"
+          
           onClick={() => {
             if (current >= durationSeconds) setCurrent(0);
             setPlaying((p) => !p);

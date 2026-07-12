@@ -1,11 +1,10 @@
 "use client";
 
+import { App, Button } from "antd";
 import { AdminDeleteButton } from "@/components/admin/AdminDeleteButton";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface CounselorRowActionsProps {
   id: string;
@@ -14,6 +13,7 @@ interface CounselorRowActionsProps {
 }
 
 export function CounselorRowActions({ id, name, isActive }: CounselorRowActionsProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const [active, setActive] = useState(isActive);
   const [loading, setLoading] = useState(false);
@@ -30,10 +30,10 @@ export function CounselorRowActions({ id, name, isActive }: CounselorRowActionsP
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to update");
       setActive(next);
-      toast.success(next ? "Counselor activated" : "Counselor deactivated");
+      message.success(next ? "Counselor activated" : "Counselor deactivated");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Update failed");
+      message.error(err instanceof Error ? err.message : "Update failed");
     } finally {
       setLoading(false);
     }
@@ -41,12 +41,12 @@ export function CounselorRowActions({ id, name, isActive }: CounselorRowActionsP
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button variant="outline" size="sm" asChild>
-        <Link href={`/admin/counselors/${id}/edit`}>Edit</Link>
-      </Button>
+      <Link href={`/admin/counselors/${id}/edit`}>
+          <Button  size="small">Edit</Button>
+        </Link>
       <Button
-        size="sm"
-        variant={active ? "default" : "outline"}
+        size="small"
+        type={active ? "primary" : "default"}
         disabled={loading}
         onClick={toggleActive}
       >

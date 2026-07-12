@@ -1,16 +1,13 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface SelectOption {
   id: string;
@@ -45,6 +42,7 @@ export function ScholarshipForm({
   countries,
   initial,
 }: ScholarshipFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -92,11 +90,11 @@ export function ScholarshipForm({
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save scholarship"));
 
-      toast.success(isEdit ? "Scholarship updated" : "Scholarship created");
+      message.success(isEdit ? "Scholarship updated" : "Scholarship created");
       router.push("/admin/scholarships");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -111,7 +109,7 @@ export function ScholarshipForm({
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="Title" htmlFor="title" required>
               <Input
                 id="title"
@@ -123,34 +121,24 @@ export function ScholarshipForm({
             <SlugField title={title} value={slug} onChange={setSlug} />
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="University" htmlFor="university_id">
-                <select
+                <AppSelect
                   id="university_id"
                   value={universityId}
-                  onChange={(e) => setUniversityId(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">None</option>
-                  {universities.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setUniversityId}
+                  placeholder="None"
+                  size="middle"
+                  options={universities.map((u) => ({ value: u.id, label: u.name }))}
+                />
               </FormField>
               <FormField label="Country" htmlFor="country_id">
-                <select
+                <AppSelect
                   id="country_id"
                   value={countryId}
-                  onChange={(e) => setCountryId(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">None</option>
-                  {countries.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setCountryId}
+                  placeholder="None"
+                  size="middle"
+                  options={countries.map((c) => ({ value: c.id, label: c.name }))}
+                />
               </FormField>
               <FormField label="Degree level" htmlFor="degree_level">
                 <Input
@@ -184,7 +172,7 @@ export function ScholarshipForm({
               </FormField>
             </div>
             <FormField label="Eligibility" htmlFor="eligibility">
-              <Textarea
+              <Input.TextArea
                 id="eligibility"
                 value={eligibility}
                 onChange={(e) => setEligibility(e.target.value)}
@@ -192,7 +180,7 @@ export function ScholarshipForm({
               />
             </FormField>
             <FormField label="Description" htmlFor="description">
-              <Textarea
+              <Input.TextArea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -207,7 +195,7 @@ export function ScholarshipForm({
               />
               Published
             </label>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

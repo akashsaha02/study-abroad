@@ -1,6 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { ROUTES } from "@/constants";
+import { Tag } from "antd";import { ROUTES } from "@/constants";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -26,8 +25,8 @@ export function CourseCard({
   return (
     <SurfaceCard href={`${ROUTES.courses}/${slug}`}>
       <div className="flex flex-wrap gap-1.5">
-        {degreeLevel && <Badge variant="outline">{degreeLevel}</Badge>}
-        {subjectArea && <Badge variant="outline">{subjectArea}</Badge>}
+        {degreeLevel && <Tag>{degreeLevel}</Tag>}
+        {subjectArea && <Tag>{subjectArea}</Tag>}
       </div>
       <h3 className="mt-3 font-semibold leading-snug">{title}</h3>
       <p className="text-sm text-muted-foreground">

@@ -1,12 +1,12 @@
 "use client";
 
+import { FormSelect } from "@/components/admin/forms/FormSelect";
 import { RoleBadge } from "@/components/common/RoleBadge";
-import { selectClassName } from "@/components/admin/forms/select-class";
 import { USER_ROLES } from "@/constants";
+import { useRouter } from "@/i18n/navigation";
 import type { UserRole } from "@/types";
-import { useRouter } from "next/navigation";
+import { App, Switch } from "antd";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface UserRowActionsProps {
   userId: string;
@@ -14,8 +14,13 @@ interface UserRowActionsProps {
   isActive: boolean;
 }
 
-export function UserRowActions({ userId, currentRole, isActive }: UserRowActionsProps) {
+export function UserRowActions({
+  userId,
+  currentRole,
+  isActive,
+}: UserRowActionsProps) {
   const router = useRouter();
+  const { message } = App.useApp();
   const [role, setRole] = useState(currentRole);
   const [active, setActive] = useState(isActive);
   const [loading, setLoading] = useState(false);
@@ -30,10 +35,10 @@ export function UserRowActions({ userId, currentRole, isActive }: UserRowActions
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to update user");
-      toast.success("User updated");
+      message.success("User updated");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Update failed");
+      message.error(err instanceof Error ? err.message : "Update failed");
     } finally {
       setLoading(false);
     }
@@ -52,24 +57,22 @@ export function UserRowActions({ userId, currentRole, isActive }: UserRowActions
   return (
     <div className="flex flex-wrap items-center gap-3">
       <RoleBadge role={role} />
-      <select
+      <FormSelect
         value={role}
-        onChange={(e) => handleRoleChange(e.target.value as UserRole)}
+        onChange={(value) => handleRoleChange(value as UserRole)}
         disabled={loading}
-        className={selectClassName}
+        className="min-w-[140px]"
         aria-label="Change role"
-      >
-        {USER_ROLES.map((r) => (
-          <option key={r} value={r}>
-            {r.replace(/_/g, " ")}
-          </option>
-        ))}
-      </select>
+        options={USER_ROLES.map((r) => ({
+          value: r,
+          label: r.replace(/_/g, " "),
+        }))}
+      />
       <label className="flex items-center gap-2 text-sm whitespace-nowrap">
-        <input
-          type="checkbox"
+        <Switch
+          size="small"
           checked={active}
-          onChange={(e) => handleActiveToggle(e.target.checked)}
+          onChange={handleActiveToggle}
           disabled={loading}
         />
         Active

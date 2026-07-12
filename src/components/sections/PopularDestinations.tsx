@@ -1,17 +1,19 @@
 import { SectionHeader } from "@/components/common/SectionHeader";
-import { Badge } from "@/components/ui/badge";
 import { POPULAR_COUNTRIES, ROUTES } from "@/constants";
+import { Link } from "@/i18n/navigation";
+import { getLocalizedCountryDescription } from "@/lib/fallback-i18n";
 import type { Country } from "@/types";
 import { ArrowRight01Icon, Globe02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
+import { Tag } from "antd";
+import { getTranslations } from "next-intl/server";
 import { Section } from "../common/Section";
 
 interface PopularDestinationsProps {
   countries: Partial<Country>[];
+  useFallbackDescriptions?: boolean;
 }
 
-// Map country slug -> flag emoji for a lightweight visual cue.
 const FLAG_BY_SLUG: Record<string, string> = Object.fromEntries(
   POPULAR_COUNTRIES.map((c) => [c.slug, c.flag])
 );
@@ -25,18 +27,31 @@ const GRADIENTS = [
   "from-cyan-500/20 to-blue-500/20",
 ];
 
-export function PopularDestinations({ countries }: PopularDestinationsProps) {
+export async function PopularDestinations({
+  countries,
+  useFallbackDescriptions = false,
+}: PopularDestinationsProps) {
+  const t = await getTranslations("home.destinations");
+  const tCountries = await getTranslations("fallback.countries");
+
   return (
     <Section>
       <SectionHeader
-        eyebrow="Destinations"
+        eyebrow={t("eyebrow")}
         eyebrowIcon={Globe02Icon}
-        title="Popular study destinations"
-        description="Explore top countries for international students, with transparent tuition and living costs."
+        title={t("title")}
+        description={t("description")}
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {countries.map((country, i) => {
           const flag = country.slug ? FLAG_BY_SLUG[country.slug] : undefined;
+          const description = useFallbackDescriptions
+            ? getLocalizedCountryDescription(
+                country.slug,
+                (key) => tCountries(key as "uk" | "canada" | "australia" | "usa" | "malaysia" | "germany"),
+                country.description
+              )
+            : country.description;
           return (
             <Link
               key={country.slug}
@@ -44,11 +59,11 @@ export function PopularDestinations({ countries }: PopularDestinationsProps) {
               className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card ring-1 ring-foreground/5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
             >
               <div
-                className={`relative flex h-28 items-center justify-center bg-linear-to-br ${
+                className={`relative flex h-24 items-center justify-center bg-linear-to-br ${
                   GRADIENTS[i % GRADIENTS.length]
                 }`}
               >
-                <span className="text-5xl drop-shadow-sm" aria-hidden>
+                <span className="text-4xl drop-shadow-sm" aria-hidden>
                   {flag ?? "🌍"}
                 </span>
               </div>
@@ -56,16 +71,18 @@ export function PopularDestinations({ countries }: PopularDestinationsProps) {
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="text-lg font-semibold">{country.name}</h3>
                   {country.tuition_min && (
-                    <Badge variant="outline" className="shrink-0">
-                      From ${country.tuition_min.toLocaleString()}/yr
-                    </Badge>
+                    <Tag className="shrink-0">
+                      {t("fromPerYear", {
+                        price: country.tuition_min.toLocaleString(),
+                      })}
+                    </Tag>
                   )}
                 </div>
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-                  {country.description}
+                  {description}
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                  Explore
+                  {t("explore")}
                   <HugeiconsIcon
                     icon={ArrowRight01Icon}
                     className="size-4 transition-transform group-hover:translate-x-0.5"

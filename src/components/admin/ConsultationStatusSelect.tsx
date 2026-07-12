@@ -1,11 +1,12 @@
 "use client";
 
+import { FormSelect } from "@/components/admin/forms/FormSelect";
 import { CONSULTATION_STATUSES } from "@/constants";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { useStatusLabel } from "@/lib/i18n-format";
+import { useRouter } from "@/i18n/navigation";
 import type { ConsultationStatus } from "@/types";
-import { useRouter } from "next/navigation";
+import { App } from "antd";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface ConsultationStatusSelectProps {
   consultationId: string;
@@ -17,6 +18,8 @@ export function ConsultationStatusSelect({
   currentStatus,
 }: ConsultationStatusSelectProps) {
   const router = useRouter();
+  const { message } = App.useApp();
+  const statusLabel = useStatusLabel();
   const [status, setStatus] = useState(currentStatus);
   const [loading, setLoading] = useState(false);
 
@@ -30,27 +33,26 @@ export function ConsultationStatusSelect({
       });
       if (!res.ok) throw new Error("Failed to update");
       setStatus(newStatus);
-      toast.success("Status updated");
+      message.success("Status updated");
       router.refresh();
     } catch {
-      toast.error("Failed to update status");
+      message.error("Failed to update status");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <select
+    <FormSelect
       value={status}
-      onChange={(e) => updateStatus(e.target.value as ConsultationStatus)}
+      onChange={(value) => updateStatus(value as ConsultationStatus)}
       disabled={loading}
-      className={selectClassName}
-    >
-      {CONSULTATION_STATUSES.map((s) => (
-        <option key={s} value={s}>
-          {s.replace(/_/g, " ")}
-        </option>
-      ))}
-    </select>
+      className="min-w-[160px]"
+      size="middle"
+      options={CONSULTATION_STATUSES.map((s) => ({
+        value: s,
+        label: statusLabel(s),
+      }))}
+    />
   );
 }

@@ -1,16 +1,13 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface UniversityOption {
   id: string;
@@ -53,6 +50,7 @@ function parseIntakes(value: string) {
 }
 
 export function CourseForm({ universities, initial }: CourseFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -108,11 +106,11 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save course"));
 
-      toast.success(isEdit ? "Course updated" : "Course created");
+      message.success(isEdit ? "Course updated" : "Course created");
       router.push("/admin/courses");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -127,21 +125,16 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="University" htmlFor="university_id" required>
-              <select
+              <AppSelect
                 id="university_id"
                 value={universityId}
-                onChange={(e) => setUniversityId(e.target.value)}
-                className={selectClassName}
-                required
-              >
-                {universities.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.name}
-                  </option>
-                ))}
-              </select>
+                onChange={setUniversityId}
+                size="middle"
+                allowClear={false}
+                options={universities.map((u) => ({ value: u.id, label: u.name }))}
+              />
             </FormField>
             <FormField label="Title" htmlFor="title" required>
               <Input
@@ -201,7 +194,7 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
               </FormField>
             </div>
             <FormField label="Language requirement" htmlFor="language_requirement">
-              <Textarea
+              <Input.TextArea
                 id="language_requirement"
                 value={languageRequirement}
                 onChange={(e) => setLanguageRequirement(e.target.value)}
@@ -209,7 +202,7 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
               />
             </FormField>
             <FormField label="Academic requirement" htmlFor="academic_requirement">
-              <Textarea
+              <Input.TextArea
                 id="academic_requirement"
                 value={academicRequirement}
                 onChange={(e) => setAcademicRequirement(e.target.value)}
@@ -224,7 +217,7 @@ export function CourseForm({ universities, initial }: CourseFormProps) {
               />
               Published
             </label>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

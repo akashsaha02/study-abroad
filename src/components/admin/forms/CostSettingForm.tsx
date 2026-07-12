@@ -1,15 +1,13 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import type { CostSetting } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface CountryOption {
   id: string;
@@ -24,6 +22,7 @@ interface CostSettingFormProps {
 const FORM_ID = "cost-setting-form";
 
 export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -67,11 +66,11 @@ export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save cost setting"));
 
-      toast.success(isEdit ? "Cost setting updated" : "Cost setting created");
+      message.success(isEdit ? "Cost setting updated" : "Cost setting created");
       router.push("/admin/settings");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -86,23 +85,17 @@ export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Country" htmlFor="country_id" required>
-                <select
+                <AppSelect
                   id="country_id"
                   value={countryId}
-                  onChange={(e) => setCountryId(e.target.value)}
-                  className={selectClassName}
-                  required
-                >
-                  <option value="">Select country</option>
-                  {countries.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setCountryId}
+                  placeholder="Select country"
+                  size="middle"
+                  options={countries.map((c) => ({ value: c.id, label: c.name }))}
+                />
               </FormField>
               <FormField label="Degree level" htmlFor="degree_level" required>
                 <Input
@@ -172,7 +165,7 @@ export function CostSettingForm({ countries, initial }: CostSettingFormProps) {
                 />
               </FormField>
             </div>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

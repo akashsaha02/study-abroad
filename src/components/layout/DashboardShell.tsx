@@ -1,14 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { RoleBadge } from "@/components/common/RoleBadge";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Link, usePathname } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth/actions";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
@@ -17,8 +11,8 @@ import {
   Menu01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Button, Drawer } from "antd";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export interface NavItem {
@@ -102,6 +96,8 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const tNav = useTranslations("nav");
+  const t = useTranslations("common");
 
   return (
     <div className="flex min-h-screen bg-muted/20">
@@ -125,37 +121,40 @@ export function DashboardShell({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/70 sm:px-6">
           <div className="flex items-center gap-3">
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="lg:hidden">
-                  <HugeiconsIcon icon={Menu01Icon} className="size-5" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0">
-                <SheetHeader className="border-b px-5 py-4">
-                  <SheetTitle className="flex items-center gap-2 text-left text-lg font-bold">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <HugeiconsIcon
-                        icon={GraduationScrollIcon}
-                        className="size-4"
-                      />
-                    </span>
-                    Abroadly
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="p-3">
-                  <NavLinks
-                    items={navItems}
-                    pathname={pathname}
-                    onNavigate={() => setOpen(false)}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
+            <Button
+              className="lg:hidden"
+              icon={<HugeiconsIcon icon={Menu01Icon} className="size-5" />}
+              onClick={() => setOpen(true)}
+              aria-label={tNav("openMenu")}
+            />
+            <Drawer
+              title={
+                <span className="flex items-center gap-2 text-lg font-bold">
+                  <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <HugeiconsIcon
+                      icon={GraduationScrollIcon}
+                      className="size-4"
+                    />
+                  </span>
+                  Abroadly
+                </span>
+              }
+              placement="left"
+              onClose={() => setOpen(false)}
+              open={open}
+              width={256}
+              className="lg:hidden"
+            >
+              <NavLinks
+                items={navItems}
+                pathname={pathname}
+                onNavigate={() => setOpen(false)}
+              />
+            </Drawer>
             <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
             {userName && (
               <span className="hidden text-sm text-muted-foreground sm:inline">
                 {userName}
@@ -163,8 +162,8 @@ export function DashboardShell({
             )}
             {userRole && <RoleBadge role={userRole} />}
             <form action={signOut}>
-              <Button variant="outline" size="sm" type="submit">
-                Sign out
+              <Button size="small" htmlType="submit">
+                {t("signOut")}
               </Button>
             </form>
           </div>

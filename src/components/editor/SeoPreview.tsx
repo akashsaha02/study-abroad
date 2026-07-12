@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Card } from "antd";
 import {
   Clock01Icon,
   Globe02Icon,
@@ -53,7 +53,7 @@ export function SeoPreview({
     <div className="space-y-4">
       {/* Google snippet preview */}
       <Card>
-        <CardContent className="p-5">
+        <div className="p-5">
           <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             <HugeiconsIcon icon={Globe02Icon} className="size-3.5" />
             Google preview
@@ -77,12 +77,12 @@ export function SeoPreview({
               {displayDesc}
             </p>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       {/* Readability + meters */}
       <Card>
-        <CardContent className="space-y-4 p-5">
+        <div className="space-y-4 p-5">
           <div className="flex items-center justify-between rounded-lg bg-muted/40 p-3">
             <span className="flex items-center gap-2 text-sm font-medium">
               <HugeiconsIcon icon={Clock01Icon} className="size-4 text-primary" />
@@ -118,7 +118,7 @@ export function SeoPreview({
             {DESC_MIN}–{DESC_MAX} so they don&apos;t get truncated in search
             results.
           </p>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

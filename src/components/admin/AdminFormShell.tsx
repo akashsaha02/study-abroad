@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "antd";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PanelCard } from "@/components/common/PanelCard";
 import { SubmitButton } from "@/components/forms/SubmitButton";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface AdminFormShellProps {
   title: string;
@@ -31,9 +31,9 @@ export function AdminFormShell({
       </Link>
       <PageHeader title={title}>
         <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href={backHref}>Cancel</Link>
-          </Button>
+          <Link href={backHref}>
+          <Button >Cancel</Button>
+        </Link>
           <SubmitButton form={formId} loading={saving}>
             Save
           </SubmitButton>

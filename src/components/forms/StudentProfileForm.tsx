@@ -1,13 +1,11 @@
 "use client";
 
+import { App, Input } from "antd";
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
 import { PanelCard } from "@/components/common/PanelCard";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import type { Profile, Student } from "@/types";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface StudentProfileFormProps {
   profile: Profile | null;
@@ -15,6 +13,7 @@ interface StudentProfileFormProps {
 }
 
 export function StudentProfileForm({ profile, student }: StudentProfileFormProps) {
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -30,9 +29,9 @@ export function StudentProfileForm({ profile, student }: StudentProfileFormProps
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Failed to save");
-      toast.success("Profile updated");
+      message.success("Profile updated");
     } catch {
-      toast.error("Failed to update profile");
+      message.error("Failed to update profile");
     } finally {
       setLoading(false);
     }
@@ -75,7 +74,7 @@ export function StudentProfileForm({ profile, student }: StudentProfileFormProps
             <Input id="preferred_subject" name="preferred_subject" defaultValue={student?.preferred_subject ?? ""} />
           </FormField>
           <FormField label="Address" htmlFor="current_address" className="md:col-span-2">
-            <Textarea id="current_address" name="current_address" defaultValue={student?.current_address ?? ""} />
+            <Input.TextArea id="current_address" name="current_address" defaultValue={student?.current_address ?? ""} />
           </FormField>
           <div className="md:col-span-2">
             <SubmitButton loading={loading}>Save Profile</SubmitButton>

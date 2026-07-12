@@ -1,9 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { App, Button } from "antd";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface PublishToggleProps {
   apiUrl: string;
@@ -11,6 +10,7 @@ interface PublishToggleProps {
 }
 
 export function PublishToggle({ apiUrl, isPublished }: PublishToggleProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const [published, setPublished] = useState(isPublished);
   const [loading, setLoading] = useState(false);
@@ -30,10 +30,10 @@ export function PublishToggle({ apiUrl, isPublished }: PublishToggleProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to update");
       setPublished(next);
-      toast.success(next ? "Published" : "Unpublished");
+      message.success(next ? "Published" : "Unpublished");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Update failed");
+      message.error(err instanceof Error ? err.message : "Update failed");
     } finally {
       setLoading(false);
     }
@@ -41,8 +41,8 @@ export function PublishToggle({ apiUrl, isPublished }: PublishToggleProps) {
 
   return (
     <Button
-      size="sm"
-      variant={published ? "default" : "outline"}
+      size="small"
+      type={published ? "primary" : "default"}
       disabled={loading}
       onClick={toggle}
     >

@@ -1,15 +1,12 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface CountryOption {
   id: string;
@@ -34,6 +31,7 @@ interface FaqFormProps {
 const FORM_ID = "faq-form";
 
 export function FaqForm({ countries, initial }: FaqFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -69,11 +67,11 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save FAQ"));
 
-      toast.success(isEdit ? "FAQ updated" : "FAQ created");
+      message.success(isEdit ? "FAQ updated" : "FAQ created");
       router.push("/admin/faqs");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -88,7 +86,7 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="Question" htmlFor="question" required>
               <Input
                 id="question"
@@ -98,7 +96,7 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
               />
             </FormField>
             <FormField label="Answer" htmlFor="answer" required>
-              <Textarea
+              <Input.TextArea
                 id="answer"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
@@ -115,19 +113,14 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
                 />
               </FormField>
               <FormField label="Country" htmlFor="country_id">
-                <select
+                <AppSelect
                   id="country_id"
                   value={countryId}
-                  onChange={(e) => setCountryId(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">General</option>
-                  {countries.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setCountryId}
+                  placeholder="General"
+                  size="middle"
+                  options={countries.map((c) => ({ value: c.id, label: c.name }))}
+                />
               </FormField>
               <FormField label="Sort order" htmlFor="sort_order">
                 <Input
@@ -146,7 +139,7 @@ export function FaqForm({ countries, initial }: FaqFormProps) {
               />
               Published
             </label>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

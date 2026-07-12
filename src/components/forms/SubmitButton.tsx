@@ -1,9 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "antd";
 import { cn } from "@/lib/utils";
 
-interface SubmitButtonProps extends React.ComponentProps<typeof Button> {
+interface SubmitButtonProps
+  extends React.ComponentProps<typeof Button> {
   loading?: boolean;
   loadingText?: string;
 }
@@ -14,11 +15,15 @@ export function SubmitButton({
   children,
   disabled,
   className,
+  type = "primary",
+  htmlType = "submit",
   ...props
 }: SubmitButtonProps) {
   return (
     <Button
-      type="submit"
+      type={type}
+      htmlType={htmlType}
+      loading={loading}
       disabled={disabled || loading}
       className={cn(className)}
       {...props}

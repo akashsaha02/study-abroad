@@ -1,7 +1,7 @@
 "use client";
 
+import { AppSelect } from "@/components/common/AppSelect";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { selectClassName } from "@/lib/styles";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
@@ -38,37 +38,28 @@ export function CourseFilters({ countries, degreeLevels }: CourseFiltersProps) {
         <label htmlFor="filter-country" className="text-sm font-medium">
           Country
         </label>
-        <select
+        <AppSelect
           id="filter-country"
+          className="mt-1.5"
           value={countryId}
-          onChange={(e) => updateFilter("country", e.target.value)}
-          className={`mt-1.5 ${selectClassName}`}
-        >
-          <option value="">All countries</option>
-          {countries.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => updateFilter("country", value)}
+          placeholder="All countries"
+          showSearch
+          options={countries.map((c) => ({ value: c.id, label: c.name }))}
+        />
       </div>
       <div className="min-w-[200px] flex-1">
         <label htmlFor="filter-degree" className="text-sm font-medium">
           Degree level
         </label>
-        <select
+        <AppSelect
           id="filter-degree"
+          className="mt-1.5"
           value={degreeLevel}
-          onChange={(e) => updateFilter("degree", e.target.value)}
-          className={`mt-1.5 ${selectClassName}`}
-        >
-          <option value="">All levels</option>
-          {degreeLevels.map((level) => (
-            <option key={level} value={level}>
-              {level}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => updateFilter("degree", value)}
+          placeholder="All levels"
+          options={degreeLevels.map((level) => ({ value: level, label: level }))}
+        />
       </div>
     </SurfaceCard>
   );

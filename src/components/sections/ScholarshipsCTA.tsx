@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
 import { Container } from "@/components/common/Container";
 import { IconBadge } from "@/components/common/IconBadge";
 import { ROUTES } from "@/constants";
+import { Link } from "@/i18n/navigation";
 import { Calculator01Icon, StarIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
+import { Button } from "antd";
 
 export function ScholarshipsCTA() {
   return (
@@ -22,19 +22,21 @@ export function ScholarshipsCTA() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
-            <Button size="lg" asChild>
-              <Link href={ROUTES.scholarships}>Browse scholarships</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href={ROUTES.costCalculator}>
+            <Link href={ROUTES.scholarships}>
+              <Button type="primary" size="large">
+                Browse scholarships
+              </Button>
+            </Link>
+            <Link href={ROUTES.costCalculator}>
+              <Button size="large">
                 <HugeiconsIcon
                   icon={Calculator01Icon}
                   className="size-4"
                   data-icon="inline-start"
                 />
                 Estimate costs
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </Container>

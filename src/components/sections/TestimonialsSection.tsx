@@ -1,5 +1,4 @@
 import { SectionHeader } from "@/components/common/SectionHeader";
-import { Badge } from "@/components/ui/badge";
 import type { Testimonial } from "@/types";
 import {
   Message01Icon,
@@ -7,6 +6,7 @@ import {
   StarIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Tag } from "antd";
 import { Section } from "../common/Section";
 
 interface TestimonialsSectionProps {
@@ -67,13 +67,13 @@ export function TestimonialsSection({
                     {university} · {country}
                   </p>
                 </figcaption>
-                <Badge variant="secondary" className="ml-auto gap-1">
+                <Tag className="ml-auto gap-1">
                   <HugeiconsIcon
                     icon={StarIcon}
                     className="size-3 text-amber-500"
                   />
                   5.0
-                </Badge>
+                </Tag>
               </div>
             </figure>
           );

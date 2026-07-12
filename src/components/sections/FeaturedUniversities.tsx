@@ -1,7 +1,6 @@
 import { SectionHeader } from "@/components/common/SectionHeader";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants";
+import { Link } from "@/i18n/navigation";
 import type { University } from "@/types";
 import {
   ArrowRight01Icon,
@@ -9,7 +8,7 @@ import {
   UniversityIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
+import { Button, Tag } from "antd";
 import { Section } from "../common/Section";
 
 interface FeaturedUniversitiesProps {
@@ -38,16 +37,16 @@ export function FeaturedUniversities({
         title="Featured universities"
         description="A selection of our top partner institutions worldwide."
         action={
-          <Button variant="outline" asChild>
-            <Link href={ROUTES.universities}>
+          <Link href={ROUTES.universities}>
+            <Button>
               View all
               <HugeiconsIcon
                 icon={ArrowRight01Icon}
                 className="size-4"
                 data-icon="inline-end"
               />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         }
       />
       <div className="grid gap-5 md:grid-cols-3">
@@ -62,10 +61,10 @@ export function FeaturedUniversities({
                 {monogram(uni.name)}
               </span>
               {uni.ranking && (
-                <Badge variant="outline" className="gap-1">
+                <Tag className="gap-1">
                   <HugeiconsIcon icon={StarIcon} className="size-3" />
                   {uni.ranking}
-                </Badge>
+                </Tag>
               )}
             </div>
             <h3 className="mt-4 font-semibold">{uni.name}</h3>

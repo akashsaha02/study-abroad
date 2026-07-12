@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import { APPLICATION_PHASES, statusLabel } from "@/lib/applications/phases";
 import { cn } from "@/lib/utils";
 import type { ApplicationStatus } from "@/types";
+import { Tag } from "antd";
 
 export interface BoardApplication {
   id: string;
@@ -55,7 +55,7 @@ export function ApplicationsBoard({
                 )}
               >
                 <p className="text-sm font-semibold">{phase.label}</p>
-                <Badge variant="secondary">{items.length}</Badge>
+                <Tag>{items.length}</Tag>
               </div>
               <div className="flex flex-1 flex-col gap-2 p-3 pt-1">
                 {items.length === 0 ? (
@@ -94,7 +94,7 @@ export function ApplicationsBoard({
               <p className="text-sm font-semibold text-destructive">
                 Unsuccessful
               </p>
-              <Badge variant="destructive">{rejected.length}</Badge>
+              <Tag color="red">{rejected.length}</Tag>
             </div>
             <div className="flex flex-col gap-2 p-3 pt-1">
               {rejected.map((app) => (

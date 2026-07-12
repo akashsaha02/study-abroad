@@ -1,13 +1,14 @@
 "use client";
 
+import { AppSelect } from "@/components/common/AppSelect";
+import { Button, InputNumber } from "antd";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PanelCard } from "@/components/common/PanelCard";
-import { Button } from "@/components/ui/button";
 import { POPULAR_COUNTRIES, ROUTES } from "@/constants";
 import type { CostBreakdown } from "@/lib/cost/build-cost-map";
-import { selectClassName } from "@/lib/styles";
 import { Calculator01Icon } from "@hugeicons/core-free-icons";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 interface CostCalculatorProps {
@@ -15,10 +16,17 @@ interface CostCalculatorProps {
 }
 
 export function CostCalculator({ costsByCountry }: CostCalculatorProps) {
+  const t = useTranslations("public.costCalculator");
   const countrySlugs = POPULAR_COUNTRIES.map((c) => c.slug);
   const [country, setCountry] = useState<string>(countrySlugs[0] ?? "uk");
   const [duration, setDuration] = useState(3);
   const [livingStyle, setLivingStyle] = useState<"budget" | "standard" | "comfort">("standard");
+
+  const livingStyleOptions = [
+    { value: "budget", label: t("budget") },
+    { value: "standard", label: t("standard") },
+    { value: "comfort", label: t("comfort") },
+  ];
 
   const costs = costsByCountry[country] ?? costsByCountry.uk;
   const livingMultiplier =
@@ -44,81 +52,81 @@ export function CostCalculator({ costsByCountry }: CostCalculatorProps) {
   return (
     <>
       <PageHeader
-        eyebrow="Planning tool"
+        eyebrow={t("eyebrow")}
         eyebrowIcon={Calculator01Icon}
-        title="Cost calculator"
-        description="Estimate your study abroad expenses including tuition, living costs, and fees."
+        title={t("title")}
+        description={t("description")}
       />
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <PanelCard title="Your inputs">
+        <PanelCard title={t("inputs")}>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Country</label>
-              <select
+              <label className="text-sm font-medium">{t("country")}</label>
+              <AppSelect
+                className="mt-1.5"
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                className={`mt-1.5 ${selectClassName}`}
-              >
-                {POPULAR_COUNTRIES.map((c) => (
-                  <option key={c.slug} value={c.slug}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Program duration (years)</label>
-              <input
-                type="number"
-                min={1}
-                max={5}
-                value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
-                className={`mt-1.5 ${selectClassName}`}
+                onChange={setCountry}
+                allowClear={false}
+                showSearch
+                options={POPULAR_COUNTRIES.map((c) => ({
+                  value: c.slug,
+                  label: c.name,
+                }))}
               />
             </div>
             <div>
-              <label className="text-sm font-medium">Living style</label>
-              <select
+              <label className="text-sm font-medium">{t("duration")}</label>
+              <InputNumber
+                className="mt-1.5 w-full!"
+                min={1}
+                max={5}
+                value={duration}
+                onChange={(value) => setDuration(value ?? 1)}
+                size="large"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">{t("livingStyle")}</label>
+              <AppSelect
+                className="mt-1.5"
                 value={livingStyle}
-                onChange={(e) =>
-                  setLivingStyle(e.target.value as typeof livingStyle)
+                onChange={(value) =>
+                  setLivingStyle(value as typeof livingStyle)
                 }
-                className={`mt-1.5 ${selectClassName}`}
-              >
-                <option value="budget">Budget</option>
-                <option value="standard">Standard</option>
-                <option value="comfort">Comfort</option>
-              </select>
+                allowClear={false}
+                options={livingStyleOptions}
+              />
             </div>
           </div>
         </PanelCard>
 
-        <PanelCard title="Cost breakdown">
+        <PanelCard title={t("breakdown")}>
           <div className="space-y-3">
             <CostRow
-              label="First year total"
+              label={t("firstYear")}
               value={`$${calculation.firstYearTotal.toLocaleString()}`}
               bold
             />
             <CostRow
-              label="Monthly living"
+              label={t("monthlyLiving")}
               value={`$${calculation.monthlyLiving.toLocaleString()}`}
             />
             <CostRow
-              label={`Total (${duration} years)`}
+              label={t("totalYears", { years: duration })}
               value={`$${calculation.totalStudyCost.toLocaleString()}`}
             />
             <CostRow
-              label="Suggested minimum budget"
+              label={t("suggestedBudget")}
               value={`$${calculation.suggestedBudget.toLocaleString()}`}
               bold
             />
           </div>
-          <Button asChild className="mt-6 w-full">
-            <Link href={ROUTES.contact}>Talk to a counselor</Link>
-          </Button>
+          <Link href={ROUTES.contact}>
+            <Button className="mt-6 w-full" size="large" type="primary">
+              {t("talkCounselor")}
+            </Button>
+          </Link>
         </PanelCard>
       </div>
     </>

@@ -1,18 +1,15 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface CountryOption {
   id: string;
@@ -59,6 +56,7 @@ function parseIntakes(value: string) {
 }
 
 export function UniversityForm({ countries, initial }: UniversityFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -133,11 +131,11 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save university"));
 
-      toast.success(isEdit ? "University updated" : "University created");
+      message.success(isEdit ? "University updated" : "University created");
       router.push("/admin/universities");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -152,21 +150,16 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="Country" htmlFor="country_id" required>
-              <select
+              <AppSelect
                 id="country_id"
                 value={countryId}
-                onChange={(e) => setCountryId(e.target.value)}
-                className={selectClassName}
-                required
-              >
-                {countries.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                onChange={setCountryId}
+                size="middle"
+                allowClear={false}
+                options={countries.map((c) => ({ value: c.id, label: c.name }))}
+              />
             </FormField>
             <FormField label="Name" htmlFor="name" required>
               <Input
@@ -207,7 +200,7 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
               />
             </FormField>
             <FormField label="Description" htmlFor="description">
-              <Textarea
+              <Input.TextArea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -247,10 +240,10 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
                 Published
               </label>
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <h2 className="font-semibold">Fees</h2>
             <div className="grid gap-4 sm:grid-cols-3">
               <FormField label="Tuition min" htmlFor="tuition_min">
@@ -279,14 +272,14 @@ export function UniversityForm({ countries, initial }: UniversityFormProps) {
               </FormField>
             </div>
             <FormField label="Requirements" htmlFor="requirements">
-              <Textarea
+              <Input.TextArea
                 id="requirements"
                 value={requirements}
                 onChange={(e) => setRequirements(e.target.value)}
                 rows={3}
               />
             </FormField>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

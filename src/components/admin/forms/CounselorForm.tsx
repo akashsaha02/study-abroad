@@ -1,16 +1,13 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import type { Counselor } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface ProfileOption {
   id: string;
@@ -26,6 +23,7 @@ interface CounselorFormProps {
 const FORM_ID = "counselor-form";
 
 export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -63,11 +61,11 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save counselor"));
 
-      toast.success(isEdit ? "Counselor updated" : "Counselor created");
+      message.success(isEdit ? "Counselor updated" : "Counselor created");
       router.push("/admin/counselors");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -82,23 +80,20 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="Profile" htmlFor="profile_id" required>
-              <select
+              <AppSelect
                 id="profile_id"
                 value={profileId}
-                onChange={(e) => setProfileId(e.target.value)}
-                required
+                onChange={setProfileId}
+                placeholder="Select profile"
+                size="middle"
                 disabled={isEdit}
-                className={selectClassName}
-              >
-                <option value="">Select profile</option>
-                {profileOptions.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.full_name ?? p.email ?? p.id}
-                  </option>
-                ))}
-              </select>
+                options={profileOptions.map((p) => ({
+                  value: p.id,
+                  label: p.full_name ?? p.email ?? p.id,
+                }))}
+              />
             </FormField>
             <FormField label="Specialization" htmlFor="specialization">
               <Input
@@ -109,7 +104,7 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
               />
             </FormField>
             <FormField label="Bio" htmlFor="bio">
-              <Textarea
+              <Input.TextArea
                 id="bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -124,7 +119,7 @@ export function CounselorForm({ initial, profileOptions }: CounselorFormProps) {
               />
               Active
             </label>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

@@ -1,7 +1,6 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "antd";
 import { useEffect, useState } from "react";
 
 function slugify(text: string) {
@@ -31,7 +30,7 @@ export function SlugField({ title, value, onChange, disabled }: SlugFieldProps) 
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="slug">Slug</Label>
+      <label htmlFor="slug">Slug</label>
       <Input
         id="slug"
         value={value}

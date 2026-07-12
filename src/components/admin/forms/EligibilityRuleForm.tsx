@@ -1,16 +1,13 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import type { EligibilityRule } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface CountryOption {
   id: string;
@@ -25,6 +22,7 @@ interface EligibilityRuleFormProps {
 const FORM_ID = "eligibility-rule-form";
 
 export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -64,11 +62,11 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save rule"));
 
-      toast.success(isEdit ? "Rule updated" : "Rule created");
+      message.success(isEdit ? "Rule updated" : "Rule created");
       router.push("/admin/settings");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -83,23 +81,17 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Country" htmlFor="country_id" required>
-                <select
+                <AppSelect
                   id="country_id"
                   value={countryId}
-                  onChange={(e) => setCountryId(e.target.value)}
-                  className={selectClassName}
-                  required
-                >
-                  <option value="">Select country</option>
-                  {countries.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setCountryId}
+                  placeholder="Select country"
+                  size="middle"
+                  options={countries.map((c) => ({ value: c.id, label: c.name }))}
+                />
               </FormField>
               <FormField label="Education level" htmlFor="education_level" required>
                 <Input
@@ -140,7 +132,7 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
               </FormField>
             </div>
             <FormField label="Recommendation" htmlFor="recommendation">
-              <Textarea
+              <Input.TextArea
                 id="recommendation"
                 value={recommendation}
                 onChange={(e) => setRecommendation(e.target.value)}
@@ -155,7 +147,7 @@ export function EligibilityRuleForm({ countries, initial }: EligibilityRuleFormP
               />
               Active
             </label>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

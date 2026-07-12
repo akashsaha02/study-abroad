@@ -1,6 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { Calendar01Icon, StarIcon } from "@hugeicons/core-free-icons";
+import { Tag } from "antd";import { Calendar01Icon, StarIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 interface ScholarshipCardProps {
@@ -23,9 +22,9 @@ export function ScholarshipCard({
           <HugeiconsIcon icon={StarIcon} className="size-5" />
         </span>
         {amount && (
-          <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+          <Tag className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
             {amount}
-          </Badge>
+          </Tag>
         )}
       </div>
       <h3 className="mt-4 font-semibold leading-snug">{title}</h3>

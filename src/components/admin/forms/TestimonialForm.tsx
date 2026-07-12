@@ -1,17 +1,14 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useRouter } from "@/i18n/navigation";
 
 interface SelectOption {
   id: string;
@@ -41,6 +38,7 @@ interface TestimonialFormProps {
 const FORM_ID = "testimonial-form";
 
 export function TestimonialForm({ countries, universities, initial }: TestimonialFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -104,11 +102,11 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save testimonial"));
 
-      toast.success(isEdit ? "Testimonial updated" : "Testimonial created");
+      message.success(isEdit ? "Testimonial updated" : "Testimonial created");
       router.push("/admin/testimonials");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -123,7 +121,7 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="Student name" htmlFor="student_name" required>
               <Input
                 id="student_name"
@@ -134,41 +132,31 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
             </FormField>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Destination country" htmlFor="country_id">
-                <select
+                <AppSelect
                   id="country_id"
                   value={countryId}
-                  onChange={(e) => {
-                    setCountryId(e.target.value);
+                  onChange={(value) => {
+                    setCountryId(value);
                     setUniversityId("");
                   }}
-                  className={selectClassName}
-                >
-                  <option value="">Select country</option>
-                  {countries.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Select country"
+                  size="middle"
+                  options={countries.map((c) => ({ value: c.id, label: c.name }))}
+                />
               </FormField>
               <FormField label="University" htmlFor="university_id">
-                <select
+                <AppSelect
                   id="university_id"
                   value={universityId}
-                  onChange={(e) => handleUniversityChange(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">Select university</option>
-                  {filteredUniversities.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={handleUniversityChange}
+                  placeholder="Select university"
+                  size="middle"
+                  options={filteredUniversities.map((u) => ({ value: u.id, label: u.name }))}
+                />
               </FormField>
             </div>
             <FormField label="Quote" htmlFor="quote" required>
-              <Textarea
+              <Input.TextArea
                 id="quote"
                 value={quote}
                 onChange={(e) => setQuote(e.target.value)}
@@ -205,7 +193,7 @@ export function TestimonialForm({ countries, universities, initial }: Testimonia
               />
               Published
             </label>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

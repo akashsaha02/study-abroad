@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "antd";
 import Link from "next/link";
 
 interface AdminPageActionsProps {
@@ -11,8 +11,8 @@ export function AdminPageActions({
   label = "Add new",
 }: AdminPageActionsProps) {
   return (
-    <Button asChild>
-      <Link href={href}>{label}</Link>
-    </Button>
+    <Link href={href}>
+          <Button>{label}</Button>
+        </Link>
   );
 }

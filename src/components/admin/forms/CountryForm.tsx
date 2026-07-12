@@ -1,15 +1,12 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
 import { FormField } from "@/components/forms/FormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface Country {
   id: string;
@@ -48,6 +45,7 @@ function parseIntakes(value: string) {
 }
 
 export function CountryForm({ initial }: CountryFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -103,11 +101,11 @@ export function CountryForm({ initial }: CountryFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save country"));
 
-      toast.success(isEdit ? "Country updated" : "Country created");
+      message.success(isEdit ? "Country updated" : "Country created");
       router.push("/admin/countries");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -122,7 +120,7 @@ export function CountryForm({ initial }: CountryFormProps) {
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <FormField label="Name" htmlFor="name" required>
               <Input
                 id="name"
@@ -133,7 +131,7 @@ export function CountryForm({ initial }: CountryFormProps) {
             </FormField>
             <SlugField title={name} value={slug} onChange={setSlug} />
             <FormField label="Description" htmlFor="description">
-              <Textarea
+              <Input.TextArea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -172,10 +170,10 @@ export function CountryForm({ initial }: CountryFormProps) {
               />
               Published
             </label>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <h2 className="font-semibold">Costs</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Tuition min" htmlFor="tuition_min">
@@ -211,13 +209,13 @@ export function CountryForm({ initial }: CountryFormProps) {
                 />
               </FormField>
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <h2 className="font-semibold">Details</h2>
             <FormField label="Visa summary" htmlFor="visa_summary">
-              <Textarea
+              <Input.TextArea
                 id="visa_summary"
                 value={visaSummary}
                 onChange={(e) => setVisaSummary(e.target.value)}
@@ -225,7 +223,7 @@ export function CountryForm({ initial }: CountryFormProps) {
               />
             </FormField>
             <FormField label="Admission requirements" htmlFor="admission_requirements">
-              <Textarea
+              <Input.TextArea
                 id="admission_requirements"
                 value={admissionRequirements}
                 onChange={(e) => setAdmissionRequirements(e.target.value)}
@@ -233,14 +231,14 @@ export function CountryForm({ initial }: CountryFormProps) {
               />
             </FormField>
             <FormField label="Scholarship summary" htmlFor="scholarship_summary">
-              <Textarea
+              <Input.TextArea
                 id="scholarship_summary"
                 value={scholarshipSummary}
                 onChange={(e) => setScholarshipSummary(e.target.value)}
                 rows={3}
               />
             </FormField>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>

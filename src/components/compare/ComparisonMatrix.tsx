@@ -2,8 +2,6 @@
 
 import { EmptyState } from "@/components/common/EmptyState";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   activeMetrics,
   bestForMetric,
@@ -17,6 +15,7 @@ import {
   UniversityIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Button, Tag } from "antd";
 import { useMemo, useState } from "react";
 
 const MAX_COMPARE = 3;
@@ -179,9 +178,9 @@ export function ComparisonMatrix({ universities }: ComparisonMatrixProps) {
                       </span>
                       {isBest && (
                         <span className="mt-1 block">
-                          <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+                          <Tag className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                             Best
-                          </Badge>
+                          </Tag>
                         </span>
                       )}
                     </td>
@@ -219,8 +218,7 @@ function AddColumn({
   return (
     <div className="relative">
       <Button
-        variant="outline"
-        size="sm"
+        size="small"
         onClick={() => setOpen(!open)}
         disabled={available.length === 0}
         aria-expanded={open}

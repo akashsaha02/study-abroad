@@ -1,6 +1,3 @@
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-
 interface FormFieldProps {
   label: string;
   htmlFor: string;
@@ -19,13 +16,13 @@ export function FormField({
   required,
 }: FormFieldProps) {
   return (
-    <div className={cn("space-y-2", className)}>
-      <Label htmlFor={htmlFor}>
+    <div className={className}>
+      <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium">
         {label}
-        {required && <span className="text-destructive"> *</span>}
-      </Label>
+        {required && <span className="text-red-500"> *</span>}
+      </label>
       {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { App, Button, Card, Tag } from "antd";
+import { AppSelect } from "@/components/common/AppSelect";
 import { DOCUMENT_TYPES, STORAGE_BUCKETS } from "@/constants";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -15,9 +14,9 @@ import {
   File01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useCallback, useRef, useState } from "react";
-import { toast } from "sonner";
+
 
 type QueueStatus = "queued" | "uploading" | "success" | "error";
 
@@ -70,6 +69,7 @@ function formatSize(bytes: number | null) {
 let queueCounter = 0;
 
 export function DocumentVault({ studentId, documents }: DocumentVaultProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -127,12 +127,12 @@ export function DocumentVault({ studentId, documents }: DocumentVaultProps) {
       if (!res.ok) throw new Error("Failed to save document record");
 
       setItem(item.id, { status: "success" });
-      toast.success(`${item.file.name} uploaded`);
+      message.success(`${item.file.name} uploaded`);
       router.refresh();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Upload failed";
-      setItem(item.id, { status: "error", error: message });
-      toast.error(message);
+      const errMsg = err instanceof Error ? err.message : "Upload failed";
+      setItem(item.id, { status: "error", error: errMsg });
+      message.error(errMsg);
     }
   }
 
@@ -205,7 +205,7 @@ export function DocumentVault({ studentId, documents }: DocumentVaultProps) {
               <span className="text-muted-foreground">({queue.length})</span>
             </p>
             {pendingCount > 0 && (
-              <Button size="sm" onClick={uploadAll}>
+              <Button size="small" onClick={uploadAll}>
                 Upload {pendingCount} file{pendingCount > 1 ? "s" : ""}
               </Button>
             )}
@@ -239,7 +239,7 @@ export function DocumentVault({ studentId, documents }: DocumentVaultProps) {
                 STATUS_META[doc.status] ?? STATUS_META.pending_review;
               return (
                 <Card key={doc.id} className="transition-shadow hover:shadow-md">
-                  <CardContent className="flex items-start gap-3 p-4">
+                  <div className="flex items-start gap-3 p-4">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                       <HugeiconsIcon icon={File01Icon} className="size-5" />
                     </div>
@@ -248,9 +248,9 @@ export function DocumentVault({ studentId, documents }: DocumentVaultProps) {
                         <p className="truncate text-sm font-medium">
                           {doc.document_type}
                         </p>
-                        <Badge className={cn("shrink-0", meta.className)}>
+                        <Tag className={cn("shrink-0", meta.className)}>
                           {meta.label}
-                        </Badge>
+                        </Tag>
                       </div>
                       <p className="truncate text-xs text-muted-foreground">
                         {doc.file_name}
@@ -262,7 +262,7 @@ export function DocumentVault({ studentId, documents }: DocumentVaultProps) {
                         </p>
                       )}
                     </div>
-                  </CardContent>
+                  </div>
                 </Card>
               );
             })}
@@ -316,32 +316,29 @@ function QueueRow({
             <label className="sr-only" htmlFor={`type-${item.id}`}>
               Document type
             </label>
-            <select
+            <AppSelect
               id={`type-${item.id}`}
               value={item.documentType}
-              onChange={(e) => onTypeChange(e.target.value)}
-              className="h-8 rounded-4xl border border-input bg-transparent px-3 text-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              {DOCUMENT_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-            <Button size="sm" onClick={onUpload}>
+              onChange={onTypeChange}
+              size="small"
+              className="min-w-[140px]"
+              allowClear={false}
+              options={DOCUMENT_TYPES.map((t) => ({ value: t, label: t }))}
+            />
+            <Button size="small" onClick={onUpload}>
               Upload
             </Button>
           </>
         )}
         {item.status === "error" && (
-          <Button size="sm" variant="outline" onClick={onUpload}>
+          <Button size="small"  onClick={onUpload}>
             Retry
           </Button>
         )}
         {item.status !== "uploading" && (
           <Button
-            size="icon-sm"
-            variant="ghost"
+            size="small"
+            type="text"
             onClick={onRemove}
             aria-label="Remove from queue"
           >

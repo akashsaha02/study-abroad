@@ -2,17 +2,8 @@
 
 import { EmptyState } from "@/components/common/EmptyState";
 import { ProgramCard } from "@/components/programs/ProgramCard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { selectClassName } from "@/lib/styles";
+import { AppSelect } from "@/components/common/AppSelect";
 import { cn } from "@/lib/utils";
 import {
   DEFAULT_MATCH_PROFILE,
@@ -32,6 +23,7 @@ import {
   SparklesIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Button, Drawer, Tag } from "antd";
 import { useMemo, useState } from "react";
 
 type SortKey = "match" | "tuition-asc" | "tuition-desc" | "ranking";
@@ -184,42 +176,49 @@ export function ProgramFinder({ programs = SAMPLE_PROGRAMS }: ProgramFinderProps
           </div>
 
           <div className="flex items-center gap-2">
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="lg:hidden">
-                  <HugeiconsIcon
-                    icon={FilterHorizontalIcon}
-                    className="size-4"
-                    data-icon="inline-start"
-                  />
-                  Filters
-                  {activeFilterCount > 0 && (
-                    <Badge className="ml-1">{activeFilterCount}</Badge>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>Filters</SheetTitle>
-                </SheetHeader>
-                <div className="mt-4">{filterPanel}</div>
-              </SheetContent>
-            </Sheet>
+            <Button
+              size="small"
+              className="lg:hidden"
+              onClick={() => setMobileOpen(true)}
+            >
+              <HugeiconsIcon
+                icon={FilterHorizontalIcon}
+                className="size-4"
+                data-icon="inline-start"
+              />
+              Filters
+              {activeFilterCount > 0 && (
+                <Tag className="ml-1">{activeFilterCount}</Tag>
+              )}
+            </Button>
+            <Drawer
+              title="Filters"
+              placement="left"
+              open={mobileOpen}
+              onClose={() => setMobileOpen(false)}
+              width={300}
+              className="overflow-y-auto"
+            >
+              {filterPanel}
+            </Drawer>
 
             <label htmlFor="sort" className="sr-only">
               Sort programs
             </label>
-            <select
+            <AppSelect
               id="sort"
               value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              className={selectClassName}
-            >
-              <option value="match">Best match</option>
-              <option value="tuition-asc">Tuition: low to high</option>
-              <option value="tuition-desc">Tuition: high to low</option>
-              <option value="ranking">World ranking</option>
-            </select>
+              onChange={(value) => setSort(value as SortKey)}
+              size="middle"
+              className="min-w-[180px]"
+              allowClear={false}
+              options={[
+                { value: "match", label: "Best match" },
+                { value: "tuition-asc", label: "Tuition: low to high" },
+                { value: "tuition-desc", label: "Tuition: high to low" },
+                { value: "ranking", label: "World ranking" },
+              ]}
+            />
           </div>
         </div>
 

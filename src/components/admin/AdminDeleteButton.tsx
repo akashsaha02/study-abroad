@@ -1,18 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { Button, Modal, App } from "antd";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface AdminDeleteButtonProps {
   apiUrl: string;
@@ -22,10 +13,12 @@ interface AdminDeleteButtonProps {
 
 export function AdminDeleteButton({
   apiUrl,
-  label = "Delete",
-  itemName = "this item",
+  label,
+  itemName,
 }: AdminDeleteButtonProps) {
   const router = useRouter();
+  const { message } = App.useApp();
+  const t = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -34,48 +27,44 @@ export function AdminDeleteButton({
     try {
       const res = await fetch(apiUrl, { method: "DELETE" });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to delete");
-      toast.success("Deleted");
+      if (!res.ok) throw new Error(data.error ?? t("deleteFailed"));
+      message.success(t("deleted"));
       setOpen(false);
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Delete failed");
+      message.error(err instanceof Error ? err.message : t("deleteFailed"));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="destructive" size="sm">
-          {label}
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Confirm deletion</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete {itemName}? This cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
+    <>
+      <Button danger size="small" onClick={() => setOpen(true)}>
+        {label ?? t("delete")}
+      </Button>
+      <Modal
+        title={t("confirmDeletion")}
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setOpen(false)} disabled={loading}>
+            {t("cancel")}
+          </Button>,
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
+            key="delete"
+            danger
+            loading={loading}
             onClick={handleDelete}
-            disabled={loading}
           >
-            Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            {t("delete")}
+          </Button>,
+        ]}
+      >
+        {t("confirmDeleteMessage", {
+          item: itemName ?? t("thisItem"),
+        })}
+      </Modal>
+    </>
   );
 }

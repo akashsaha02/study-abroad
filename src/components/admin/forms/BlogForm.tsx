@@ -1,5 +1,6 @@
 "use client";
 
+import { App, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
@@ -7,13 +8,10 @@ import { RichTextEditor } from "@/components/editor/RichTextEditor";
 import { SeoPreview } from "@/components/editor/SeoPreview";
 import { FormField } from "@/components/forms/FormField";
 import { PanelCard } from "@/components/common/PanelCard";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { STORAGE_BUCKETS } from "@/constants";
 import { uploadPublicFile } from "@/lib/storage/upload";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
-import { toast } from "sonner";
 
 interface BlogPost {
   id: string;
@@ -34,6 +32,7 @@ interface BlogFormProps {
 const FORM_ID = "blog-form";
 
 export function BlogForm({ initial }: BlogFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -66,11 +65,11 @@ export function BlogForm({ initial }: BlogFormProps) {
     e.preventDefault();
 
     if (!title.trim()) {
-      toast.error("Add a title before saving");
+      message.error("Add a title before saving");
       return;
     }
     if (!content.trim() || content === "<p></p>") {
-      toast.error("Add some content to your post");
+      message.error("Add some content to your post");
       return;
     }
 
@@ -114,11 +113,11 @@ export function BlogForm({ initial }: BlogFormProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save blog post"));
 
-      toast.success(isEdit ? "Blog post updated" : "Blog post created");
+      message.success(isEdit ? "Blog post updated" : "Blog post created");
       router.push("/admin/blog");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -146,7 +145,7 @@ export function BlogForm({ initial }: BlogFormProps) {
               </FormField>
               <SlugField title={title} value={slug} onChange={setSlug} />
               <FormField label="Excerpt" htmlFor="excerpt">
-                <Textarea
+                <Input.TextArea
                   id="excerpt"
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
@@ -168,7 +167,7 @@ export function BlogForm({ initial }: BlogFormProps) {
                 try {
                   return await uploadBlogImage(file);
                 } catch {
-                  toast.error("Failed to upload image");
+                  message.error("Failed to upload image");
                   throw new Error("upload failed");
                 }
               }}
@@ -218,7 +217,7 @@ export function BlogForm({ initial }: BlogFormProps) {
                 />
               </FormField>
               <FormField label="Meta description" htmlFor="meta_description">
-                <Textarea
+                <Input.TextArea
                   id="meta_description"
                   value={metaDescription}
                   onChange={(e) => setMetaDescription(e.target.value)}

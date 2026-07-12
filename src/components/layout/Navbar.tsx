@@ -1,17 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { APP_NAME, ROUTES } from "@/constants";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { ROUTES } from "@/constants";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import {
-  ArrowRight01Icon,
+  ArrowDown01Icon,
   BookOpen01Icon,
   Briefcase01Icon,
   Calculator01Icon,
@@ -26,101 +20,101 @@ import {
   UserAccountIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Button, Drawer } from "antd";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "../common/Container";
 
 interface NavChild {
   href: string;
-  label: string;
-  description: string;
+  labelKey: keyof IntlMessages["nav"];
+  descKey: keyof IntlMessages["nav"];
   icon: IconSvgElement;
 }
 
 interface NavGroup {
-  label: string;
+  labelKey: keyof IntlMessages["nav"];
   children: NavChild[];
 }
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    label: "Explore",
+    labelKey: "explore",
     children: [
       {
         href: ROUTES.universities,
-        label: "Universities",
-        description: "Browse partner institutions worldwide",
+        labelKey: "universities",
+        descKey: "universitiesDesc",
         icon: UniversityIcon,
       },
       {
         href: ROUTES.courses,
-        label: "Courses",
-        description: "Browse programs by subject and degree",
+        labelKey: "courses",
+        descKey: "coursesDesc",
         icon: BookOpen01Icon,
       },
       {
         href: ROUTES.compare,
-        label: "Compare",
-        description: "Weigh universities side-by-side",
+        labelKey: "compare",
+        descKey: "compareDesc",
         icon: Globe02Icon,
       },
       {
         href: ROUTES.scholarships,
-        label: "Scholarships",
-        description: "Find funding for your studies",
+        labelKey: "scholarships",
+        descKey: "scholarshipsDesc",
         icon: StarIcon,
       },
     ],
   },
   {
-    label: "Prepare",
+    labelKey: "prepare",
     children: [
       {
         href: ROUTES.ielts,
-        label: "IELTS Prep",
-        description: "Mock tests & band calculator",
+        labelKey: "ielts",
+        descKey: "ieltsDesc",
         icon: FileValidationIcon,
       },
       {
         href: ROUTES.eligibilityChecker,
-        label: "Eligibility Checker",
-        description: "See where you qualify",
+        labelKey: "eligibilityChecker",
+        descKey: "eligibilityCheckerDesc",
         icon: UserAccountIcon,
       },
       {
         href: ROUTES.costCalculator,
-        label: "Cost Calculator",
-        description: "Estimate your total budget",
+        labelKey: "costCalculator",
+        descKey: "costCalculatorDesc",
         icon: Calculator01Icon,
       },
     ],
   },
   {
-    label: "Company",
+    labelKey: "company",
     children: [
       {
         href: ROUTES.services,
-        label: "Services",
-        description: "End-to-end guidance",
+        labelKey: "services",
+        descKey: "servicesDesc",
         icon: Briefcase01Icon,
       },
       {
         href: ROUTES.blog,
-        label: "Blog",
-        description: "Guides & student stories",
+        labelKey: "blog",
+        descKey: "blogDesc",
         icon: BookOpen01Icon,
       },
       {
         href: ROUTES.about,
-        label: "About",
-        description: "Who we are",
+        labelKey: "about",
+        descKey: "aboutDesc",
         icon: Message01Icon,
       },
       {
         href: ROUTES.contact,
-        label: "Contact",
-        description: "Talk to a counselor",
+        labelKey: "contact",
+        descKey: "contactDesc",
         icon: Calendar01Icon,
       },
     ],
@@ -129,6 +123,8 @@ const NAV_GROUPS: NavGroup[] = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
@@ -145,73 +141,67 @@ export function Navbar() {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setActiveGroup(label);
   }
+
   function scheduleClose() {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setActiveGroup(null), 120);
+    closeTimer.current = window.setTimeout(() => setActiveGroup(null), 150);
   }
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-all duration-300",
+        "sticky top-0 z-50 border-b transition-all duration-300",
         scrolled
-          ? "border-b border-border bg-background/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-background/70"
-          : "border-b border-transparent bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/50"
+          ? "border-border/80 bg-background/95 shadow-sm backdrop-blur-md"
+          : "border-transparent bg-background/90 backdrop-blur-sm"
       )}
     >
       <Container>
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-[4.25rem] items-center gap-6">
           <Link
             href={ROUTES.home}
-            className="flex items-center gap-2 text-xl font-bold tracking-tight"
+            className="flex shrink-0 items-center gap-2.5"
           >
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <HugeiconsIcon icon={GraduationScrollIcon} className="size-5" />
             </span>
-            <span>
-              {APP_NAME}
-              <span className="text-primary">.</span>
+            <span className="text-lg font-bold tracking-tight text-foreground">
+              {tCommon("appName")}
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex">
+          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex">
             <NavItemLink
               href={ROUTES.studyIn("uk")}
-              label="Study Abroad"
+              label={t("studyAbroad")}
               active={pathname.startsWith("/study-in")}
             />
             {NAV_GROUPS.map((group) => (
               <NavDropdown
-                key={group.label}
+                key={group.labelKey}
                 group={group}
                 pathname={pathname}
-                open={activeGroup === group.label}
-                onOpen={() => openGroup(group.label)}
+                open={activeGroup === group.labelKey}
+                onOpen={() => openGroup(group.labelKey)}
                 onClose={scheduleClose}
               />
             ))}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={ROUTES.login}>Sign in</Link>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link href={ROUTES.eligibilityChecker}>Check Eligibility</Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link href={ROUTES.contact}>
-                Book Consultation
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  className="size-4"
-                  data-icon="inline-end"
-                />
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <div className="hidden items-center gap-2 lg:flex">
+              <LanguageSwitcher />
+              <Link href={ROUTES.login}>
+                <Button type="text">{t("signIn")}</Button>
               </Link>
-            </Button>
+              <Link href={ROUTES.contact}>
+                <Button type="primary">{t("bookConsultation")}</Button>
+              </Link>
+            </div>
+            <div className="lg:hidden">
+              <MobileNav open={open} setOpen={setOpen} pathname={pathname} />
+            </div>
           </div>
-
-          <MobileNav open={open} setOpen={setOpen} pathname={pathname} />
         </div>
       </Container>
     </header>
@@ -231,13 +221,16 @@ function NavItemLink({
     <Link
       href={href}
       className={cn(
-        "relative rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+        "relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
         active
           ? "text-primary"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
       )}
     >
       {label}
+      {active && (
+        <span className="absolute inset-x-3.5 -bottom-[1.125rem] h-0.5 rounded-full bg-primary" />
+      )}
     </Link>
   );
 }
@@ -255,6 +248,7 @@ function NavDropdown({
   onOpen: () => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("nav");
   const hasActive = group.children.some((c) => pathname.startsWith(c.href));
 
   return (
@@ -272,56 +266,67 @@ function NavDropdown({
         aria-expanded={open}
         aria-haspopup="true"
         className={cn(
-          "flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          "flex items-center gap-1 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors",
           open || hasActive
-            ? "text-foreground"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            ? "bg-muted/70 text-foreground"
+            : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
         )}
       >
-        {group.label}
+        {t(group.labelKey)}
         <HugeiconsIcon
-          icon={ArrowRight01Icon}
+          icon={ArrowDown01Icon}
           className={cn(
-            "size-3.5 rotate-90 transition-transform duration-200",
-            open && "-rotate-90"
+            "size-4 text-muted-foreground transition-transform duration-200",
+            open && "rotate-180"
           )}
         />
       </button>
 
       <div
         className={cn(
-          "absolute left-0 top-full w-72 origin-top pt-2 transition-all duration-200",
+          "absolute left-1/2 top-[calc(100%+0.5rem)] z-50 w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 pt-1 transition-all duration-200",
           open
             ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-1 opacity-0"
+            : "invisible -translate-y-2 opacity-0 pointer-events-none"
         )}
       >
-        <div className="overflow-hidden rounded-2xl border bg-popover p-2 shadow-lg ring-1 ring-foreground/5">
-          {group.children.map((child) => {
-            const active = pathname.startsWith(child.href);
-            return (
-              <Link
-                key={child.href}
-                href={child.href}
-                className={cn(
-                  "flex items-start gap-3 rounded-xl p-2.5 transition-colors",
-                  active ? "bg-muted" : "hover:bg-muted/60"
-                )}
-              >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <HugeiconsIcon icon={child.icon} className="size-5" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium">
-                    {child.label}
+        <div className="overflow-hidden rounded-2xl border border-border/80 bg-popover p-2 shadow-xl">
+          <div className="grid gap-0.5">
+            {group.children.map((child) => {
+              const active = pathname.startsWith(child.href);
+              return (
+                <Link
+                  key={child.href}
+                  href={child.href}
+                  className={cn(
+                    "flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors",
+                    active
+                      ? "bg-primary/8 text-foreground"
+                      : "hover:bg-muted/60"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "flex size-10 shrink-0 items-center justify-center rounded-xl",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-primary"
+                    )}
+                  >
+                    <HugeiconsIcon icon={child.icon} className="size-5" />
                   </span>
-                  <span className="block text-xs text-muted-foreground">
-                    {child.description}
+                  <span className="min-w-0 pt-0.5">
+                    <span className="block text-sm font-semibold leading-tight">
+                      {t(child.labelKey)}
+                    </span>
+                    <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                      {t(child.descKey)}
+                    </span>
                   </span>
-                </span>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
@@ -337,38 +342,64 @@ function MobileNav({
   setOpen: (v: boolean) => void;
   pathname: string;
 }) {
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild className="lg:hidden">
-        <Button variant="outline" size="icon">
-          <HugeiconsIcon icon={Menu01Icon} />
-          <span className="sr-only">Open menu</span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="right" className="flex w-[320px] flex-col p-0">
-        <SheetHeader className="border-b px-5 py-4">
-          <SheetTitle className="flex items-center gap-2 text-left">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+    <>
+      <Button
+        type="text"
+        icon={<HugeiconsIcon icon={Menu01Icon} className="size-5" />}
+        onClick={() => setOpen(true)}
+        aria-label={t("openMenu")}
+      />
+      <Drawer
+        title={
+          <span className="flex items-center gap-2.5">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <HugeiconsIcon icon={GraduationScrollIcon} className="size-4" />
             </span>
-            {APP_NAME}
-          </SheetTitle>
-        </SheetHeader>
-
-        <nav className="flex-1 space-y-5 overflow-y-auto px-4 py-5">
+            <span className="font-semibold">{tCommon("appName")}</span>
+          </span>
+        }
+        placement="right"
+        onClose={() => setOpen(false)}
+        open={open}
+        size={340}
+        classNames={{ body: "px-4" }}
+        footer={
+          <div className="flex flex-col gap-2">
+            <LanguageSwitcher className="w-full" />
+            <Link href={ROUTES.login} onClick={() => setOpen(false)} className="block">
+              <Button block>{t("signIn")}</Button>
+            </Link>
+            <Link href={ROUTES.contact} onClick={() => setOpen(false)} className="block">
+              <Button type="primary" block>
+                {t("bookConsultation")}
+              </Button>
+            </Link>
+          </div>
+        }
+      >
+        <nav className="space-y-6 pb-4">
           <Link
             href={ROUTES.studyIn("uk")}
             onClick={() => setOpen(false)}
-            className="block rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted"
+            className={cn(
+              "block rounded-xl px-3 py-2.5 text-sm font-semibold",
+              pathname.startsWith("/study-in")
+                ? "bg-primary/8 text-primary"
+                : "hover:bg-muted"
+            )}
           >
-            Study Abroad
+            {t("studyAbroad")}
           </Link>
           {NAV_GROUPS.map((group) => (
-            <div key={group.label}>
-              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {group.label}
+            <div key={group.labelKey}>
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {t(group.labelKey)}
               </p>
-              <div className="mt-1 space-y-0.5">
+              <div className="space-y-0.5">
                 {group.children.map((child) => {
                   const active = pathname.startsWith(child.href);
                   return (
@@ -377,17 +408,17 @@ function MobileNav({
                       href={child.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
                         active
-                          ? "bg-muted font-medium text-foreground"
+                          ? "bg-primary/8 font-medium text-primary"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
                       <HugeiconsIcon
                         icon={child.icon}
-                        className="size-4 text-primary"
+                        className={cn("size-4", active ? "text-primary" : "text-primary/70")}
                       />
-                      {child.label}
+                      {t(child.labelKey)}
                     </Link>
                   );
                 })}
@@ -395,20 +426,7 @@ function MobileNav({
             </div>
           ))}
         </nav>
-
-        <div className="space-y-2 border-t p-4">
-          <Button variant="outline" className="w-full" asChild>
-            <Link href={ROUTES.login} onClick={() => setOpen(false)}>
-              Sign in
-            </Link>
-          </Button>
-          <Button className="w-full" asChild>
-            <Link href={ROUTES.contact} onClick={() => setOpen(false)}>
-              Book Consultation
-            </Link>
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+      </Drawer>
+    </>
   );
 }

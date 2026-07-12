@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { ROUTES } from "@/constants";
+import { Tag } from "antd";
 import { ArrowRight01Icon, StarIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -37,10 +37,10 @@ export function UniversityCard({
           {monogram(name)}
         </span>
         {ranking && (
-          <Badge variant="outline" className="gap-1">
+          <Tag className="gap-1">
             <HugeiconsIcon icon={StarIcon} className="size-3" />
             {ranking}
-          </Badge>
+          </Tag>
         )}
       </div>
       <h3 className="mt-4 font-semibold leading-snug">{name}</h3>

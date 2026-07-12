@@ -1,12 +1,10 @@
 "use client";
 
+import { App, Button, Card } from "antd";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 interface SelectOption {
   id: string;
@@ -34,6 +32,7 @@ export function ApplicationTargetForm({
   courses,
   initial,
 }: ApplicationTargetFormProps) {
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [countryId, setCountryId] = useState(initial.country_id ?? "");
   const [universityId, setUniversityId] = useState(initial.university_id ?? "");
@@ -85,9 +84,9 @@ export function ApplicationTargetForm({
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to update application"));
 
-      toast.success("Application targets updated");
+      message.success("Application targets updated");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update");
+      message.error(err instanceof Error ? err.message : "Failed to update");
     } finally {
       setLoading(false);
     }
@@ -95,61 +94,46 @@ export function ApplicationTargetForm({
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <div className="p-6">
         <h3 className="mb-4 font-semibold">Study targets</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <FormField label="Country" htmlFor="country_id">
-            <select
+            <AppSelect
               id="country_id"
               value={countryId}
-              onChange={(e) => handleCountryChange(e.target.value)}
-              className={selectClassName}
-            >
-              <option value="">Select country</option>
-              {countries.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              onChange={handleCountryChange}
+              placeholder="Select country"
+              size="middle"
+              options={countries.map((c) => ({ value: c.id, label: c.name }))}
+            />
           </FormField>
           <FormField label="University" htmlFor="university_id">
-            <select
+            <AppSelect
               id="university_id"
               value={universityId}
-              onChange={(e) => handleUniversityChange(e.target.value)}
-              className={selectClassName}
+              onChange={handleUniversityChange}
+              placeholder="Select university"
+              size="middle"
               disabled={filteredUniversities.length === 0}
-            >
-              <option value="">Select university</option>
-              {filteredUniversities.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name}
-                </option>
-              ))}
-            </select>
+              options={filteredUniversities.map((u) => ({ value: u.id, label: u.name }))}
+            />
           </FormField>
           <FormField label="Course" htmlFor="course_id">
-            <select
+            <AppSelect
               id="course_id"
               value={courseId}
-              onChange={(e) => setCourseId(e.target.value)}
-              className={selectClassName}
+              onChange={setCourseId}
+              placeholder="Select course"
+              size="middle"
               disabled={filteredCourses.length === 0}
-            >
-              <option value="">Select course</option>
-              {filteredCourses.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+              options={filteredCourses.map((c) => ({ value: c.id, label: c.name }))}
+            />
           </FormField>
-          <Button type="submit" disabled={loading}>
+          <Button htmlType="submit" disabled={loading}>
             {loading ? "Saving…" : "Save targets"}
           </Button>
         </form>
-      </CardContent>
+      </div>
     </Card>
   );
 }

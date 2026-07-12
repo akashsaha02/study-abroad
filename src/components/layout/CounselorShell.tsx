@@ -2,6 +2,7 @@ import { DashboardShell } from "./DashboardShell";
 import type { NavItem } from "./DashboardShell";
 import { NavIcon } from "@/constants/nav-icons";
 import type { UserRole } from "@/types";
+import { getTranslations } from "next-intl/server";
 
 function withIcon(items: Omit<NavItem, "icon">[]): NavItem[] {
   return items.map((item) => ({
@@ -10,16 +11,21 @@ function withIcon(items: Omit<NavItem, "icon">[]): NavItem[] {
   }));
 }
 
-const counselorNav = withIcon([
-  { href: "/counselor", label: "Overview", section: "Main" },
-  { href: "/counselor/leads", label: "Leads" },
-  { href: "/counselor/students", label: "Students" },
-  { href: "/counselor/applications", label: "Applications" },
-  { href: "/counselor/tasks", label: "Tasks" },
-  { href: "/counselor/notes", label: "Notes" },
-]);
+async function buildCounselorNav(): Promise<NavItem[]> {
+  const t = await getTranslations("admin");
+  const tDash = await getTranslations("dashboard");
 
-export function CounselorShell({
+  return withIcon([
+    { href: "/counselor", label: tDash("overview"), section: "Main" },
+    { href: "/counselor/leads", label: t("leads") },
+    { href: "/counselor/students", label: t("students") },
+    { href: "/counselor/applications", label: t("applications") },
+    { href: "/counselor/tasks", label: t("tasks") },
+    { href: "/counselor/notes", label: t("notes") },
+  ]);
+}
+
+export async function CounselorShell({
   children,
   userName,
   userRole,
@@ -28,10 +34,13 @@ export function CounselorShell({
   userName?: string;
   userRole?: UserRole;
 }) {
+  const tDash = await getTranslations("dashboard");
+  const navItems = await buildCounselorNav();
+
   return (
     <DashboardShell
-      title="Counselor Dashboard"
-      navItems={counselorNav}
+      title={tDash("counselorTitle")}
+      navItems={navItems}
       userName={userName}
       userRole={userRole}
     >

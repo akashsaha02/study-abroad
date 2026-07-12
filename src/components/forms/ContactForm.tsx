@@ -1,11 +1,11 @@
 "use client";
 
+import { App, Input } from "antd";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface CountryOption {
   id: string;
@@ -17,7 +17,10 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ countries }: ContactFormProps) {
+  const t = useTranslations("public.contactForm");
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
+  const [countryId, setCountryId] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,14 +33,19 @@ export function ContactForm({ countries }: ContactFormProps) {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, source: "contact_form" }),
+        body: JSON.stringify({
+          ...data,
+          preferred_country_id: countryId || null,
+          source: "contact_form",
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
-      toast.success("Message sent! We'll contact you soon.");
+      message.success(t("success"));
       form.reset();
+      setCountryId("");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to send message");
+      message.error(err instanceof Error ? err.message : t("error"));
     } finally {
       setLoading(false);
     }
@@ -45,34 +53,29 @@ export function ContactForm({ countries }: ContactFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <FormField label="Full Name" htmlFor="name" required>
-        <Input id="name" name="name" required />
+      <FormField label={t("name")} htmlFor="name" required>
+        <Input id="name" name="name" required size="large" />
       </FormField>
-      <FormField label="Phone" htmlFor="phone" required>
-        <Input id="phone" name="phone" type="tel" required />
+      <FormField label={t("phone")} htmlFor="phone" required>
+        <Input id="phone" name="phone" type="tel" required size="large" />
       </FormField>
-      <FormField label="Email" htmlFor="email">
-        <Input id="email" name="email" type="email" />
+      <FormField label={t("email")} htmlFor="email">
+        <Input id="email" name="email" type="email" size="large" />
       </FormField>
-      <FormField label="Preferred Country" htmlFor="preferred_country_id">
-        <select
+      <FormField label={t("country")} htmlFor="preferred_country_id">
+        <AppSelect
           id="preferred_country_id"
-          name="preferred_country_id"
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-        >
-          <option value="">Select country</option>
-          {countries.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          value={countryId}
+          onChange={setCountryId}
+          placeholder={t("countryPlaceholder")}
+          options={countries.map((c) => ({ value: c.id, label: c.name }))}
+        />
       </FormField>
-      <FormField label="Message" htmlFor="message">
-        <Textarea id="message" name="message" rows={4} />
+      <FormField label={t("message")} htmlFor="message">
+        <Input.TextArea id="message" name="message" rows={4} size="large" />
       </FormField>
       <SubmitButton loading={loading} className="w-full">
-        Send Message
+        {t("submit")}
       </SubmitButton>
     </form>
   );

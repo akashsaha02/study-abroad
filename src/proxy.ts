@@ -1,7 +1,11 @@
+import createIntlMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
+import { routing, type Locale } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
 import { getDashboardPathForRole } from "@/lib/auth/redirects";
 import type { UserRole } from "@/types";
+
+const intlMiddleware = createIntlMiddleware(routing);
 
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password"];
 
@@ -9,20 +13,50 @@ const DASHBOARD_ROLES: UserRole[] = ["student", "admin", "super_admin"];
 const COUNSELOR_ROLES: UserRole[] = ["counselor", "admin", "super_admin"];
 const ADMIN_ROLES: UserRole[] = ["admin", "super_admin"];
 
-export async function proxy(request: NextRequest) {
-  const { supabase, user, supabaseResponse } = await updateSession(request);
-  const { pathname } = request.nextUrl;
+function getLocaleFromPath(pathname: string): Locale {
+  const segment = pathname.split("/")[1];
+  if (routing.locales.includes(segment as Locale)) {
+    return segment as Locale;
+  }
+  return routing.defaultLocale;
+}
 
-  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+function stripLocale(pathname: string): string {
+  const locale = getLocaleFromPath(pathname);
+  const without = pathname.replace(`/${locale}`, "") || "/";
+  return without.startsWith("/") ? without : `/${without}`;
+}
+
+function withLocale(path: string, locale: Locale): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `/${locale}${normalized === "/" ? "" : normalized}`;
+}
+
+export async function proxy(request: NextRequest) {
+  const intlResponse = intlMiddleware(request);
+
+  const location = intlResponse.headers.get("location");
+  if (location && intlResponse.status >= 300 && intlResponse.status < 400) {
+    return intlResponse;
+  }
+
+  const { supabase, user, response } = await updateSession(request, intlResponse);
+  const pathname = request.nextUrl.pathname;
+  const locale = getLocaleFromPath(pathname);
+  const pathWithoutLocale = stripLocale(pathname);
+
+  const isAuthRoute = AUTH_ROUTES.some((route) =>
+    pathWithoutLocale.startsWith(route)
+  );
   const isProtected =
-    pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/counselor") ||
-    pathname.startsWith("/admin");
+    pathWithoutLocale.startsWith("/dashboard") ||
+    pathWithoutLocale.startsWith("/counselor") ||
+    pathWithoutLocale.startsWith("/admin");
 
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("redirect", pathname);
+    url.pathname = withLocale("/login", locale);
+    url.searchParams.set("redirect", pathWithoutLocale);
     return NextResponse.redirect(url);
   }
 
@@ -34,7 +68,10 @@ export async function proxy(request: NextRequest) {
       .single();
 
     const url = request.nextUrl.clone();
-    url.pathname = getDashboardPathForRole(profile?.role as UserRole);
+    url.pathname = withLocale(
+      getDashboardPathForRole(profile?.role as UserRole),
+      locale
+    );
     return NextResponse.redirect(url);
   }
 
@@ -47,37 +84,46 @@ export async function proxy(request: NextRequest) {
 
     const role = profile?.role as UserRole | undefined;
 
-    if (pathname.startsWith("/admin") && (!role || !ADMIN_ROLES.includes(role))) {
+    if (
+      pathWithoutLocale.startsWith("/admin") &&
+      (!role || !ADMIN_ROLES.includes(role))
+    ) {
       const url = request.nextUrl.clone();
-      url.pathname = role === "counselor" ? "/counselor" : "/dashboard";
+      url.pathname = withLocale(
+        role === "counselor" ? "/counselor" : "/dashboard",
+        locale
+      );
       return NextResponse.redirect(url);
     }
 
     if (
-      pathname.startsWith("/counselor") &&
+      pathWithoutLocale.startsWith("/counselor") &&
       (!role || !COUNSELOR_ROLES.includes(role))
     ) {
       const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
+      url.pathname = withLocale("/dashboard", locale);
       return NextResponse.redirect(url);
     }
 
     if (
-      pathname.startsWith("/dashboard") &&
+      pathWithoutLocale.startsWith("/dashboard") &&
       role &&
       !DASHBOARD_ROLES.includes(role)
     ) {
       const url = request.nextUrl.clone();
-      url.pathname = role === "counselor" ? "/counselor" : "/admin";
+      url.pathname = withLocale(
+        role === "counselor" ? "/counselor" : "/admin",
+        locale
+      );
       return NextResponse.redirect(url);
     }
   }
 
-  return supabaseResponse;
+  return response;
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

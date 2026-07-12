@@ -2,6 +2,7 @@ import { DashboardShell } from "./DashboardShell";
 import type { NavItem } from "./DashboardShell";
 import { NavIcon } from "@/constants/nav-icons";
 import type { UserRole } from "@/types";
+import { getTranslations } from "next-intl/server";
 
 function withIcon(items: Omit<NavItem, "icon">[]): NavItem[] {
   return items.map((item) => ({
@@ -10,16 +11,20 @@ function withIcon(items: Omit<NavItem, "icon">[]): NavItem[] {
   }));
 }
 
-const studentNav = withIcon([
-  { href: "/dashboard", label: "Overview", section: "Main" },
-  { href: "/dashboard/profile", label: "Profile" },
-  { href: "/dashboard/applications", label: "Applications" },
-  { href: "/dashboard/documents", label: "Documents" },
-  { href: "/dashboard/consultations", label: "Consultations" },
-  { href: "/dashboard/notifications", label: "Notifications" },
-]);
+async function buildStudentNav(): Promise<NavItem[]> {
+  const t = await getTranslations("dashboard");
 
-export function StudentShell({
+  return withIcon([
+    { href: "/dashboard", label: t("overview"), section: "Main" },
+    { href: "/dashboard/profile", label: t("profile") },
+    { href: "/dashboard/applications", label: t("applications") },
+    { href: "/dashboard/documents", label: t("documents") },
+    { href: "/dashboard/consultations", label: t("consultations") },
+    { href: "/dashboard/notifications", label: t("notifications") },
+  ]);
+}
+
+export async function StudentShell({
   children,
   userName,
   userRole,
@@ -28,10 +33,13 @@ export function StudentShell({
   userName?: string;
   userRole?: UserRole;
 }) {
+  const t = await getTranslations("dashboard");
+  const navItems = await buildStudentNav();
+
   return (
     <DashboardShell
-      title="Student Dashboard"
-      navItems={studentNav}
+      title={t("studentTitle")}
+      navItems={navItems}
       userName={userName}
       userRole={userRole}
     >

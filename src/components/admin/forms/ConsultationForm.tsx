@@ -1,17 +1,14 @@
 "use client";
 
+import { App, Card, Input } from "antd";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
-import { selectClassName } from "@/components/admin/forms/select-class";
+import { AppSelect } from "@/components/common/AppSelect";
 import { FormField } from "@/components/forms/FormField";
 import { CONSULTATION_STATUSES } from "@/constants";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import type { Consultation, ConsultationStatus } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface LeadOption {
   id: string;
@@ -45,6 +42,7 @@ export function ConsultationForm({
   counselors = [],
   backHref = "/admin/consultations",
 }: ConsultationFormProps) {
+  const { message } = App.useApp();
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [loading, setLoading] = useState(false);
@@ -86,11 +84,11 @@ export function ConsultationForm({
       const data = await res.json();
       if (!res.ok) throw new Error(parseApiError(data, "Failed to save consultation"));
 
-      toast.success(isEdit ? "Consultation updated" : "Consultation scheduled");
+      message.success(isEdit ? "Consultation updated" : "Consultation scheduled");
       router.push(backHref);
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save");
+      message.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setLoading(false);
     }
@@ -105,66 +103,50 @@ export function ConsultationForm({
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <CardContent className="space-y-4 p-6">
+          <div className="space-y-4 p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Lead" htmlFor="lead_id">
-                <select
+                <AppSelect
                   id="lead_id"
                   value={leadId}
-                  onChange={(e) => setLeadId(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">None</option>
-                  {leads.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setLeadId}
+                  placeholder="None"
+                  size="middle"
+                  options={leads.map((l) => ({ value: l.id, label: l.name }))}
+                />
               </FormField>
               <FormField label="Student" htmlFor="student_id">
-                <select
+                <AppSelect
                   id="student_id"
                   value={studentId}
-                  onChange={(e) => setStudentId(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">None</option>
-                  {students.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setStudentId}
+                  placeholder="None"
+                  size="middle"
+                  options={students.map((s) => ({ value: s.id, label: s.label }))}
+                />
               </FormField>
               <FormField label="Counselor" htmlFor="counselor_id">
-                <select
+                <AppSelect
                   id="counselor_id"
                   value={counselorId}
-                  onChange={(e) => setCounselorId(e.target.value)}
-                  className={selectClassName}
-                >
-                  <option value="">Unassigned</option>
-                  {counselors.map((c) => (
-                    <option key={c.profile_id} value={c.profile_id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setCounselorId}
+                  placeholder="Unassigned"
+                  size="middle"
+                  options={counselors.map((c) => ({ value: c.profile_id, label: c.name }))}
+                />
               </FormField>
               <FormField label="Status" htmlFor="status">
-                <select
+                <AppSelect
                   id="status"
                   value={status}
-                  onChange={(e) => setStatus(e.target.value as ConsultationStatus)}
-                  className={selectClassName}
-                >
-                  {CONSULTATION_STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {s.replace(/_/g, " ")}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => setStatus(value as ConsultationStatus)}
+                  size="middle"
+                  allowClear={false}
+                  options={CONSULTATION_STATUSES.map((s) => ({
+                    value: s,
+                    label: s.replace(/_/g, " "),
+                  }))}
+                />
               </FormField>
               <FormField label="Requested date" htmlFor="requested_date">
                 <Input
@@ -193,14 +175,14 @@ export function ConsultationForm({
               />
             </FormField>
             <FormField label="Notes" htmlFor="notes">
-              <Textarea
+              <Input.TextArea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
               />
             </FormField>
-          </CardContent>
+          </div>
         </Card>
       </form>
     </AdminFormShell>
