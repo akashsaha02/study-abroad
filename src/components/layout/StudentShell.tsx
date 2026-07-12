@@ -28,10 +28,12 @@ export async function StudentShell({
   children,
   userName,
   userRole,
+  avatarUrl,
 }: {
   children: React.ReactNode;
   userName?: string;
   userRole?: UserRole;
+  avatarUrl?: string | null;
 }) {
   const t = await getTranslations("dashboard");
   const navItems = await buildStudentNav();
@@ -42,6 +44,7 @@ export async function StudentShell({
       navItems={navItems}
       userName={userName}
       userRole={userRole}
+      avatarUrl={avatarUrl}
     >
       {children}
     </DashboardShell>

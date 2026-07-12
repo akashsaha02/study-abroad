@@ -36,7 +36,10 @@
     "openMenu": "মেনু খুলুন",
     "language": "ভাষা",
     "bangla": "বাংলা",
-    "english": "English"
+    "english": "English",
+    "myDashboard": "আমার ড্যাশবোর্ড",
+    "myProfile": "আমার প্রোফাইল",
+    "signOut": "সাইন আউট"
   },
   "common": {
     "appName": "Abroadly",
@@ -120,7 +123,16 @@
     "settings": "সেটিংস",
     "welcome": "স্বাগতম, {name}",
     "quickActions": "দ্রুত কার্যক্রম",
-    "recentActivity": "সাম্প্রতিক কার্যকলাপ"
+    "recentActivity": "সাম্প্রতিক কার্যকলাপ",
+    "avatarTitle": "প্রোফাইল ছবি",
+    "avatarDesc": "আপনার অ্যাকাউন্ট ও নেভিগেশন বারে দেখানোর জন্য ছবি আপলোড করুন।",
+    "avatarUpload": "ছবি আপলোড",
+    "avatarRemove": "ছবি সরান",
+    "avatarUpdated": "প্রোফাইল ছবি আপডেট হয়েছে",
+    "avatarRemoved": "প্রোফাইল ছবি সরানো হয়েছে",
+    "avatarFailed": "প্রোফাইল ছবি আপডেট ব্যর্থ",
+    "avatarInvalidType": "JPEG, PNG, WebP বা GIF ছবি বেছে নিন",
+    "avatarTooLarge": "ছবি ২ MB বা তার কম হতে হবে"
   },
   "admin": {
     "crm": "সিআরএম",

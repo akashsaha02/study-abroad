@@ -11,6 +11,7 @@ export default async function StudentLayout({
     <StudentShell
       userName={user?.profile?.full_name ?? undefined}
       userRole={user?.profile?.role}
+      avatarUrl={user?.profile?.avatar_url}
     >
       {children}
     </StudentShell>

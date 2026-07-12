@@ -4,6 +4,7 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { RoleBadge } from "@/components/common/RoleBadge";
 import { Link, usePathname } from "@/i18n/navigation";
 import { signOut } from "@/lib/auth/actions";
+import { getInitials } from "@/lib/auth/nav-user";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
 import {
@@ -11,7 +12,7 @@ import {
   Menu01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button, Drawer } from "antd";
+import { Button, Drawer, Avatar } from "antd";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -28,6 +29,7 @@ interface DashboardShellProps {
   navItems: NavItem[];
   userName?: string;
   userRole?: UserRole;
+  avatarUrl?: string | null;
 }
 
 function withSectionFlags(items: NavItem[]) {
@@ -93,6 +95,7 @@ export function DashboardShell({
   navItems,
   userName,
   userRole,
+  avatarUrl,
 }: DashboardShellProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -155,6 +158,15 @@ export function DashboardShell({
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher />
+            {userName && (
+              <Avatar
+                size={32}
+                src={avatarUrl ?? undefined}
+                className="hidden border border-border bg-primary/10 text-xs font-semibold text-primary sm:inline-flex"
+              >
+                {getInitials(userName)}
+              </Avatar>
+            )}
             {userName && (
               <span className="hidden text-sm text-muted-foreground sm:inline">
                 {userName}

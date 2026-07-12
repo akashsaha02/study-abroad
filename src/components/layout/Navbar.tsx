@@ -3,6 +3,8 @@
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { ROUTES } from "@/constants";
 import { Link, usePathname } from "@/i18n/navigation";
+import { signOut } from "@/lib/auth/actions";
+import { getInitials, type NavbarUser } from "@/lib/auth/nav-user";
 import { cn } from "@/lib/utils";
 import {
   ArrowDown01Icon,
@@ -20,7 +22,8 @@ import {
   UserAccountIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
-import { Button, Drawer } from "antd";
+import { Avatar, Button, Drawer, Dropdown } from "antd";
+import type { MenuProps } from "antd";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "../common/Container";
@@ -121,7 +124,7 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-export function Navbar() {
+export function Navbar({ user }: { user?: NavbarUser | null }) {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
@@ -191,15 +194,19 @@ export function Navbar() {
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <div className="hidden items-center gap-2 lg:flex">
               <LanguageSwitcher />
-              <Link href={ROUTES.login}>
-                <Button type="text">{t("signIn")}</Button>
-              </Link>
+              {user ? (
+                <NavbarUserMenu user={user} />
+              ) : (
+                <Link href={ROUTES.login}>
+                  <Button type="text">{t("signIn")}</Button>
+                </Link>
+              )}
               <Link href={ROUTES.contact}>
                 <Button type="primary">{t("bookConsultation")}</Button>
               </Link>
             </div>
             <div className="lg:hidden">
-              <MobileNav open={open} setOpen={setOpen} pathname={pathname} />
+              <MobileNav open={open} setOpen={setOpen} pathname={pathname} user={user} />
             </div>
           </div>
         </div>
@@ -333,14 +340,72 @@ function NavDropdown({
   );
 }
 
+function NavbarUserMenu({ user }: { user: NavbarUser }) {
+  const t = useTranslations("nav");
+
+  const items: MenuProps["items"] = [
+    {
+      key: "dashboard",
+      label: (
+        <Link href={user.dashboardHref} className="block">
+          {t("myDashboard")}
+        </Link>
+      ),
+    },
+    ...(user.role === "student"
+      ? [
+          {
+            key: "profile",
+            label: (
+              <Link href={ROUTES.dashboardProfile} className="block">
+                {t("myProfile")}
+              </Link>
+            ),
+          },
+        ]
+      : []),
+    { type: "divider" as const },
+    {
+      key: "signout",
+      label: (
+        <form action={signOut}>
+          <button type="submit" className="w-full text-left">
+            {t("signOut")}
+          </button>
+        </form>
+      ),
+    },
+  ];
+
+  return (
+    <Dropdown menu={{ items }} trigger={["click"]} placement="bottomRight">
+      <button
+        type="button"
+        className="rounded-full ring-offset-background transition-shadow hover:ring-2 hover:ring-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label={user.name}
+      >
+        <Avatar
+          size={36}
+          src={user.avatarUrl ?? undefined}
+          className="border border-border bg-primary/10 font-semibold text-primary"
+        >
+          {getInitials(user.name)}
+        </Avatar>
+      </button>
+    </Dropdown>
+  );
+}
+
 function MobileNav({
   open,
   setOpen,
   pathname,
+  user,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
   pathname: string;
+  user?: NavbarUser | null;
 }) {
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
@@ -369,10 +434,50 @@ function MobileNav({
         classNames={{ body: "px-4" }}
         footer={
           <div className="flex flex-col gap-2">
-            <LanguageSwitcher className="w-full" />
-            <Link href={ROUTES.login} onClick={() => setOpen(false)} className="block">
-              <Button block>{t("signIn")}</Button>
-            </Link>
+            {user && (
+              <div className="mb-1 flex items-center gap-3 rounded-xl border bg-muted/30 px-3 py-2.5">
+                <Avatar
+                  size={40}
+                  src={user.avatarUrl ?? undefined}
+                  className="border border-border bg-primary/10 font-semibold text-primary"
+                >
+                  {getInitials(user.name)}
+                </Avatar>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{user.name}</p>
+                  <Link
+                    href={user.dashboardHref}
+                    onClick={() => setOpen(false)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    {t("myDashboard")}
+                  </Link>
+                </div>
+              </div>
+            )}
+            <LanguageSwitcher className="w-full justify-center" />
+            {user ? (
+              <>
+                {user.role === "student" && (
+                  <Link
+                    href={ROUTES.dashboardProfile}
+                    onClick={() => setOpen(false)}
+                    className="block"
+                  >
+                    <Button block>{t("myProfile")}</Button>
+                  </Link>
+                )}
+                <form action={signOut}>
+                  <Button block htmlType="submit">
+                    {t("signOut")}
+                  </Button>
+                </form>
+              </>
+            ) : (
+              <Link href={ROUTES.login} onClick={() => setOpen(false)} className="block">
+                <Button block>{t("signIn")}</Button>
+              </Link>
+            )}
             <Link href={ROUTES.contact} onClick={() => setOpen(false)} className="block">
               <Button type="primary" block>
                 {t("bookConsultation")}

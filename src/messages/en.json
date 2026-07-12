@@ -36,7 +36,10 @@
     "openMenu": "Open menu",
     "language": "Language",
     "bangla": "বাংলা",
-    "english": "English"
+    "english": "English",
+    "myDashboard": "My dashboard",
+    "myProfile": "My profile",
+    "signOut": "Sign out"
   },
   "common": {
     "appName": "Abroadly",
@@ -120,7 +123,16 @@
     "settings": "Settings",
     "welcome": "Welcome back, {name}",
     "quickActions": "Quick Actions",
-    "recentActivity": "Recent Activity"
+    "recentActivity": "Recent Activity",
+    "avatarTitle": "Profile photo",
+    "avatarDesc": "Upload a photo so it appears on your account and in the navigation bar.",
+    "avatarUpload": "Upload photo",
+    "avatarRemove": "Remove photo",
+    "avatarUpdated": "Profile photo updated",
+    "avatarRemoved": "Profile photo removed",
+    "avatarFailed": "Failed to update profile photo",
+    "avatarInvalidType": "Please choose a JPEG, PNG, WebP, or GIF image",
+    "avatarTooLarge": "Image must be 2 MB or smaller"
   },
   "admin": {
     "crm": "CRM",
