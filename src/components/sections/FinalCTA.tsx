@@ -33,7 +33,7 @@ export async function FinalCTA() {
               {t("description")}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href={ROUTES.contact}>
+              <Link href={ROUTES.bookConsultation}>
                 <Button
                   size="large"
                   className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"

@@ -108,7 +108,9 @@
     "eligibility_checker": "Eligibility Checker",
     "cost_calculator": "Cost Calculator",
     "whatsapp": "WhatsApp",
-    "manual_admin_entry": "Manual Entry"
+    "manual_admin_entry": "Manual Entry",
+    "service_order": "Service Order",
+    "consultation_request": "Consultation Request"
   },
   "dashboard": {
     "studentTitle": "Student Dashboard",
@@ -139,6 +141,20 @@
     "personalInfo": "Personal information",
     "fullName": "Full name",
     "phone": "Phone",
+    "phoneLabel": "Phone",
+    "nationality": "Nationality",
+    "nationalityPlaceholder": "Select nationality",
+    "dateOfBirth": "Date of birth",
+    "highestEducation": "Highest education",
+    "institution": "Institution",
+    "cgpa": "CGPA",
+    "englishTest": "English test",
+    "englishTestPlaceholder": "Select test type",
+    "englishScore": "English score",
+    "preferredCountries": "Preferred countries",
+    "preferredCountryPlaceholder": "Select countries",
+    "preferredSubject": "Preferred subject",
+    "address": "Address",
     "emailLabel": "Email",
     "roleLabel": "Role",
     "saveProfile": "Save profile",
@@ -457,12 +473,33 @@
     "contact": {
       "eyebrow": "Get in touch",
       "title": "Contact us",
-      "description": "Book a free consultation or send a message. We typically respond within 24 hours.",
+      "description": "Send us a message for general inquiries. We typically respond within 24 hours.",
       "formTitle": "Send a message",
       "office": "Office",
       "officeValue": "Dhaka, Bangladesh",
       "phone": "Phone / WhatsApp",
       "email": "Email"
+    },
+    "consultation": {
+      "eyebrow": "Free session",
+      "title": "Book a consultation",
+      "description": "Schedule a free one-on-one session with our counselors to plan your study abroad journey.",
+      "formTitle": "Request consultation",
+      "office": "Office",
+      "officeValue": "Dhaka, Bangladesh",
+      "phoneInfo": "Phone / WhatsApp",
+      "emailInfo": "Email",
+      "name": "Full Name",
+      "phone": "Phone",
+      "email": "Email",
+      "country": "Preferred Country",
+      "countryPlaceholder": "Select country",
+      "preferredDate": "Preferred date",
+      "notes": "Notes",
+      "submit": "Book consultation",
+      "success": "Consultation requested! We'll confirm your slot soon.",
+      "error": "Failed to submit request",
+      "contextLabel": "Regarding"
     },
     "contactForm": {
       "name": "Full Name",
@@ -473,12 +510,21 @@
       "message": "Message",
       "submit": "Send Message",
       "success": "Message sent! We'll contact you soon.",
-      "error": "Failed to send message"
+      "error": "Failed to send message",
+      "contextLabel": "Regarding"
     },
     "services": {
       "eyebrow": "What we do",
       "title": "Our services",
       "description": "End-to-end support for your international education journey."
+    },
+    "serviceOrder": {
+      "orderNow": "Order now",
+      "name": "Full name",
+      "phone": "Phone",
+      "email": "Email",
+      "success": "Order submitted! Our team will contact you shortly.",
+      "error": "Failed to submit order"
     },
     "compare": {
       "eyebrow": "Decision tool",
@@ -585,6 +631,8 @@
     "newsletterDesc": "Scholarship alerts, deadlines, and country guides — no spam.",
     "emailPlaceholder": "you@email.com",
     "subscribe": "Subscribe",
+    "newsletterSuccess": "You're subscribed! Check your inbox for updates.",
+    "newsletterError": "Could not subscribe. Please try again.",
     "tagline": "Expert study abroad guidance from university selection to visa approval.",
     "explore": "Explore",
     "prepare": "Prepare",

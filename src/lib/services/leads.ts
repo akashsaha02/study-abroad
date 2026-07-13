@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { applyFkPayload, detectFkColumns } from "@/lib/countries/fk-guard";
 import { getCountryNameById, resolveCountryId } from "@/lib/countries/resolve";
 import type { Lead, LeadSource } from "@/types";
 
@@ -15,10 +16,14 @@ export interface CreateLeadInput {
   budget?: number;
   message?: string;
   source?: LeadSource;
+  university_id?: string;
+  course_id?: string;
+  service_slug?: string;
 }
 
 export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
   const supabase = await createClient();
+  const fks = await detectFkColumns(supabase);
   const id = crypto.randomUUID();
   const source = input.source ?? "website";
   const now = new Date().toISOString();
@@ -32,7 +37,7 @@ export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
     input.preferred_country ??
     null;
 
-  const { error } = await supabase.from("leads").insert({
+  let payload = {
     id,
     name: input.name,
     email: input.email,
@@ -46,7 +51,19 @@ export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
     budget: input.budget,
     message: input.message,
     source,
-  });
+    university_id: input.university_id ?? null,
+    course_id: input.course_id ?? null,
+    service_slug: input.service_slug ?? null,
+  };
+
+  payload = applyFkPayload(fks, payload, [
+    ["leads", "preferred_country_id"],
+    ["leads", "university_id"],
+    ["leads", "course_id"],
+    ["leads", "service_slug"],
+  ]);
+
+  const { error } = await supabase.from("leads").insert(payload);
 
   if (error) {
     console.error("Failed to create lead:", error);
@@ -70,6 +87,9 @@ export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
     status: "new",
     assigned_counselor_id: null,
     converted_student_id: null,
+    university_id: input.university_id ?? null,
+    course_id: input.course_id ?? null,
+    service_slug: input.service_slug ?? null,
     created_at: now,
     updated_at: now,
   };
@@ -78,8 +98,7 @@ export async function createLead(input: CreateLeadInput): Promise<Lead | null> {
 export async function getLeads(filters?: {
   status?: string;
   source?: string;
-  country?: string;
-  countryId?: string;
+  assignedCounselorId?: string;
 }) {
   const supabase = await createClient();
   let query = supabase
@@ -89,18 +108,18 @@ export async function getLeads(filters?: {
 
   if (filters?.status) query = query.eq("status", filters.status);
   if (filters?.source) query = query.eq("source", filters.source);
-  if (filters?.countryId) query = query.eq("preferred_country_id", filters.countryId);
-  else if (filters?.country) query = query.eq("preferred_country", filters.country);
+  if (filters?.assignedCounselorId) {
+    query = query.eq("assigned_counselor_id", filters.assignedCounselorId);
+  }
 
-  const { data, error } = await query;
-  if (error) return [];
-  return data as Lead[];
+  const { data } = await query;
+  return data ?? [];
 }
 
 export async function getLeadById(id: string) {
   const supabase = await createClient();
   const { data } = await supabase.from("leads").select("*").eq("id", id).single();
-  return data as Lead | null;
+  return data;
 }
 
 export async function updateLeadStatus(id: string, status: string) {
@@ -112,11 +131,14 @@ export async function updateLeadStatus(id: string, status: string) {
   return !error;
 }
 
-export async function assignCounselor(leadId: string, counselorId: string) {
+export async function assignLead(id: string, counselorId: string) {
   const supabase = await createClient();
   const { error } = await supabase
     .from("leads")
-    .update({ assigned_counselor_id: counselorId })
-    .eq("id", leadId);
+    .update({
+      assigned_counselor_id: counselorId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
   return !error;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { App, Card, Input } from "antd";
+import { AppDatePicker } from "@/components/common/AppDatePicker";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { SlugField } from "@/components/admin/SlugField";
 import { parseApiError } from "@/components/admin/forms/api-error";
@@ -167,11 +168,11 @@ export function ScholarshipForm({
                 />
               </FormField>
               <FormField label="Deadline" htmlFor="deadline">
-                <Input
+                <AppDatePicker
                   id="deadline"
-                  type="date"
                   value={deadline ?? ""}
-                  onChange={(e) => setDeadline(e.target.value)}
+                  onChange={setDeadline}
+                  size="middle"
                 />
               </FormField>
               <FormField label="Application link" htmlFor="application_link">

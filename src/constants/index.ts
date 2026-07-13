@@ -13,6 +13,7 @@ export const ROUTES = {
   home: "/",
   about: "/about",
   contact: "/contact",
+  bookConsultation: "/book-consultation",
   login: "/login",
   register: "/register",
   forgotPassword: "/forgot-password",
@@ -64,7 +65,17 @@ export const LEAD_SOURCES: LeadSource[] = [
   "cost_calculator",
   "whatsapp",
   "manual_admin_entry",
+  "service_order",
+  "consultation_request",
 ];
+
+export const ENGLISH_TEST_TYPES = [
+  "IELTS",
+  "PTE",
+  "TOEFL",
+  "Duolingo",
+  "None",
+] as const;
 
 export const CONSULTATION_STATUSES = [
   "requested",

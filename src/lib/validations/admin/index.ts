@@ -203,6 +203,18 @@ export const applicationStepUpdateSchema = z.object({
   completed_at: z.string().optional().nullable(),
 });
 
+export const serviceSchema = z.object({
+  slug,
+  title: z.string().min(1),
+  description: z.string().optional().nullable(),
+  price: z.coerce.number().min(0),
+  discount_percent: z.coerce.number().min(0).max(100).optional(),
+  sort_order: z.coerce.number().optional(),
+  is_published: z.boolean().optional(),
+});
+
+export type ServiceInput = z.infer<typeof serviceSchema>;
+
 export type BlogPostInput = z.infer<typeof blogPostSchema>;
 export type FaqInput = z.infer<typeof faqSchema>;
 export type TestimonialInput = z.infer<typeof testimonialSchema>;

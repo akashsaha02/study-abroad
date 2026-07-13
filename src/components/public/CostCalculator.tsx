@@ -5,6 +5,7 @@ import { Button, InputNumber } from "antd";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PanelCard } from "@/components/common/PanelCard";
 import { POPULAR_COUNTRIES, ROUTES } from "@/constants";
+import { buildLeadContextUrl } from "@/lib/leads/urls";
 import type { CostBreakdown } from "@/lib/cost/build-cost-map";
 import { Calculator01Icon } from "@hugeicons/core-free-icons";
 import { Link } from "@/i18n/navigation";
@@ -122,7 +123,7 @@ export function CostCalculator({ costsByCountry }: CostCalculatorProps) {
               bold
             />
           </div>
-          <Link href={ROUTES.contact}>
+          <Link href={buildLeadContextUrl(ROUTES.bookConsultation, { country })}>
             <Button className="mt-6 w-full" size="large" type="primary">
               {t("talkCounselor")}
             </Button>

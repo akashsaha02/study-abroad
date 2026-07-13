@@ -49,7 +49,7 @@ export async function HeroSection() {
                 />
               </Button>
             </Link>
-            <Link href={ROUTES.contact}>
+            <Link href={ROUTES.bookConsultation}>
               <Button size="large">{t("ctaConsultation")}</Button>
             </Link>
           </div>

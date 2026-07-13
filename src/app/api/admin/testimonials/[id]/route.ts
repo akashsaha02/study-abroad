@@ -1,4 +1,5 @@
 import { requireApiRole } from "@/lib/auth/api-auth";
+import { applyFkPayload, detectFkColumns } from "@/lib/countries/fk-guard";
 import { enrichTestimonialPayload } from "@/lib/countries/enrich-payload";
 import { createClient } from "@/lib/supabase/server";
 import { testimonialSchema } from "@/lib/validations/admin";
@@ -23,7 +24,12 @@ export async function PATCH(
 
   const { id } = await params;
   const supabase = await createClient();
-  const payload = await enrichTestimonialPayload(supabase, parsed.data);
+  const fks = await detectFkColumns(supabase);
+  let payload = await enrichTestimonialPayload(supabase, parsed.data);
+  payload = applyFkPayload(fks, payload, [
+    ["testimonials", "country_id"],
+    ["testimonials", "university_id"],
+  ]);
   const { data, error } = await supabase
     .from("testimonials")
     .update(payload)

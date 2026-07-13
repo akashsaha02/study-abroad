@@ -4,6 +4,7 @@ import { PageLayout } from "@/components/common/PageLayout";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
+import { buildLeadContextUrl } from "@/lib/leads/urls";
 import { getCourseBySlug } from "@/lib/services/content";
 import {
   ArrowRight01Icon,
@@ -50,6 +51,12 @@ export default async function CourseDetailPage({ params }: Props) {
     { label: "Duration", value: course.duration, icon: Clock01Icon },
     { label: "Language", value: course.language_requirement, icon: Globe02Icon },
   ].filter((d) => d.value);
+
+  const contactHref = buildLeadContextUrl(ROUTES.contact, {
+    course: course.slug,
+    university: university?.slug,
+    country: university?.countries?.slug,
+  });
 
   return (
     <PageLayout>
@@ -124,7 +131,7 @@ export default async function CourseDetailPage({ params }: Props) {
           <Button  className="mt-6 w-full">View university</Button>
         </Link>
             )}
-            <Link href={ROUTES.contact}>
+            <Link href={contactHref}>
           <Button className="mt-2 w-full">
                 Apply with Abroadly
                 <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" data-icon="inline-end" />

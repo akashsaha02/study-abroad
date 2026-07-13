@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PanelCard } from "@/components/common/PanelCard";
 import { getUser } from "@/lib/auth/get-user";
 import { getStudentByProfileId } from "@/lib/services/students";
+import { getPublishedCountries } from "@/lib/services/content";
 import type { UserRole } from "@/types";
 import { getTranslations } from "next-intl/server";
 
@@ -15,8 +16,15 @@ interface AccountProfileContentProps {
 export async function AccountProfileContent({ role }: AccountProfileContentProps) {
   const t = await getTranslations("dashboard");
   const user = await getUser();
-  const student =
-    role === "student" && user ? await getStudentByProfileId(user.id) : null;
+  const [student, countries] = await Promise.all([
+    role === "student" && user ? getStudentByProfileId(user.id) : Promise.resolve(null),
+    getPublishedCountries(),
+  ]);
+  const countryOptions = countries.map((c) => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+  }));
   const displayName = user?.profile?.full_name ?? user?.email ?? "User";
   const isStudent = role === "student";
 
@@ -36,7 +44,11 @@ export async function AccountProfileContent({ role }: AccountProfileContentProps
       )}
 
       {isStudent ? (
-        <StudentProfileForm profile={user?.profile ?? null} student={student} />
+        <StudentProfileForm
+          profile={user?.profile ?? null}
+          student={student}
+          countries={countryOptions}
+        />
       ) : (
         <BasicProfileForm profile={user?.profile ?? null} />
       )}

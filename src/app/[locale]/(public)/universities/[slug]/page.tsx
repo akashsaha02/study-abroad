@@ -5,6 +5,7 @@ import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { CourseCard } from "@/components/public/CourseCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
+import { buildLeadContextUrl } from "@/lib/leads/urls";
 import { FALLBACK_UNIVERSITIES } from "@/data/fallback";
 import { Link } from "@/i18n/navigation";
 import { getUniversityImage } from "@/lib/images/public-assets";
@@ -58,6 +59,12 @@ export default async function UniversityDetailPage({ params }: Props) {
   const heroImage = getUniversityImage({
     slug: university.slug,
     logo_url: university.logo_url,
+  });
+
+  const countrySlug = (university as { countries?: { slug?: string } }).countries?.slug;
+  const contactHref = buildLeadContextUrl(ROUTES.contact, {
+    university: university.slug,
+    country: countrySlug,
   });
 
   return (
@@ -137,7 +144,7 @@ export default async function UniversityDetailPage({ params }: Props) {
                 </div>
               </div>
             )}
-            <Link href={ROUTES.contact}>
+            <Link href={contactHref}>
           <Button className="mt-6 w-full">
                 Apply with Abroadly
                 <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" data-icon="inline-end" />

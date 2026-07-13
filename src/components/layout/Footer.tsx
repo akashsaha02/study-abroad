@@ -1,21 +1,19 @@
 import { APP_NAME, POPULAR_COUNTRIES, ROUTES } from "@/constants";
 import { Link } from "@/i18n/navigation";
 import {
-  ArrowRight01Icon,
   GraduationScrollIcon,
   Location01Icon,
   Mail01Icon,
   SmartPhone01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button } from "antd";
 import { getTranslations } from "next-intl/server";
 import { Container } from "../common/Container";
+import { NewsletterForm } from "./NewsletterForm";
 
 export async function Footer() {
   const t = await getTranslations("footer");
   const tNav = await getTranslations("nav");
-  const tAuth = await getTranslations("auth");
 
   const exploreLinks = [
     { href: ROUTES.universities, label: tNav("universities") },
@@ -40,26 +38,7 @@ export async function Footer() {
             <h3 className="text-xl font-bold tracking-tight">{t("newsletterTitle")}</h3>
             <p className="mt-2 text-sm text-muted-foreground">{t("newsletterDesc")}</p>
           </div>
-          <form className="flex w-full max-w-md gap-2">
-            <label htmlFor="newsletter-email" className="sr-only">
-              {tAuth("email")}
-            </label>
-            <input
-              id="newsletter-email"
-              type="email"
-              required
-              placeholder={t("emailPlaceholder")}
-              className="h-10 flex-1 rounded-4xl border border-input bg-background px-4 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            />
-            <Button type="primary" htmlType="submit" className="shrink-0">
-              {t("subscribe")}
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
-                className="size-4"
-                data-icon="inline-end"
-              />
-            </Button>
-          </form>
+          <NewsletterForm />
         </div>
       </Container>
 

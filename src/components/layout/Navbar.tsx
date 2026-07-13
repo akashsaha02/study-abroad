@@ -203,7 +203,7 @@ export function Navbar({ user }: { user?: NavbarUser | null }) {
                   <Button type="text">{t("signIn")}</Button>
                 </Link>
               )}
-              <Link href={ROUTES.contact}>
+              <Link href={ROUTES.bookConsultation}>
                 <Button type="primary">{t("bookConsultation")}</Button>
               </Link>
             </div>
@@ -474,7 +474,7 @@ function MobileNav({
                 <Button block>{t("signIn")}</Button>
               </Link>
             )}
-            <Link href={ROUTES.contact} onClick={() => setOpen(false)} className="block">
+            <Link href={ROUTES.bookConsultation} onClick={() => setOpen(false)} className="block">
               <Button type="primary" block>
                 {t("bookConsultation")}
               </Button>

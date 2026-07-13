@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { SERVICES } from "@/constants";
+import type { Service } from "@/types";
 
 export async function getPublishedCountries() {
   const supabase = await createClient();
@@ -129,6 +131,71 @@ export async function getEligibilityRules() {
     .eq("is_active", true)
     .order("country");
   return data ?? [];
+}
+
+export async function getPublishedTestimonials() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("testimonials")
+    .select("*")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(6);
+  return data ?? [];
+}
+
+export async function getPublishedServices(): Promise<Service[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("is_published", true)
+    .order("sort_order");
+
+  if (!error && data && data.length > 0) {
+    return data as Service[];
+  }
+
+  return SERVICES.map((service, index) => ({
+    id: service.slug,
+    slug: service.slug,
+    title: service.title,
+    description: service.description,
+    price: 0,
+    discount_percent: 0,
+    sort_order: index,
+    is_published: true,
+    created_at: new Date(0).toISOString(),
+    updated_at: new Date(0).toISOString(),
+  }));
+}
+
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("services")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (data) return data as Service;
+
+  const fallback = SERVICES.find((s) => s.slug === slug);
+  if (!fallback) return null;
+
+  return {
+    id: fallback.slug,
+    slug: fallback.slug,
+    title: fallback.title,
+    description: fallback.description,
+    price: 0,
+    discount_percent: 0,
+    sort_order: 0,
+    is_published: true,
+    created_at: new Date(0).toISOString(),
+    updated_at: new Date(0).toISOString(),
+  };
 }
 
 export async function getAdminStats() {

@@ -1,6 +1,7 @@
 "use client";
 
 import { App, Card, Input } from "antd";
+import { AppDatePicker } from "@/components/common/AppDatePicker";
 import { AdminFormShell } from "@/components/admin/AdminFormShell";
 import { parseApiError } from "@/components/admin/forms/api-error";
 import { AppSelect } from "@/components/common/AppSelect";
@@ -161,19 +162,20 @@ export function ConsultationForm({
                 />
               </FormField>
               <FormField label="Requested date" htmlFor="requested_date">
-                <Input
+                <AppDatePicker
                   id="requested_date"
-                  type="date"
                   value={requestedDate}
-                  onChange={(e) => setRequestedDate(e.target.value)}
+                  onChange={setRequestedDate}
+                  size="middle"
                 />
               </FormField>
               <FormField label="Scheduled at" htmlFor="scheduled_at">
-                <Input
+                <AppDatePicker
                   id="scheduled_at"
-                  type="datetime-local"
                   value={scheduledAt}
-                  onChange={(e) => setScheduledAt(e.target.value)}
+                  onChange={setScheduledAt}
+                  showTime
+                  size="middle"
                 />
               </FormField>
             </div>

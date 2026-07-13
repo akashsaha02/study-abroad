@@ -40,7 +40,9 @@ export type LeadSource =
   | "eligibility_checker"
   | "cost_calculator"
   | "whatsapp"
-  | "manual_admin_entry";
+  | "manual_admin_entry"
+  | "service_order"
+  | "consultation_request";
 
 export interface Profile {
   id: string;
@@ -71,6 +73,9 @@ export interface Lead {
   status: LeadStatus;
   assigned_counselor_id: string | null;
   converted_student_id: string | null;
+  university_id: string | null;
+  course_id: string | null;
+  service_slug: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -93,6 +98,7 @@ export interface Student {
   preferred_subject: string | null;
   budget: number | null;
   assigned_counselor_id: string | null;
+  preferred_country_ids?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -332,6 +338,43 @@ export interface CostSetting {
   application_fee: number | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface Service {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  price: number;
+  discount_percent: number;
+  sort_order: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ServiceOrderStatus = "pending" | "confirmed" | "cancelled";
+
+export interface ServiceOrder {
+  id: string;
+  service_id: string;
+  lead_id: string | null;
+  student_id: string | null;
+  quantity: number;
+  unit_price: number;
+  discount_applied: number;
+  status: ServiceOrderStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  is_active: boolean;
+  subscribed_at: string;
+  unsubscribed_at: string | null;
 }
 
 export interface AuthUser {

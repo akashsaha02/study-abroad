@@ -14,6 +14,7 @@ import {
   FALLBACK_UNIVERSITIES,
 } from "@/data/fallback";
 import { getLocalizedFallbackFaqs } from "@/lib/fallback-i18n";
+import { getPublishedTestimonials } from "@/lib/services/content";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 
@@ -29,7 +30,7 @@ export async function generateMetadata() {
 async function getHomeData() {
   const supabase = await createClient();
 
-  const [countriesRes, faqsRes, testimonialsRes, universitiesRes] = await Promise.all([
+  const [countriesRes, faqsRes, testimonials, universitiesRes] = await Promise.all([
     supabase.from("countries").select("*").eq("is_published", true).limit(6),
     supabase
       .from("faqs")
@@ -37,12 +38,7 @@ async function getHomeData() {
       .eq("is_published", true)
       .order("sort_order")
       .limit(4),
-    supabase
-      .from("testimonials")
-      .select("*, universities(name), countries(name)")
-      .eq("is_published", true)
-      .order("created_at", { ascending: false })
-      .limit(8),
+    getPublishedTestimonials(),
     supabase
       .from("universities")
       .select("*")
@@ -53,15 +49,13 @@ async function getHomeData() {
 
   const usingFallbackCountries = !countriesRes.data?.length;
   const usingFallbackFaqs = !faqsRes.data?.length;
-  const usingFallbackTestimonials = !testimonialsRes.data?.length;
+  const usingFallbackTestimonials = !testimonials.length;
   const usingFallbackUniversities = !universitiesRes.data?.length;
 
   return {
     countries: countriesRes.data?.length ? countriesRes.data : FALLBACK_COUNTRIES,
     faqs: faqsRes.data?.length ? faqsRes.data : FALLBACK_FAQS,
-    testimonials: testimonialsRes.data?.length
-      ? testimonialsRes.data
-      : FALLBACK_TESTIMONIALS,
+    testimonials: testimonials.length ? testimonials : FALLBACK_TESTIMONIALS,
     universities: universitiesRes.data?.length
       ? universitiesRes.data
       : FALLBACK_UNIVERSITIES,

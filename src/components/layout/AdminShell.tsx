@@ -23,6 +23,7 @@ async function buildAdminNav(userRole?: UserRole): Promise<NavItem[]> {
     { href: "/admin/applications", label: t("applications") },
     { href: "/admin/documents", label: t("documents") },
     { href: "/admin/consultations", label: t("consultations") },
+    { href: "/admin/service-orders", label: "Service orders" },
     { href: "/admin/counselors", label: t("counselors") },
     { href: "/admin/countries", label: t("countries"), section: t("content") },
     { href: "/admin/universities", label: t("universities") },
@@ -30,6 +31,7 @@ async function buildAdminNav(userRole?: UserRole): Promise<NavItem[]> {
     { href: "/admin/scholarships", label: t("scholarships") },
     { href: "/admin/blog", label: t("blog") },
     { href: "/admin/faqs", label: t("faqs") },
+    { href: "/admin/services", label: "Services" },
     { href: "/admin/testimonials", label: t("testimonials") },
     { href: "/admin/settings", label: tDash("settings"), section: t("system") },
   ];

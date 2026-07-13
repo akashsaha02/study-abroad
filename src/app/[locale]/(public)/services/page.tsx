@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
 import { ServiceCard } from "@/components/public/ServiceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { SERVICES } from "@/constants";
+import { getPublishedServices } from "@/lib/services/content";
 import { getLocalizedService } from "@/lib/fallback-i18n";
 import { Briefcase01Icon } from "@hugeicons/core-free-icons";
 import { getTranslations } from "next-intl/server";
@@ -19,6 +19,7 @@ export async function generateMetadata() {
 export default async function ServicesPage() {
   const t = await getTranslations("public.services");
   const tServices = await getTranslations("fallback.services");
+  const services = await getPublishedServices();
 
   return (
     <PageLayout>
@@ -29,16 +30,18 @@ export default async function ServicesPage() {
         description={t("description")}
       />
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {SERVICES.map((service) => {
+        {services.map((service) => {
           const localized = getLocalizedService(service.slug, (key) =>
-            tServices(key as `${typeof service.slug}.title` | `${typeof service.slug}.description`)
+            tServices(key as "admission-processing.title")
           );
           return (
             <ServiceCard
               key={service.slug}
               slug={service.slug}
-              title={localized.title}
-              description={localized.description}
+              title={localized.title || service.title}
+              description={localized.description || service.description || ""}
+              price={service.price}
+              discountPercent={service.discount_percent}
             />
           );
         })}

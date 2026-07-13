@@ -8,6 +8,7 @@ import { CourseForm } from "@/components/admin/forms/CourseForm";
 import { FaqForm } from "@/components/admin/forms/FaqForm";
 import { ScholarshipForm } from "@/components/admin/forms/ScholarshipForm";
 import { TestimonialForm } from "@/components/admin/forms/TestimonialForm";
+import { ServiceForm } from "@/components/admin/forms/ServiceForm";
 import { UniversityForm } from "@/components/admin/forms/UniversityForm";
 import type {
   BlogPost,
@@ -16,6 +17,7 @@ import type {
   Course,
   Faq,
   Scholarship,
+  Service,
   Testimonial,
   University,
 } from "@/types";
@@ -120,6 +122,15 @@ export function TestimonialsAdminPanel(
       renderForm={(formProps) => (
         <TestimonialForm {...formProps} countries={countries} universities={universities} />
       )}
+    />
+  );
+}
+
+export function ServicesAdminPanel(props: ListPanelProps<Service>) {
+  return (
+    <AdminListPanel
+      {...props}
+      renderForm={(formProps) => <ServiceForm {...formProps} />}
     />
   );
 }

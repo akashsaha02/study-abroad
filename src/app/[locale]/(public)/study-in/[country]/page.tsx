@@ -5,6 +5,7 @@ import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { UniversityCard } from "@/components/public/UniversityCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { POPULAR_COUNTRIES, ROUTES } from "@/constants";
+import { buildLeadContextUrl } from "@/lib/leads/urls";
 import { FALLBACK_COUNTRIES } from "@/data/fallback";
 import { Link } from "@/i18n/navigation";
 import { getCountryImage } from "@/lib/images/public-assets";
@@ -54,6 +55,9 @@ export default async function CountryPage({ params }: Props) {
   ].filter((s) => s.content);
 
   const flag = FLAG_BY_SLUG[slug];
+  const consultationHref = buildLeadContextUrl(ROUTES.bookConsultation, {
+    country: slug,
+  });
 
   return (
     <PageLayout>
@@ -147,7 +151,7 @@ export default async function CountryPage({ params }: Props) {
                 </div>
               </div>
             )}
-            <Link href={ROUTES.contact}>
+            <Link href={consultationHref}>
               <Button className="w-full">Book Free Consultation</Button>
             </Link>
           </SurfaceCard>

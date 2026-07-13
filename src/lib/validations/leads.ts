@@ -7,6 +7,9 @@ export const contactSchema = z.object({
   preferred_country: z.string().optional(),
   preferred_country_id: z.string().uuid().optional(),
   message: z.string().optional(),
+  university_id: z.string().uuid().optional(),
+  course_id: z.string().uuid().optional(),
+  service_slug: z.string().optional(),
 });
 
 export const eligibilitySchema = z.object({
