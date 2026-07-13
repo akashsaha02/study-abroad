@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
+import { existsSync, rmSync } from "node:fs";
+import { join } from "node:path";
+
+const nextDir = join(process.cwd(), ".next");
+if (existsSync(nextDir)) {
+  console.log("Cleaning .next cache before build...");
+  rmSync(nextDir, { recursive: true, force: true });
+}
 
 const ciEnv = {
   ...process.env,
