@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Abroadly — Study Abroad Agency Platform
 
-## Getting Started
+Monorepo with separate **frontend** (Next.js UI) and **backend** (REST API).
 
-First, run the development server:
+## Structure
+
+```
+study-abroad-agency/
+├── frontend/     # Next.js UI (port 3000)
+├── backend/      # Express REST API (port 3001)
+├── supabase/     # Database migrations & config
+└── scripts/      # Seed & migration scripts
+```
+
+## Getting started
+
+1. Copy environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+2. Copy and sync environment variables:
+
+```bash
+cp .env.example .env.local
+npm run sync:env
+```
+
+3. Run both apps:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:3001/api
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The frontend proxies `/api/*` requests to the backend via `BACKEND_URL`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Command | Description |
+|---------|-------------|
+| `npm run sync:env` | Copy root `.env.local` to frontend & backend |
+| `npm run dev` | Start frontend + backend |
+| `npm run dev:frontend` | UI only |
+| `npm run dev:backend` | API only |
+| `npm run build` | Build both packages |
+| `npm run lint` | Lint both packages |
+| `npm run seed:all` | Seed demo content & test users |
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Deploy **frontend** and **backend** as separate services. Set:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Frontend: `BACKEND_URL=https://api.yourdomain.com`
+- Backend: `FRONTEND_URL=https://yourdomain.com` (for CORS)
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js · Express · TypeScript · Tailwind CSS v4 · Ant Design · Supabase · Resend

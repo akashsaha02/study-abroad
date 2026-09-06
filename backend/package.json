@@ -1,0 +1,31 @@
+{
+  "name": "@abroadly/backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "node scripts/generate-routes.mjs",
+    "dev": "tsx watch --env-file=.env.local src/server.ts",
+    "build": "tsc --noEmit",
+    "start": "tsx --env-file=.env.local src/server.ts",
+    "lint": "eslint src",
+    "generate:routes": "node scripts/generate-routes.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "resend": "^6.16.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^20",
+    "eslint": "^9",
+    "tsx": "^4.19.2",
+    "typescript": "^5",
+    "typescript-eslint": "^8.46.0"
+  }
+}

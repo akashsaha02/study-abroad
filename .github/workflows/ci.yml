@@ -19,6 +19,8 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
       SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-key
+      BACKEND_URL: http://localhost:3001
+      FRONTEND_URL: http://localhost:3000
 
     steps:
       - name: Checkout
@@ -33,8 +35,5 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Build
-        run: npm run build
+      - name: CI check
+        run: npm run check:ci
