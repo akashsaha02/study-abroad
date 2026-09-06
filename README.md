@@ -55,26 +55,28 @@ The frontend proxies `/api/*` requests to the backend via `BACKEND_URL`.
 
 ### Frontend (Vercel)
 
-The last failed build looked for a `public/` folder because the Framework Preset was **Other**. Next.js lives in `frontend/`, so the Vercel project must point there.
+Keep **Root Directory empty** (the Git repository root). Do not set it to `frontend` — Vercel looks for `.next` at the repo root, and `vercel.json` already builds the frontend workspace there.
 
 **Project → Settings → General → Build & Development Settings**
 
+Turn **Override** off for Build / Install / Output so `vercel.json` is used. Then:
+
 | Setting | Value |
 |---|---|
-| Root Directory | `frontend` |
+| Root Directory | *empty* (not `frontend`) |
 | Framework Preset | Next.js |
-| Build Command | `next build` (or leave default) |
-| Install Command | `cd .. && npm install` |
-| Output Directory | leave **empty** (do not set `public`) |
+| Build Command | `npm exec -w @abroadly/frontend -- next build --webpack` |
+| Install Command | `npm install` |
+| Output Directory | *empty* (not `public`, not `.next`) |
 
-Then **Settings → Environment Variables** (Production + Preview):
+**Settings → Environment Variables** (Production + Preview):
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_APP_URL` — `https://your-app.vercel.app` (no trailing slash)
 - `BACKEND_URL` — your Render URL, e.g. `https://abroadly-api.onrender.com` (no trailing slash)
 
-Redeploy the `dev` (or `main`) branch after saving. Do not add a root `public/` folder — that would ship a static site, not the Next.js app.
+Push these changes to the branch Vercel deploys (`dev` or `main`), then Redeploy.
 
 ### Backend (Render, free)
 

@@ -19,6 +19,9 @@ function supabaseHostname() {
 const nextConfig: NextConfig = {
   reactCompiler: true,
   transpilePackages: ["@abroadly/shared"],
+  // Vercel looks for `.next` at the repo root (`/vercel/path0/.next`).
+  // Local `next build` still writes to `frontend/.next`.
+  distDir: process.env.VERCEL ? "../.next" : ".next",
   // npm workspaces hoist `next` to the repo root; a frontend-only root cannot resolve it.
   turbopack: {
     root: monorepoRoot,
