@@ -1,15 +1,16 @@
 # Abroadly — Study Abroad Agency Platform
 
-Monorepo with separate **frontend** (Next.js UI) and **backend** (REST API).
+Monorepo with a **frontend** (Next.js UI), **backend** (REST API), and **shared** domain package.
 
 ## Structure
 
 ```
 study-abroad-agency/
-├── frontend/     # Next.js UI (port 3000)
-├── backend/      # Express REST API (port 3001)
-├── supabase/     # Database migrations & config
-└── scripts/      # Seed & migration scripts
+├── frontend/          # Next.js UI (port 3000)
+├── backend/           # Express REST API (port 3001)
+├── packages/shared    # Types, constants, country helpers
+├── supabase/          # Database migrations & config
+└── scripts/           # Seed & migration scripts
 ```
 
 ## Getting started
@@ -56,6 +57,8 @@ Deploy **frontend** and **backend** as separate services. Set:
 
 - Frontend: `BACKEND_URL=https://api.yourdomain.com`
 - Backend: `FRONTEND_URL=https://yourdomain.com` (for CORS)
+
+Vercel should host the Next.js frontend (`npm run build -w @abroadly/frontend`). Run the Express API on a Node host.
 
 ## Stack
 

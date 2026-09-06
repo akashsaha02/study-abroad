@@ -3,7 +3,7 @@
 import { Input } from "antd";
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
-import { forgotPassword, type AuthActionState } from "@/lib/auth/actions";
+import { forgotPassword, type AuthActionState } from "@/features/auth/actions";
 import { Link } from "@/i18n/navigation";
 import { useActionState } from "react";
 

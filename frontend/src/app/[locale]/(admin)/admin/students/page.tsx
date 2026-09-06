@@ -2,9 +2,9 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageStack } from "@/components/common/PageStack";
 import { PanelCard } from "@/components/common/PanelCard";
 import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
-import { resolveStudentCountryNames } from "@/lib/countries/display";
+import { resolveStudentCountryNames } from "@abroadly/shared/countries/display";
 import { buildUniqueFilters } from "@/lib/table-helpers";
-import { STUDENTS_WITH_PROFILE } from "@/lib/supabase/embeds";
+import { STUDENTS_WITH_PROFILE } from "@abroadly/shared/embeds";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 

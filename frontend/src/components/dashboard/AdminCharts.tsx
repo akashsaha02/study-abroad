@@ -9,7 +9,7 @@ import {
 import type {
   ChartDataPoint,
   TrendDataPoint,
-} from "@/lib/services/dashboard";
+} from "@/features/admin-cms/dashboard";
 import { useTranslations } from "next-intl";
 
 interface AdminChartsProps {

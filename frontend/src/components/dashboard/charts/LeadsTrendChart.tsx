@@ -1,6 +1,6 @@
 "use client";
 
-import type { TrendDataPoint } from "@/lib/services/dashboard";
+import type { TrendDataPoint } from "@/features/admin-cms/dashboard";
 import {
   Area,
   AreaChart,

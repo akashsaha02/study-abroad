@@ -1,10 +1,10 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
-import { ComparisonMatrix } from "@/components/compare/ComparisonMatrix";
+import { ComparisonMatrix } from "@/features/compare/components/ComparisonMatrix";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { COMPARE_UNIVERSITIES } from "@/data/compare";
-import { mapDbUniversityToCompare } from "@/lib/compare/map-universities";
-import { getPublishedUniversities } from "@/lib/services/content";
+import { COMPARE_UNIVERSITIES } from "@/features/compare/data";
+import { mapDbUniversityToCompare } from "@/features/compare/map-universities";
+import { getPublishedUniversities } from "@/features/catalog/queries";
 import { Globe02Icon } from "@hugeicons/core-free-icons";
 import { getTranslations } from "next-intl/server";
 

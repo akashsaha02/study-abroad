@@ -13,7 +13,7 @@ import { Empty, Input, Table } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
-import { DocumentReviewActions } from "@/components/admin/DocumentReviewActions";
+import { DocumentReviewActions } from "@/features/documents/components/DocumentReviewActions";
 
 export type TableRow = Record<string, unknown> & { id: string };
 

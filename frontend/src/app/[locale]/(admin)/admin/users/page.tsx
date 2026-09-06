@@ -1,5 +1,5 @@
 import { UsersAdminPanel } from "@/components/admin/UsersAdminPanel";
-import { requireRole } from "@/lib/auth/get-user";
+import { requireRole } from "@/infrastructure/auth/get-user";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types";
 import { getLocale, getTranslations } from "next-intl/server";

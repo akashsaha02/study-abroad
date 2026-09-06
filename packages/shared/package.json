@@ -1,0 +1,30 @@
+{
+  "name": "@abroadly/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./types": "./src/types/index.ts",
+    "./constants": "./src/constants.ts",
+    "./embeds": "./src/supabase/embeds.ts",
+    "./countries/resolve": "./src/countries/resolve.ts",
+    "./countries/display": "./src/countries/display.ts",
+    "./countries/fk-guard": "./src/countries/fk-guard.ts",
+    "./auth": "./src/auth/index.ts",
+    "./eligibility": "./src/eligibility/index.ts",
+    "./applications": "./src/applications/index.ts",
+    "./html": "./src/html.ts",
+    "./validations/auth": "./src/validations/auth.ts",
+    "./validations/leads": "./src/validations/leads.ts",
+    "./validations/admin": "./src/validations/admin.ts",
+    "./validations/student-profile": "./src/validations/student-profile.ts",
+    "./validations/consultation-request": "./src/validations/consultation-request.ts",
+    "./validations/newsletter": "./src/validations/newsletter.ts"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.110.0"
+  }
+}

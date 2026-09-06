@@ -16,8 +16,8 @@ export function SiteBackground() {
             "radial-gradient(circle, color-mix(in oklch, var(--success) 35%, transparent), transparent 70%)",
         }}
       />
-      <div className="site-texture-mask absolute inset-0 bg-dot-6-s-1-foreground/5" />
-      <div className="site-texture-mask absolute inset-0 bg-grid-12-s-1-foreground/4" />
+      <div className="site-texture-mask absolute inset-0 bg-site-dots" />
+      <div className="site-texture-mask absolute inset-0 bg-site-grid" />
     </div>
   );
 }

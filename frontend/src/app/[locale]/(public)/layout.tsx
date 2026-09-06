@@ -1,5 +1,5 @@
-import { getUser } from "@/lib/auth/get-user";
-import { toNavbarUser } from "@/lib/auth/nav-user";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { toNavbarUser } from "@/features/auth/nav-user";
 import { FloatingActionMenu } from "@/components/common/FloatingActionMenu";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";

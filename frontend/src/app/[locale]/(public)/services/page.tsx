@@ -1,8 +1,8 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
-import { ServiceCard } from "@/components/public/ServiceCard";
+import { ServiceCard } from "@/features/content/components/ServiceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { getPublishedServices } from "@/lib/services/content";
+import { getPublishedServices } from "@/features/catalog/queries";
 import { getLocalizedService } from "@/lib/fallback-i18n";
 import { Briefcase01Icon } from "@hugeicons/core-free-icons";
 import { getTranslations } from "next-intl/server";

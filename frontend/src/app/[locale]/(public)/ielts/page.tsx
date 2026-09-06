@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { BandScoreCalculator } from "@/components/ielts/BandScoreCalculator";
+import { BandScoreCalculator } from "@/features/ielts/components/BandScoreCalculator";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
 import { Link } from "@/i18n/navigation";

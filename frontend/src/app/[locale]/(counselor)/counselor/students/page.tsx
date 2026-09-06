@@ -2,10 +2,10 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageStack } from "@/components/common/PageStack";
 import { PanelCard } from "@/components/common/PanelCard";
 import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
-import { getUser } from "@/lib/auth/get-user";
-import { resolveStudentCountryNames } from "@/lib/countries/display";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { resolveStudentCountryNames } from "@abroadly/shared/countries/display";
 import { buildUniqueFilters } from "@/lib/table-helpers";
-import { STUDENTS_WITH_PROFILE_BASIC } from "@/lib/supabase/embeds";
+import { STUDENTS_WITH_PROFILE_BASIC } from "@abroadly/shared/embeds";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 
@@ -35,7 +35,7 @@ export default async function CounselorStudentsPage() {
   const rows = (students ?? []).map((student) => ({
     id: student.id,
     name: (student.profiles as { full_name?: string })?.full_name ?? "—",
-    detailHref: `/admin/students/${student.id}`,
+    detailHref: `/counselor/students/${student.id}`,
     email: (student.profiles as { email?: string })?.email ?? "—",
     country: countryMap.get(student.id) ?? "—",
   }));

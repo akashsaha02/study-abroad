@@ -258,6 +258,30 @@ html[lang="bn"] {
   background-size: 20px 20px;
 }
 
+/* Site-wide texture (replaces bg-dot-6-s-1 / bg-grid-12-s-1 plugin utilities). */
+.bg-site-dots {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 5%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
+.bg-site-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--foreground) 4%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--foreground) 4%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+}
+
 /* Site-wide texture mask — fades pattern at page edges. */
 .site-texture-mask {
   mask-image: linear-gradient(

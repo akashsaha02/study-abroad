@@ -6,7 +6,9 @@ import { PageStack } from "@/components/common/PageStack";
 
 import { StatusBadge } from "@/components/common/StatusBadge";
 
-import { getLeadById } from "@/lib/services/leads";
+import { getLeadById } from "@/features/leads/queries";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { isAdminRole } from "@/lib/staff-paths";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,9 +18,9 @@ import { Descriptions } from "antd";
 
 import { notFound } from "next/navigation";
 
-import { LeadActions } from "./lead-actions";
+import { LeadActions } from "@/features/leads/components/LeadActions";
 
-import { LeadNotesSection } from "./LeadNotesSection";
+import { LeadNotesSection } from "@/features/leads/components/LeadNotesSection";
 
 
 
@@ -37,6 +39,9 @@ export default async function LeadDetailPage({ params }: Props) {
   const lead = await getLeadById(id);
 
   if (!lead) notFound();
+
+  const user = await getUser();
+  const canManage = isAdminRole(user?.profile?.role);
 
 
 
@@ -211,6 +216,7 @@ export default async function LeadDetailPage({ params }: Props) {
           counselors={counselorOptions}
 
           studentProfiles={profileOptions}
+          canManage={canManage}
 
         />
 

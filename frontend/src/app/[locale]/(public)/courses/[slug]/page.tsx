@@ -4,8 +4,8 @@ import { PageLayout } from "@/components/common/PageLayout";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
-import { buildLeadContextUrl } from "@/lib/leads/urls";
-import { getCourseBySlug } from "@/lib/services/content";
+import { buildLeadContextUrl } from "@/features/leads/urls";
+import { getCourseBySlug } from "@/features/catalog/queries";
 import {
   ArrowRight01Icon,
   BookOpen01Icon,

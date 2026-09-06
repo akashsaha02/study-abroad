@@ -6,6 +6,7 @@ import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { isSafeHttpUrl } from "@abroadly/shared/html";
 import {
   Heading01Icon,
   ImageAdd02Icon,
@@ -238,6 +239,7 @@ export function RichTextEditor({
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
+    if (!isSafeHttpUrl(url)) return;
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
 

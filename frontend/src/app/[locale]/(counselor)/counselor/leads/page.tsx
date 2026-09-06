@@ -2,11 +2,11 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageStack } from "@/components/common/PageStack";
 import { PanelCard } from "@/components/common/PanelCard";
 import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 import {
   getCountryDisplayName,
   resolveCountryNamesForRows,
-} from "@/lib/countries/display";
+} from "@abroadly/shared/countries/display";
 import { translateMessageKey, translateStatus } from "@/lib/i18n-format";
 import { buildLeadSourceFilters, buildStatusFilters, buildUniqueFilters } from "@/lib/table-helpers";
 import { createClient } from "@/lib/supabase/server";
@@ -41,7 +41,7 @@ export default async function CounselorLeadsPage() {
   const rows = (leads ?? []).map((lead) => ({
     id: lead.id,
     name: lead.name,
-    detailHref: `/admin/leads/${lead.id}`,
+    detailHref: `/counselor/leads/${lead.id}`,
     phone: lead.phone,
     country: getCountryDisplayName(lead, countryMap),
     source: lead.source,

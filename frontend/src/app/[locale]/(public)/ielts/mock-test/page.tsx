@@ -1,4 +1,4 @@
-import { MockTest } from "@/components/ielts/MockTest";
+import { MockTest } from "@/features/ielts/components/MockTest";
 import { buildMetadata } from "@/components/seo/PageSEO";
 
 export const metadata = buildMetadata({

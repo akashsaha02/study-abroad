@@ -1,6 +1,6 @@
 "use client";
 
-import { FormSelect } from "@/components/admin/forms/FormSelect";
+import { AppSelect } from "@/components/common/AppSelect";
 import { USER_ROLES } from "@/constants";
 import { useRouter } from "@/i18n/navigation";
 import type { UserRole } from "@/types";
@@ -92,7 +92,7 @@ export function UserEditModal({
           <Input />
         </Form.Item>
         <Form.Item name="role" label="Role" rules={[{ required: true }]}>
-          <FormSelect
+          <AppSelect
             options={USER_ROLES.map((r) => ({
               value: r,
               label: r.replace(/_/g, " "),

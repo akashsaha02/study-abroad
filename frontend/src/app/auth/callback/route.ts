@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { getDashboardPathForRole } from "@/lib/auth/redirects";
+import { getDashboardPathForRole } from "@/features/auth/redirects";
 import { routing, type Locale } from "@/i18n/routing";
 import type { UserRole } from "@/types";
 import { NextResponse } from "next/server";

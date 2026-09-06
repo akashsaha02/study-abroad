@@ -4,7 +4,7 @@ import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
 import { APPLICATION_STATUSES } from "@/constants";
 import { translateStatus } from "@/lib/i18n-format";
 import { buildUniqueFilters } from "@/lib/table-helpers";
-import { APPLICATIONS_WITH_STUDENT } from "@/lib/supabase/embeds";
+import { APPLICATIONS_WITH_STUDENT } from "@abroadly/shared/embeds";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 

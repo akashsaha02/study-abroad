@@ -3,8 +3,8 @@ import { PageStack } from "@/components/common/PageStack";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PanelCard } from "@/components/common/PanelCard";
 import { emptyStateIcons } from "@/constants/empty-state-icons";
-import { getUser } from "@/lib/auth/get-user";
-import { getStudentNotifications } from "@/lib/services/students";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getStudentNotifications } from "@/features/student/queries";
 import { cn } from "@/lib/utils";
 
 export default async function StudentNotificationsPage() {

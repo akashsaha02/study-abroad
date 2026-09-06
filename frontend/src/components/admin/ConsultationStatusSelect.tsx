@@ -1,6 +1,6 @@
 "use client";
 
-import { FormSelect } from "@/components/admin/forms/FormSelect";
+import { AppSelect } from "@/components/common/AppSelect";
 import { CONSULTATION_STATUSES } from "@/constants";
 import { useStatusLabel } from "@/lib/i18n-format";
 import { useRouter } from "@/i18n/navigation";
@@ -43,7 +43,7 @@ export function ConsultationStatusSelect({
   }
 
   return (
-    <FormSelect
+    <AppSelect
       value={status}
       onChange={(value) => updateStatus(value as ConsultationStatus)}
       disabled={loading}

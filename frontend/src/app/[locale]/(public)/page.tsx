@@ -16,7 +16,7 @@ import {
   FALLBACK_UNIVERSITIES,
 } from "@/data/fallback";
 import { getLocalizedFallbackFaqs } from "@/lib/fallback-i18n";
-import { getPublishedTestimonials } from "@/lib/services/content";
+import { getPublishedTestimonials } from "@/features/catalog/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 

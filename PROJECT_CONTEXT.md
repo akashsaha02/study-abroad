@@ -6,13 +6,20 @@ Study abroad agency platform for lead generation, student management, and applic
 
 ```
 study-abroad-agency/
-├── frontend/   # Next.js UI (port 3000) — pages, components, SSR reads
-├── backend/    # REST API (port 3001) — /api/* routes, emails, mutations
-├── supabase/   # Database migrations & config
-└── scripts/    # Seed & migration scripts
+├── frontend/          # Next.js UI (port 3000) — pages, SSR reads, feature modules
+│   └── src/features/  # auth, leads, student, catalog, documents, applications, ...
+├── backend/           # Express REST API (port 3001) — /api/* mutations
+│   └── src/modules/   # identity, leads, eligibility, students, applications, cms
+├── packages/shared    # Types, Zod schemas, eligibility engine, application phases
+├── supabase/          # Database migrations & config
+└── scripts/           # Seed & migration scripts
 ```
 
 The frontend proxies `/api/*` to the backend via `BACKEND_URL`.
+
+Reads for HTML happen in Next.js Server Components (feature `queries.ts` files).
+Writes go through Express feature modules. Shared domain code lives in `@abroadly/shared`.
+Pages import from `@/features/<name>/...`. Do not add compatibility re-exports at old `lib/` or `components/` paths.
 
 ## Stack
 Next.js (frontend) | Express (backend API) | TypeScript | Tailwind CSS v4 | Ant Design | Supabase | Resend
@@ -35,7 +42,7 @@ Visitor → eligibility/contact → lead → admin review → counselor assigned
 auth/callback — OAuth callback (frontend)
 ```
 
-API routes live in `backend/src/routes/` (Express on port 3001).
+The Express API (port 3001) is organized by domain under `backend/src/modules/<name>/` (router, controller, service). The frontend rewrites `/api/*` to the backend.
 
 ## Database Enums
 - `user_role`: student, counselor, admin, super_admin
@@ -62,8 +69,7 @@ profiles, leads, students, counselors, countries, universities, courses, scholar
 
 ```bash
 npm install          # from repo root
-cp .env.local frontend/.env.local
-cp .env.local backend/.env.local
-# or: npm run sync:env
+cp .env.example .env.local
+npm run sync:env
 npm run dev          # starts frontend :3000 + backend :3001
 ```

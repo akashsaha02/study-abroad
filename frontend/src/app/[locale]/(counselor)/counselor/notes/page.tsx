@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
 import { buildUniqueFilters } from "@/lib/table-helpers";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 

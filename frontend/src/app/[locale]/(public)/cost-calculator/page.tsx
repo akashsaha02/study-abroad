@@ -1,8 +1,8 @@
 import { PageLayout } from "@/components/common/PageLayout";
-import { CostCalculator } from "@/components/public/CostCalculator";
+import { CostCalculator } from "@/features/catalog/components/CostCalculator";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { buildCostMap } from "@/lib/cost/build-cost-map";
-import { getCostSettings, getPublishedCountries } from "@/lib/services/content";
+import { getCostSettings, getPublishedCountries } from "@/features/catalog/queries";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {

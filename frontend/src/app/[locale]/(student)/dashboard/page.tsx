@@ -17,14 +17,14 @@ import {
   Notification01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 import {
   getStudentApplications,
   getStudentByProfileId,
   getStudentConsultations,
   getStudentDocuments,
   getStudentNotifications,
-} from "@/lib/services/students";
+} from "@/features/student/queries";
 import { Link } from "@/i18n/navigation";
 
 export default async function StudentDashboardPage() {

@@ -8,7 +8,7 @@ import { FALLBACK_COUNTRIES } from "@/data/fallback";
 import { Link } from "@/i18n/navigation";
 import { getLocalizedCountryDescription } from "@/lib/fallback-i18n";
 import { getCountryImage } from "@/lib/images/public-assets";
-import { getPublishedCountries } from "@/lib/services/content";
+import { getPublishedCountries } from "@/features/catalog/queries";
 import { ArrowRight01Icon, Globe02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button, Tag } from "antd";

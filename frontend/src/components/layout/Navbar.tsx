@@ -3,8 +3,8 @@
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { ROUTES } from "@/constants";
 import { Link, usePathname } from "@/i18n/navigation";
-import { signOut } from "@/lib/auth/actions";
-import { getInitials, type NavbarUser } from "@/lib/auth/nav-user";
+import { signOut } from "@/features/auth/actions";
+import { getInitials, type NavbarUser } from "@/features/auth/nav-user";
 import { cn } from "@/lib/utils";
 import {
   ArrowDown01Icon,

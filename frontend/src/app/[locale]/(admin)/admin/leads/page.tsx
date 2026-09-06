@@ -4,14 +4,14 @@ import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
 import {
   getCountryDisplayName,
   resolveCountryNamesForRows,
-} from "@/lib/countries/display";
+} from "@abroadly/shared/countries/display";
 import { translateMessageKey, translateStatus } from "@/lib/i18n-format";
 import {
   buildLeadSourceFilters,
   buildStatusFilters,
   buildUniqueFilters,
 } from "@/lib/table-helpers";
-import { getLeads } from "@/lib/services/leads";
+import { getLeads } from "@/features/leads/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 

@@ -1,5 +1,5 @@
-import { AccountProfileContent } from "@/components/profile/AccountProfileContent";
-import { getUser } from "@/lib/auth/get-user";
+import { AccountProfileContent } from "@/features/student/components/AccountProfileContent";
+import { getUser } from "@/infrastructure/auth/get-user";
 import type { UserRole } from "@/types";
 
 export default async function AccountProfilePage() {

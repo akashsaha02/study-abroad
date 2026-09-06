@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChartDataPoint } from "@/lib/services/dashboard";
+import type { ChartDataPoint } from "@/features/admin-cms/dashboard";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { ChartCard } from "./ChartCard";
 import { getChartColor } from "./ChartCard";

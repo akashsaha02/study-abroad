@@ -1,9 +1,9 @@
 import { EmptyState } from "@/components/common/EmptyState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
-import { BlogCard } from "@/components/public/BlogCard";
+import { BlogCard } from "@/features/content/components/BlogCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { getPublishedBlogPosts } from "@/lib/services/content";
+import { getPublishedBlogPosts } from "@/features/catalog/queries";
 import { BookOpen01Icon } from "@hugeicons/core-free-icons";
 
 export const metadata = buildMetadata({

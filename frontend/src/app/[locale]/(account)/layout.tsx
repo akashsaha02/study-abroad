@@ -1,8 +1,9 @@
 import { AdminShell } from "@/components/layout/AdminShell";
 import { CounselorShell } from "@/components/layout/CounselorShell";
 import { StudentShell } from "@/components/layout/StudentShell";
-import { getUser } from "@/lib/auth/get-user";
-import { redirect } from "next/navigation";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 
 export default async function AccountLayout({
   children,
@@ -11,7 +12,8 @@ export default async function AccountLayout({
 }) {
   const user = await getUser();
   if (!user) {
-    redirect("/login");
+    redirect({ href: "/login", locale: await getLocale() });
+    return null;
   }
 
   const shellProps = {

@@ -14,11 +14,11 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "@/i18n/navigation";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 import {
   getCounselorChartData,
   getCounselorDashboardData,
-} from "@/lib/services/dashboard";
+} from "@/features/admin-cms/dashboard";
 import { getLocale } from "next-intl/server";
 
 export default async function CounselorDashboardPage() {
@@ -82,7 +82,7 @@ export default async function CounselorDashboardPage() {
               {data.recentLeads.map((lead) => (
                 <Link
                   key={lead.id}
-                  href={`/admin/leads/${lead.id}`}
+                  href={`/counselor/leads/${lead.id}`}
                   className="flex items-center justify-between rounded-xl border border-foreground/5 bg-muted/20 p-3 transition-colors hover:bg-muted/40"
                 >
                   <div>
@@ -120,7 +120,7 @@ export default async function CounselorDashboardPage() {
                 return studentId ? (
                   <Link
                     key={doc.id}
-                    href={`/admin/students/${studentId}`}
+                    href={`/counselor/students/${studentId}`}
                     className="flex items-center justify-between rounded-xl border border-foreground/5 bg-muted/20 p-3 transition-colors hover:bg-muted/40"
                   >
                     {content}

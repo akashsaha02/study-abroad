@@ -1,4 +1,4 @@
-import { RegisterForm } from "@/components/forms/RegisterForm";
+import { RegisterForm } from "@/features/auth/components/RegisterForm";
 import { buildMetadata } from "@/components/seo/PageSEO";
 
 export const metadata = buildMetadata({

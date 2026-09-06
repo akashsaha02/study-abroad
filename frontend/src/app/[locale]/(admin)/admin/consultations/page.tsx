@@ -5,7 +5,7 @@ import { buildUniqueFilters } from "@/lib/table-helpers";
 import {
   CONSULTATIONS_LIST_SELECT,
   STUDENTS_ID_EMAIL_SELECT,
-} from "@/lib/supabase/embeds";
+} from "@abroadly/shared/embeds";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 

@@ -2,7 +2,7 @@ import createIntlMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import { routing, type Locale } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import { getDashboardPathForRole } from "@/lib/auth/redirects";
+import { getDashboardPathForRole } from "@/features/auth/redirects";
 import type { UserRole } from "@/types";
 
 const intlMiddleware = createIntlMiddleware(routing);

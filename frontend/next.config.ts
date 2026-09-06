@@ -18,6 +18,7 @@ function supabaseHostname() {
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  transpilePackages: ["@abroadly/shared"],
   // npm workspaces hoist `next` to the repo root; a frontend-only root cannot resolve it.
   turbopack: {
     root: monorepoRoot,

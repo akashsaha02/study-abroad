@@ -1,10 +1,10 @@
 import { EmptyState } from "@/components/common/EmptyState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
-import { CourseCard } from "@/components/public/CourseCard";
-import { CourseFilters } from "@/components/public/CourseFilters";
+import { CourseCard } from "@/features/catalog/components/CourseCard";
+import { CourseFilters } from "@/features/catalog/components/CourseFilters";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { getPublishedCountries, getPublishedCourses } from "@/lib/services/content";
+import { getPublishedCountries, getPublishedCourses } from "@/features/catalog/queries";
 import { GraduationScrollIcon } from "@hugeicons/core-free-icons";
 import { Suspense } from "react";
 

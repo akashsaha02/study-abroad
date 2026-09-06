@@ -4,8 +4,8 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { PanelCard } from "@/components/common/PanelCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { emptyStateIcons } from "@/constants/empty-state-icons";
-import { getUser } from "@/lib/auth/get-user";
-import { getStudentByProfileId, getStudentConsultations } from "@/lib/services/students";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getStudentByProfileId, getStudentConsultations } from "@/features/student/queries";
 
 export default async function StudentConsultationsPage() {
   const user = await getUser();

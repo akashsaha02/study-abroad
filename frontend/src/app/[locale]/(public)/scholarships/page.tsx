@@ -1,9 +1,9 @@
 import { EmptyState } from "@/components/common/EmptyState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
-import { ScholarshipCard } from "@/components/public/ScholarshipCard";
+import { ScholarshipCard } from "@/features/catalog/components/ScholarshipCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { getPublishedScholarships } from "@/lib/services/content";
+import { getPublishedScholarships } from "@/features/catalog/queries";
 import { StarIcon } from "@hugeicons/core-free-icons";
 import { getTranslations } from "next-intl/server";
 

@@ -1,4 +1,4 @@
-import { AdminDocumentsPanel } from "@/components/admin/AdminDocumentsPanel";
+import { AdminDocumentsPanel } from "@/features/documents/components/AdminDocumentsPanel";
 
 import { GlassPanelCard } from "@/components/common/GlassCard";
 
@@ -8,13 +8,13 @@ import { PageStack } from "@/components/common/PageStack";
 
 import { StatusBadge } from "@/components/common/StatusBadge";
 
-import { resolveStudentCountryNames } from "@/lib/countries/display";
+import { resolveStudentCountryNames } from "@abroadly/shared/countries/display";
 
 import { translateStatus } from "@/lib/i18n-format";
 
 import { Link } from "@/i18n/navigation";
 
-import { STUDENTS_WITH_PROFILE_DETAIL } from "@/lib/supabase/embeds";
+import { STUDENTS_WITH_PROFILE_DETAIL } from "@abroadly/shared/embeds";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -24,7 +24,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { notFound } from "next/navigation";
 
-import { SendNotificationForm } from "./SendNotificationForm";
+import { SendNotificationForm } from "@/features/notifications/components/SendNotificationForm";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { isAdminRole, staffRoot } from "@/lib/staff-paths";
 
 
 
@@ -39,6 +41,10 @@ interface Props {
 export default async function AdminStudentDetailPage({ params }: Props) {
 
   const { id } = await params;
+
+  const user = await getUser();
+  const canManage = isAdminRole(user?.profile?.role);
+  const root = staffRoot(user?.profile?.role);
 
   const locale = await getLocale();
 
@@ -188,11 +194,13 @@ export default async function AdminStudentDetailPage({ params }: Props) {
 
 
 
+        {canManage ? (
         <GlassPanelCard title="Send notification" variant="glass">
 
           <SendNotificationForm userId={profile.id} />
 
         </GlassPanelCard>
+        ) : null}
 
 
 
@@ -226,7 +234,7 @@ export default async function AdminStudentDetailPage({ params }: Props) {
 
                     <Link
 
-                      href={`/admin/applications/${a.id}`}
+                      href={`${root}/applications/${a.id}`}
 
                       className="font-medium text-primary hover:underline"
 
@@ -270,7 +278,7 @@ export default async function AdminStudentDetailPage({ params }: Props) {
 
         >
 
-          <AdminDocumentsPanel documents={docItems} locale={dateLocale} />
+          <AdminDocumentsPanel documents={docItems} locale={dateLocale} canReview={canManage} />
 
         </GlassPanelCard>
 

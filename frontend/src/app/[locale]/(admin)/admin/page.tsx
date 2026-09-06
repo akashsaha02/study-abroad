@@ -16,8 +16,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "@/i18n/navigation";
-import { getUser } from "@/lib/auth/get-user";
-import { getAdminChartData, getAdminDashboardData } from "@/lib/services/dashboard";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getAdminChartData, getAdminDashboardData } from "@/features/admin-cms/dashboard";
 import { getLocale } from "next-intl/server";
 
 export default async function AdminDashboardPage() {

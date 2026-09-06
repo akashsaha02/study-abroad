@@ -3,7 +3,7 @@
 import { Input } from "antd";
 import { FormField } from "@/components/forms/FormField";
 import { SubmitButton } from "@/components/forms/SubmitButton";
-import { resetPassword, type AuthActionState } from "@/lib/auth/actions";
+import { resetPassword, type AuthActionState } from "@/features/auth/actions";
 import { useActionState } from "react";
 
 const initialState: AuthActionState = {};

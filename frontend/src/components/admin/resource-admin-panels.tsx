@@ -1,15 +1,15 @@
 "use client";
 
 import { AdminListPanel, type AdminListPanelProps } from "@/components/admin/AdminListPanel";
-import { BlogForm } from "@/components/admin/forms/BlogForm";
+import { BlogForm } from "@/features/content/admin/BlogForm";
 import { CounselorForm } from "@/components/admin/forms/CounselorForm";
-import { CountryForm } from "@/components/admin/forms/CountryForm";
-import { CourseForm } from "@/components/admin/forms/CourseForm";
-import { FaqForm } from "@/components/admin/forms/FaqForm";
-import { ScholarshipForm } from "@/components/admin/forms/ScholarshipForm";
-import { TestimonialForm } from "@/components/admin/forms/TestimonialForm";
-import { ServiceForm } from "@/components/admin/forms/ServiceForm";
-import { UniversityForm } from "@/components/admin/forms/UniversityForm";
+import { CountryForm } from "@/features/catalog/admin/CountryForm";
+import { CourseForm } from "@/features/catalog/admin/CourseForm";
+import { FaqForm } from "@/features/content/admin/FaqForm";
+import { ScholarshipForm } from "@/features/catalog/admin/ScholarshipForm";
+import { TestimonialForm } from "@/features/content/admin/TestimonialForm";
+import { ServiceForm } from "@/features/content/admin/ServiceForm";
+import { UniversityForm } from "@/features/catalog/admin/UniversityForm";
 import type {
   BlogPost,
   Counselor,

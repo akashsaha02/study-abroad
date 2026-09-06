@@ -1,7 +1,8 @@
 import { PageLayout } from "@/components/common/PageLayout";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
-import { getBlogPostBySlug } from "@/lib/services/content";
+import { getBlogPostBySlug } from "@/features/catalog/queries";
+import { sanitizeHtml } from "@abroadly/shared/html";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -49,7 +50,7 @@ export default async function BlogPostPage({ params }: Props) {
         <SurfaceCard hover={false} padding="lg">
           <div
             className="prose prose-neutral max-w-none dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: post.content ?? "" }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content ?? "") }}
           />
         </SurfaceCard>
       </article>

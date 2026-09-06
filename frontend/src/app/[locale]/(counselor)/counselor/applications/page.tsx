@@ -2,10 +2,10 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageStack } from "@/components/common/PageStack";
 import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
 import { APPLICATION_STATUSES } from "@/constants";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 import { translateStatus } from "@/lib/i18n-format";
 import { buildUniqueFilters } from "@/lib/table-helpers";
-import { APPLICATIONS_COUNSELOR_SELECT } from "@/lib/supabase/embeds";
+import { APPLICATIONS_COUNSELOR_SELECT } from "@abroadly/shared/embeds";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 
@@ -24,7 +24,7 @@ export default async function CounselorApplicationsPage() {
     id: app.id,
     student:
       (app.students as { profiles?: { full_name?: string } })?.profiles?.full_name ?? "—",
-    detailHref: `/admin/applications/${app.id}`,
+    detailHref: `/counselor/applications/${app.id}`,
     university: (app.universities as { name?: string })?.name ?? "—",
     status: app.status,
     statusLabel: translateStatus(tStatus, app.status),

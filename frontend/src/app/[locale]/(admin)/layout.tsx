@@ -1,5 +1,5 @@
 import { AdminShell } from "@/components/layout/AdminShell";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 
 export const dynamic = "force-dynamic";
 

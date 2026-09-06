@@ -4,7 +4,7 @@ import { PanelCard } from "@/components/common/PanelCard";
 import { FilterableDataTable } from "@/components/tables/FilterableDataTable";
 import { translateStatus } from "@/lib/i18n-format";
 import { buildUniqueFilters } from "@/lib/table-helpers";
-import { DOCUMENTS_WITH_STUDENT } from "@/lib/supabase/embeds";
+import { DOCUMENTS_WITH_STUDENT } from "@abroadly/shared/embeds";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 

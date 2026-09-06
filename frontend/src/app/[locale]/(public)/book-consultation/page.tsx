@@ -2,12 +2,12 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
 import { PanelCard } from "@/components/common/PanelCard";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { ConsultationRequestForm } from "@/components/forms/ConsultationRequestForm";
+import { ConsultationRequestForm } from "@/features/leads/components/ConsultationRequestForm";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { POPULAR_COUNTRIES } from "@/constants";
-import { getUser } from "@/lib/auth/get-user";
-import { resolveLeadContextFromSlugs } from "@/lib/leads/context";
-import { getPublishedCountries } from "@/lib/services/content";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { resolveLeadContextFromSlugs } from "@/features/leads/context";
+import { getPublishedCountries } from "@/features/catalog/queries";
 import {
   Calendar01Icon,
   Location01Icon,

@@ -1,7 +1,7 @@
 import { SettingsTabs } from "@/components/admin/SettingsTabs";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageStack } from "@/components/common/PageStack";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 import { createClient } from "@/lib/supabase/server";
 import type { CostSetting, EligibilityRule } from "@/types";
 

@@ -3,11 +3,11 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { FilterChips } from "@/components/common/FilterChips";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
-import { UniversityCard } from "@/components/public/UniversityCard";
+import { UniversityCard } from "@/features/catalog/components/UniversityCard";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
 import { FALLBACK_UNIVERSITIES } from "@/data/fallback";
-import { getPublishedCountries, getPublishedUniversities } from "@/lib/services/content";
+import { getPublishedCountries, getPublishedUniversities } from "@/features/catalog/queries";
 import { UniversityIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 

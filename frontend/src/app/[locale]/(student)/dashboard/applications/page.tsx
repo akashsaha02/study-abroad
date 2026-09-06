@@ -3,14 +3,14 @@ import { PageStack, SectionStack } from "@/components/common/PageStack";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PanelCard } from "@/components/common/PanelCard";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { ApplicationPipeline } from "@/components/dashboard/ApplicationPipeline";
+import { ApplicationPipeline } from "@/features/applications/components/ApplicationPipeline";
 import {
   ApplicationsBoard,
   type BoardApplication,
-} from "@/components/dashboard/ApplicationsBoard";
+} from "@/features/applications/components/ApplicationsBoard";
 import { emptyStateIcons } from "@/constants/empty-state-icons";
-import { getUser } from "@/lib/auth/get-user";
-import { getStudentApplications, getStudentByProfileId } from "@/lib/services/students";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getStudentApplications, getStudentByProfileId } from "@/features/student/queries";
 import type { ApplicationStatus } from "@/types";
 
 export default async function StudentApplicationsPage() {

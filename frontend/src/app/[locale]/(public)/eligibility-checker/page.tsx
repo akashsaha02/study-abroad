@@ -1,9 +1,9 @@
-import { EligibilityCheckerForm } from "@/components/forms/EligibilityCheckerForm";
+import { EligibilityCheckerForm } from "@/features/leads/components/EligibilityCheckerForm";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { POPULAR_COUNTRIES } from "@/constants";
-import { getUser } from "@/lib/auth/get-user";
-import { getPublishedCountries } from "@/lib/services/content";
-import { getStudentByProfileId } from "@/lib/services/students";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getPublishedCountries } from "@/features/catalog/queries";
+import { getStudentByProfileId } from "@/features/student/queries";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {

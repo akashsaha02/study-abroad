@@ -1,5 +1,5 @@
 import { StudentShell } from "@/components/layout/StudentShell";
-import { getUser } from "@/lib/auth/get-user";
+import { getUser } from "@/infrastructure/auth/get-user";
 
 export default async function StudentLayout({
   children,

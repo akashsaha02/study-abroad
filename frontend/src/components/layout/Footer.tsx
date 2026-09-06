@@ -9,7 +9,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { getTranslations } from "next-intl/server";
 import { Container } from "../common/Container";
-import { NewsletterForm } from "./NewsletterForm";
+import { NewsletterForm } from "@/features/leads/components/NewsletterForm";
 
 export async function Footer() {
   const t = await getTranslations("footer");

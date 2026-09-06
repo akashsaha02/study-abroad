@@ -1,6 +1,6 @@
-import { AdminDocumentsPanel } from "@/components/admin/AdminDocumentsPanel";
+import { AdminDocumentsPanel } from "@/features/documents/components/AdminDocumentsPanel";
 
-import { ApplicationTargetForm } from "@/components/admin/ApplicationTargetForm";
+import { ApplicationTargetForm } from "@/features/applications/components/ApplicationTargetForm";
 
 import { GlassPanelCard, GlassStatCard } from "@/components/common/GlassCard";
 
@@ -10,13 +10,13 @@ import { PageStack, SectionStack } from "@/components/common/PageStack";
 
 import { StatusBadge } from "@/components/common/StatusBadge";
 
-import { ApplicationPipeline } from "@/components/dashboard/ApplicationPipeline";
+import { ApplicationPipeline } from "@/features/applications/components/ApplicationPipeline";
 
 import { Link } from "@/i18n/navigation";
 
 import { translateStatus } from "@/lib/i18n-format";
 
-import { APPLICATION_DETAIL_SELECT } from "@/lib/supabase/embeds";
+import { APPLICATION_DETAIL_SELECT } from "@abroadly/shared/embeds";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -42,9 +42,11 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { notFound } from "next/navigation";
 
-import { ApplicationStepsSection } from "./ApplicationStepsSection";
+import { ApplicationStepsSection } from "@/features/applications/components/ApplicationStepsSection";
 
-import { ApplicationStatusForm } from "./status-form";
+import { ApplicationStatusForm } from "@/features/applications/components/ApplicationStatusForm";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { isAdminRole, staffRoot } from "@/lib/staff-paths";
 
 
 
@@ -59,6 +61,10 @@ interface Props {
 export default async function AdminApplicationDetailPage({ params }: Props) {
 
   const { id } = await params;
+
+  const user = await getUser();
+  const canManage = isAdminRole(user?.profile?.role);
+  const root = staffRoot(user?.profile?.role);
 
   const locale = await getLocale();
 
@@ -304,6 +310,7 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
 
 
 
+          {canManage ? (
           <GlassPanelCard
 
             title="Checklist steps"
@@ -323,6 +330,7 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
             />
 
           </GlassPanelCard>
+          ) : null}
 
 
 
@@ -336,7 +344,7 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
 
           >
 
-            <AdminDocumentsPanel documents={docItems} locale={dateLocale} />
+            <AdminDocumentsPanel documents={docItems} locale={dateLocale} canReview={canManage} />
 
           </GlassPanelCard>
 
@@ -384,7 +392,7 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
 
                   <Link
 
-                    href={`/admin/students/${studentId}`}
+                    href={`${root}/students/${studentId}`}
 
                     className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
 
@@ -404,6 +412,7 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
 
 
 
+            {canManage ? (
             <GlassPanelCard title="Update status" variant="glass">
 
               <ApplicationStatusForm
@@ -417,9 +426,11 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
               />
 
             </GlassPanelCard>
+            ) : null}
 
 
 
+            {canManage ? (
             <GlassPanelCard title="Study targets" variant="glass">
 
               <ApplicationTargetForm
@@ -455,6 +466,7 @@ export default async function AdminApplicationDetailPage({ params }: Props) {
               />
 
             </GlassPanelCard>
+            ) : null}
 
           </SectionStack>
 

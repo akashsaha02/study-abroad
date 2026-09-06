@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
-import { registerRoutes } from "@/routes/register.generated";
+import { registerModuleRoutes } from "@/modules";
+import { requestContextMiddleware } from "@/infrastructure/http/request-context";
+import { errorHandler } from "@/shared/http/error-handler";
 
 const app = express();
 const port = Number(process.env.PORT ?? 3001);
@@ -15,16 +17,19 @@ app.use(
   })
 );
 app.use(express.json({ limit: "2mb" }));
+app.use(requestContextMiddleware);
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use(registerRoutes());
+app.use(registerModuleRoutes());
 
 app.use((_req, res) => {
   res.status(404).json({ error: "Not found" });
 });
+
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`API server listening on http://localhost:${port}`);

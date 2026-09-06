@@ -1,10 +1,10 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageStack } from "@/components/common/PageStack";
-import { DocumentVault } from "@/components/dashboard/DocumentVault";
+import { DocumentVault } from "@/features/documents/components/DocumentVault";
 import { EmptyState } from "@/components/common/EmptyState";
 import { emptyStateIcons } from "@/constants/empty-state-icons";
-import { getUser } from "@/lib/auth/get-user";
-import { getStudentByProfileId, getStudentDocuments } from "@/lib/services/students";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getStudentByProfileId, getStudentDocuments } from "@/features/student/queries";
 import type { Document } from "@/types";
 
 export default async function StudentDocumentsPage() {

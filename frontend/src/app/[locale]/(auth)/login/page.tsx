@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/forms/LoginForm";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { Suspense } from "react";
 

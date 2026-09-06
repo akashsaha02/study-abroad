@@ -3,12 +3,12 @@ import { IconBadge } from "@/components/common/IconBadge";
 import { PageHeader } from "@/components/common/PageHeader";
 import { PageLayout } from "@/components/common/PageLayout";
 import { SurfaceCard } from "@/components/common/SurfaceCard";
-import { ServiceOrderButton } from "@/components/public/ServiceOrderButton";
+import { ServiceOrderButton } from "@/features/leads/components/ServiceOrderButton";
 import { buildMetadata } from "@/components/seo/PageSEO";
 import { ROUTES } from "@/constants";
-import { buildLeadContextUrl } from "@/lib/leads/urls";
-import { getUser } from "@/lib/auth/get-user";
-import { getServiceBySlug } from "@/lib/services/content";
+import { buildLeadContextUrl } from "@/features/leads/urls";
+import { getUser } from "@/infrastructure/auth/get-user";
+import { getServiceBySlug } from "@/features/catalog/queries";
 import {
   ArrowRight01Icon,
   BookOpen01Icon,
