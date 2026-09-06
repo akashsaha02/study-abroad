@@ -1,0 +1,35 @@
+# Abroadly Express API — deploy from the GitHub repo root (needed for npm workspaces).
+# Dashboard: New → Blueprint → this repo. Render prompts for sync:false env vars.
+
+services:
+  - type: web
+    name: abroadly-api
+    runtime: node
+    plan: starter
+    buildCommand: npm ci
+    startCommand: npm run start:backend
+    healthCheckPath: /health
+    buildFilter:
+      paths:
+        - backend/**
+        - packages/shared/**
+        - package.json
+        - package-lock.json
+        - .npmrc
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: FRONTEND_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false

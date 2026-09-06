@@ -31,6 +31,6 @@ app.use((_req, res) => {
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`API server listening on http://localhost:${port}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`API server listening on port ${port}`);
 });
