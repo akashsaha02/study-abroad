@@ -4,9 +4,11 @@ import { spawnSync } from "node:child_process";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
-const nextDir = join(process.cwd(), ".next");
+const root = process.cwd();
+
+const nextDir = join(root, "frontend", ".next");
 if (existsSync(nextDir)) {
-  console.log("Cleaning .next cache before build...");
+  console.log("Cleaning frontend/.next cache before build...");
   rmSync(nextDir, { recursive: true, force: true });
 }
 
@@ -15,11 +17,15 @@ const ciEnv = {
   NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "ci-placeholder-key",
   SUPABASE_SERVICE_ROLE_KEY: "ci-placeholder-key",
+  BACKEND_URL: "http://localhost:3001",
+  FRONTEND_URL: "http://localhost:3000",
 };
 
 const steps = [
-  { name: "Lint", command: "npm", args: ["run", "lint"] },
-  { name: "Build", command: "npm", args: ["run", "build"] },
+  { name: "Lint frontend", command: "npm", args: ["run", "lint", "-w", "@abroadly/frontend"] },
+  { name: "Lint backend", command: "npm", args: ["run", "lint", "-w", "@abroadly/backend"] },
+  { name: "Build backend", command: "npm", args: ["run", "build", "-w", "@abroadly/backend"] },
+  { name: "Build frontend", command: "npm", args: ["run", "build", "-w", "@abroadly/frontend"] },
 ];
 
 function runStep({ name, command, args }) {
@@ -28,6 +34,7 @@ function runStep({ name, command, args }) {
     env: ciEnv,
     stdio: "inherit",
     shell: process.platform === "win32",
+    cwd: root,
   });
 
   if (result.status !== 0) {
@@ -38,11 +45,8 @@ function runStep({ name, command, args }) {
   console.log(`✓ ${name} passed`);
 }
 
-console.log("Running local CI checks (same as GitHub Actions)...");
-console.log("Steps: lint → build");
-
+console.log("Running CI checks...\n");
 for (const step of steps) {
   runStep(step);
 }
-
-console.log("\n✓ All CI checks passed. Safe to push.");
+console.log("\n✓ All CI checks passed");

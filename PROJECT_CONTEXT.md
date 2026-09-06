@@ -2,8 +2,27 @@
 
 Study abroad agency platform for lead generation, student management, and application tracking.
 
+## Monorepo layout
+
+```
+study-abroad-agency/
+├── frontend/          # Next.js UI (port 3000) — pages, SSR reads, feature modules
+│   └── src/features/  # auth, leads, student, catalog, documents, applications, ...
+├── backend/           # Express REST API (port 3001) — /api/* mutations
+│   └── src/modules/   # identity, leads, eligibility, students, applications, cms
+├── packages/shared    # Types, Zod schemas, eligibility engine, application phases
+├── supabase/          # Database migrations & config
+└── scripts/           # Seed & migration scripts
+```
+
+The frontend proxies `/api/*` to the backend via `BACKEND_URL`.
+
+Reads for HTML happen in Next.js Server Components (feature `queries.ts` files).
+Writes go through Express feature modules. Shared domain code lives in `@abroadly/shared`.
+Pages import from `@/features/<name>/...`. Do not add compatibility re-exports at old `lib/` or `components/` paths.
+
 ## Stack
-Next.js App Router | TypeScript | Tailwind CSS v4 | shadcn/ui | Supabase | Resend | Vercel
+Next.js (frontend) | Express (backend API) | TypeScript | Tailwind CSS v4 | Ant Design | Supabase | Resend
 
 ## User Roles
 - `student` — dashboard, applications, documents
@@ -13,15 +32,17 @@ Next.js App Router | TypeScript | Tailwind CSS v4 | shadcn/ui | Supabase | Resen
 ## Business Flow
 Visitor → eligibility/contact → lead → admin review → counselor assigned → student → documents → application → tracking → visa → completion
 
-## Route Structure
+## Route Structure (frontend)
 ```
 (public)/     — SEO website, tools
 (auth)/       — login, register, forgot/reset password
 (student)/    — /dashboard/*
 (counselor)/  — /counselor/*
 (admin)/      — /admin/*
-api/          — leads, eligibility, calculator, webhooks
+auth/callback — OAuth callback (frontend)
 ```
+
+The Express API (port 3001) is organized by domain under `backend/src/modules/<name>/` (router, controller, service). The frontend rewrites `/api/*` to the backend.
 
 ## Database Enums
 - `user_role`: student, counselor, admin, super_admin
@@ -44,13 +65,11 @@ profiles, leads, students, counselors, countries, universities, courses, scholar
 - applications: student read own; counselor/admin update assigned
 - documents: student upload own; counselor/admin review
 
-## Build Order
-1. Foundation + DB + auth
-2. Public website
-3. Lead generation tools
-4. Admin CRM
-5. Student dashboard
-6. Application/document management
-7. Counselor dashboard
-8. Content management
-9. Polish + deploy
+## Development
+
+```bash
+npm install          # from repo root
+cp .env.example .env.local
+npm run sync:env
+npm run dev          # starts frontend :3000 + backend :3001
+```

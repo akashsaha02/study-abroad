@@ -1,0 +1,23 @@
+import { getUser } from "@/infrastructure/auth/get-user";
+import { toNavbarUser } from "@/features/auth/nav-user";
+import { FloatingActionMenu } from "@/components/common/FloatingActionMenu";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+
+export default async function PublicLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const authUser = await getUser();
+  const user = authUser ? toNavbarUser(authUser) : null;
+
+  return (
+    <>
+      <Navbar user={user} />
+      <main className="flex-1">{children}</main>
+      <Footer />
+      <FloatingActionMenu />
+    </>
+  );
+}
