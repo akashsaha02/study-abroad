@@ -12,6 +12,7 @@
     "dev": "npm run sync:env && concurrently -n frontend,backend -c blue,green \"npm run dev -w @abroadly/frontend\" \"npm run dev -w @abroadly/backend\"",
     "dev:frontend": "npm run dev -w @abroadly/frontend",
     "dev:backend": "npm run dev -w @abroadly/backend",
+    "start:backend": "npm run start:prod -w @abroadly/backend",
     "build": "npm run build -w @abroadly/backend && npm run build -w @abroadly/frontend",
     "start": "concurrently -n frontend,backend -c blue,green \"npm run start -w @abroadly/frontend\" \"npm run start -w @abroadly/backend\"",
     "lint": "npm run lint -w @abroadly/frontend && npm run lint -w @abroadly/backend",
@@ -22,6 +23,9 @@
     "seed:content": "node --env-file=.env.local scripts/seed-demo-content.mjs",
     "seed:all": "npm run seed:content && npm run seed:test",
     "migrate:entity-relations": "node --env-file=.env.local scripts/run-entity-relations-migration.mjs"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

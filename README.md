@@ -53,12 +53,29 @@ The frontend proxies `/api/*` requests to the backend via `BACKEND_URL`.
 
 ## Deployment
 
-Deploy **frontend** and **backend** as separate services. Set:
+### Frontend (Vercel)
 
-- Frontend: `BACKEND_URL=https://api.yourdomain.com`
-- Backend: `FRONTEND_URL=https://yourdomain.com` (for CORS)
+Import the repo (root directory = repo root). Build is already set in `vercel.json`.
 
-Vercel should host the Next.js frontend (`npm run build -w @abroadly/frontend`). Run the Express API on a Node host.
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_APP_URL` — `https://your-app.vercel.app`
+- `BACKEND_URL` — `https://abroadly-api.onrender.com` (no trailing slash)
+
+### Backend (Render)
+
+`render.yaml` defines the API. In Render: **New → Blueprint** → this repo.
+
+When prompted, set:
+
+- `FRONTEND_URL` — your Vercel origin (CORS)
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_EMAIL`
+
+Render sets `PORT`. Health check: `GET /health`.
+
+Local API still uses `npm run start -w @abroadly/backend` (reads `.env.local`). Production uses `npm run start:backend`.
 
 ## Stack
 

@@ -6,7 +6,11 @@
     "dev": "tsx watch --env-file=.env.local src/server.ts",
     "build": "tsc --noEmit",
     "start": "tsx --env-file=.env.local src/server.ts",
+    "start:prod": "tsx src/server.ts",
     "lint": "eslint src"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "@abroadly/shared": "*",
@@ -15,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "resend": "^6.16.0",
+    "tsx": "^4.19.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -23,7 +28,6 @@
     "@types/express": "^5.0.0",
     "@types/node": "^20",
     "eslint": "^9",
-    "tsx": "^4.19.2",
     "typescript": "^5",
     "typescript-eslint": "^8.46.0"
   }
