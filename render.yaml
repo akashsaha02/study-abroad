@@ -1,11 +1,11 @@
-# Abroadly Express API — deploy from the GitHub repo root (needed for npm workspaces).
-# Dashboard: New → Blueprint → this repo. Render prompts for sync:false env vars.
+# Abroadly Express API — free Render web service.
+# Prefer Dashboard → New → Web Service (Free) if Blueprint asks for a card.
 
 services:
   - type: web
     name: abroadly-api
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm ci
     startCommand: npm run start:backend
     healthCheckPath: /health

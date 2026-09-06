@@ -62,20 +62,22 @@ Import the repo (root directory = repo root). Build is already set in `vercel.js
 - `NEXT_PUBLIC_APP_URL` — `https://your-app.vercel.app`
 - `BACKEND_URL` — `https://abroadly-api.onrender.com` (no trailing slash)
 
-### Backend (Render)
+### Backend (Render, free)
 
-`render.yaml` defines the API. In Render: **New → Blueprint** → this repo.
+Do **not** use Blueprint if Render asks for a card. Create a free web service by hand:
 
-When prompted, set:
+1. Render Dashboard → **New** → **Web Service** → connect this GitHub repo.
+2. **Instance type:** Free.
+3. Leave root directory empty (repo root).
+4. Build: `npm ci`
+5. Start: `npm run start:backend`
+6. Add env vars:
+   - `FRONTEND_URL` — your Vercel origin
+   - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_EMAIL`
 
-- `FRONTEND_URL` — your Vercel origin (CORS)
-- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `ADMIN_EMAIL`
-
-Render sets `PORT`. Health check: `GET /health`.
-
-Local API still uses `npm run start -w @abroadly/backend` (reads `.env.local`). Production uses `npm run start:backend`.
+Free instances sleep after ~15 minutes idle; the first request after that is slow. Health check path: `/health`.
 
 ## Stack
 
