@@ -13,6 +13,7 @@ const watch = [
   "package-lock.json",
   "vercel.json",
   "scripts/vercel-ignore.mjs",
+  "scripts/assert-vercel-backend-url.mjs",
 ];
 
 try {

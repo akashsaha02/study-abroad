@@ -1,17 +1,18 @@
-# Deploys after CI passes on main, or on manual dispatch.
-# Leave secrets unset if Vercel/Render already deploy from Git — those jobs skip.
+# Deploys after CI on main, on push to main, or on manual dispatch.
 #
 # GitHub → Settings → Secrets and variables → Actions:
 #   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
 #   RENDER_DEPLOY_HOOK_URL
 #   BACKEND_HEALTH_URL (optional, e.g. https://abroadly-api.onrender.com)
 #
-# If you enable these secrets, turn off automatic Git deploys on Vercel/Render
-# so production only ships after CI.
+# Keep Vercel and Render Git auto-deploy ON. These jobs are a backup.
+# They skip (with a warning) when the matching secret is missing.
 
 name: CD
 
 on:
+  push:
+    branches: [main]
   workflow_run:
     workflows: [CI]
     types: [completed]
@@ -30,7 +31,10 @@ jobs:
     name: Deploy frontend
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      github.event.workflow_run.conclusion == 'success'
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -50,8 +54,7 @@ jobs:
       - name: Require Vercel credentials
         run: |
           if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
-            echo "Skipping: set VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID to deploy from GitHub."
-            echo "Vercel Git integration can keep deploying without these secrets."
+            echo "::warning::Vercel Git auto-deploy should ship the frontend. Set VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID to also deploy from GitHub."
             echo "deploy=false" >> "$GITHUB_ENV"
             exit 0
           fi
@@ -77,7 +80,10 @@ jobs:
     name: Deploy backend
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      github.event.workflow_run.conclusion == 'success'
     env:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
       BACKEND_HEALTH_URL: ${{ secrets.BACKEND_HEALTH_URL }}
@@ -85,8 +91,7 @@ jobs:
       - name: Trigger Render deploy
         run: |
           if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
-            echo "Skipping: set RENDER_DEPLOY_HOOK_URL to deploy the API from GitHub."
-            echo "Render Git auto-deploy can keep shipping without this secret."
+            echo "::warning::RENDER_DEPLOY_HOOK_URL is not set. Enable Auto-Deploy on the Render web service (Settings → Build & Deploy → Auto-Deploy: On Commit), or add a Deploy Hook URL secret."
             echo "deployed=false" >> "$GITHUB_ENV"
             exit 0
           fi

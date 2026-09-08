@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "npm ci",
-  "buildCommand": "npm exec -w @abroadly/frontend -- next build --webpack",
+  "buildCommand": "node scripts/assert-vercel-backend-url.mjs && npm exec -w @abroadly/frontend -- next build --webpack",
   "ignoreCommand": "node scripts/vercel-ignore.mjs"
 }

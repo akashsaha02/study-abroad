@@ -6,6 +6,8 @@ services:
     name: abroadly-api
     runtime: node
     plan: free
+    branch: main
+    autoDeploy: true
     buildCommand: npm ci
     startCommand: npm run start:backend
     healthCheckPath: /health
@@ -16,6 +18,7 @@ services:
         - package.json
         - package-lock.json
         - .npmrc
+        - render.yaml
     envVars:
       - key: NODE_VERSION
         value: "22"

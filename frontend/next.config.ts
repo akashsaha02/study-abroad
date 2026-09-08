@@ -16,6 +16,29 @@ function supabaseHostname() {
   }
 }
 
+function isLocalhostHost(value: string) {
+  try {
+    const { hostname } = new URL(value);
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  } catch {
+    return false;
+  }
+}
+
+/** Baked into Vercel routing at build time. Must be the Render origin in production. */
+function resolveBackendUrl() {
+  const backendUrl = (process.env.BACKEND_URL ?? "http://localhost:3001").replace(
+    /\/+$/,
+    ""
+  );
+  if (process.env.VERCEL && (!process.env.BACKEND_URL || isLocalhostHost(backendUrl))) {
+    throw new Error(
+      "Set BACKEND_URL on Vercel to your Render API origin (e.g. https://abroadly-api.onrender.com). /api cannot rewrite to localhost in production."
+    );
+  }
+  return backendUrl;
+}
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   transpilePackages: ["@abroadly/shared"],
@@ -37,9 +60,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const backendUrl = (
-      process.env.BACKEND_URL ?? "http://localhost:3001"
-    ).replace(/\/+$/, "");
+    const backendUrl = resolveBackendUrl();
     return [
       {
         source: "/api/:path*",

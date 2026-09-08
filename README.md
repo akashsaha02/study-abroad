@@ -82,7 +82,7 @@ Add `http://localhost:3000/auth/callback` and `https://your-app.vercel.app/auth/
 GitHub Actions:
 
 - **CI** (`.github/workflows/ci.yml`) — on pull requests and pushes to `main`/`dev`: validate env examples, lint, typecheck, build frontend and backend in parallel. Mark the **CI** job as a required status check on `main`.
-- **CD** (`.github/workflows/cd.yml`) — after CI succeeds on `main` (or **Run workflow**). Deploys only if you set GitHub secrets; otherwise it skips and Vercel/Render Git deploys still apply.
+- **CD** (`.github/workflows/cd.yml`) — after CI / on push to `main`. Hits Vercel/Render only if you set GitHub secrets. **Keep Vercel and Render Git auto-deploy ON** so commits still ship when those secrets are empty.
 
 Optional GitHub secrets (Actions → Secrets) if you want GitHub to ship after CI instead of host auto-deploy:
 
@@ -93,7 +93,7 @@ Optional GitHub secrets (Actions → Secrets) if you want GitHub to ship after C
 | `RENDER_DEPLOY_HOOK_URL` | Render deploy hook |
 | `BACKEND_HEALTH_URL` | Optional `https://your-api.onrender.com` health probe |
 
-If those secrets are set, turn off automatic Git deploys on Vercel and Render so production only updates after CI.
+If you set the GitHub deploy secrets, you can leave host auto-deploy on (two deploys) or turn host auto-deploy off so only GitHub ships after CI. Do **not** turn both off — production will stop updating.
 
 Local hook (optional): `npm run setup:hooks` then `npm run check:ci` runs on every push.
 
@@ -105,6 +105,8 @@ Keep **one git repo**. Deploy two services. Keep the `/api` rewrite so auth cook
 
 Keep **Root Directory empty** (the Git repository root). Do not set it to `frontend` — Vercel looks for `.next` at the repo root, and `vercel.json` already builds the frontend workspace there.
 
+`/api/*` is rewritten to `BACKEND_URL` **at build time**. If `BACKEND_URL` is missing, production calls localhost and never reaches Render. Set it, then **Redeploy**.
+
 Backend-only commits are skipped via `ignoreCommand`.
 
 **Project → Settings → General → Build & Development Settings**
@@ -115,7 +117,7 @@ Turn **Override** off for Build / Install / Output so `vercel.json` is used. The
 |---|---|
 | Root Directory | *empty* (not `frontend`) |
 | Framework Preset | Next.js |
-| Build Command | `npm exec -w @abroadly/frontend -- next build --webpack` |
+| Build Command | `node scripts/assert-vercel-backend-url.mjs && npm exec -w @abroadly/frontend -- next build --webpack` |
 | Install Command | `npm ci` |
 | Output Directory | *empty* (not `public`, not `.next`) |
 
@@ -135,10 +137,12 @@ Do **not** use Blueprint if Render asks for a card. Create a free web service by
 1. Render Dashboard → **New** → **Web Service** → connect this GitHub repo.
 2. **Instance type:** Free (or paid to avoid cold starts).
 3. Leave root directory empty (repo root).
-4. Build: `npm ci`
-5. Start: `npm run start:backend`
-6. Add env vars from `.env.production.example` (Render section).
+4. Branch: `main`. **Auto-Deploy: Yes** (On commit).
+5. Build: `npm ci`
+6. Start: `npm run start:backend`
+7. Add env vars from `.env.production.example` (Render section).
    - `FRONTEND_URL` must be the exact Vercel origin (no trailing slash)
+8. Optional backup: copy the service **Deploy Hook** into GitHub secret `RENDER_DEPLOY_HOOK_URL`.
 
 Free instances sleep after ~15 minutes idle; the first request after that is slow. Health check path: `/health`.
 
