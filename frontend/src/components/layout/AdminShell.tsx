@@ -16,7 +16,18 @@ async function buildAdminNav(userRole?: UserRole): Promise<NavItem[]> {
   const t = await getTranslations("admin");
   const tDash = await getTranslations("dashboard");
 
-  const items: Omit<NavItem, "icon">[] = [
+  const items: Omit<NavItem, "icon">[] =
+    userRole === "counselor"
+      ? [
+          { href: "/admin/ielts", label: "Overview", section: "IELTS" },
+          { href: "/admin/ielts/questions", label: "Questions" },
+          { href: "/admin/ielts/questions/import", label: "Import" },
+          { href: "/admin/ielts/tests", label: "Tests" },
+          { href: "/admin/ielts/attempts", label: "Attempts" },
+          { href: "/admin/ielts/analytics", label: "Analytics" },
+          { href: "/admin/ielts/settings", label: "Settings" },
+        ]
+      : [
     { href: "/admin", label: tDash("overview"), section: t("crm") },
     { href: "/admin/leads", label: t("leads") },
     { href: "/admin/students", label: t("students") },
@@ -33,6 +44,14 @@ async function buildAdminNav(userRole?: UserRole): Promise<NavItem[]> {
     { href: "/admin/faqs", label: t("faqs") },
     { href: "/admin/services", label: "Services" },
     { href: "/admin/testimonials", label: t("testimonials") },
+    { href: "/admin/ielts", label: "IELTS", section: "IELTS" },
+    { href: "/admin/ielts/questions", label: "Questions" },
+    { href: "/admin/ielts/questions/import", label: "Import" },
+    { href: "/admin/ielts/tests", label: "Tests" },
+    { href: "/admin/ielts/attempts", label: "Attempts" },
+    { href: "/admin/ielts/analytics", label: "Analytics" },
+    { href: "/admin/ielts/staff", label: "Contributors" },
+    { href: "/admin/ielts/settings", label: "Settings" },
     { href: "/admin/settings", label: tDash("settings"), section: t("system") },
   ];
 

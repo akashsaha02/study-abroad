@@ -17,7 +17,7 @@
     "scholarships": "Scholarships",
     "scholarshipsDesc": "Find funding for your studies",
     "ielts": "IELTS Prep",
-    "ieltsDesc": "Mock tests & band calculator",
+    "ieltsDesc": "Practice, mock tests, and band estimates",
     "eligibilityChecker": "Eligibility Checker",
     "eligibilityCheckerDesc": "See where you qualify",
     "costCalculator": "Cost Calculator",
@@ -578,7 +578,9 @@
       "reading": "Reading",
       "readingDesc": "Split-screen passage and questions.",
       "writing": "Writing",
-      "writingDesc": "Distraction-free editor with live word count."
+      "writingDesc": "Distraction-free editor with live word count.",
+      "speaking": "Speaking",
+      "speakingDesc": "Cue cards and private recordings. Reviewer scoring only."
     },
     "costCalculator": {
       "eyebrow": "Planning tool",

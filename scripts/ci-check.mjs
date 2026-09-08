@@ -27,6 +27,7 @@ const steps = [
   { name: "Lint frontend", command: "npm", args: ["run", "lint", "-w", "@abroadly/frontend"] },
   { name: "Lint backend", command: "npm", args: ["run", "lint", "-w", "@abroadly/backend"] },
   { name: "Typecheck shared", command: "npx", args: ["tsc", "--noEmit", "-p", "packages/shared"] },
+  { name: "IELTS tests", command: "npm", args: ["run", "test:ielts"] },
   { name: "Build backend", command: "npm", args: ["run", "build", "-w", "@abroadly/backend"] },
   { name: "Build frontend", command: "npm", args: ["run", "build", "-w", "@abroadly/frontend"] },
 ];

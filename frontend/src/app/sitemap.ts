@@ -20,6 +20,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/study-abroad",
     "/ielts",
     "/ielts/mock-test",
+    "/ielts/mock-tests",
+    "/ielts/practice",
+    "/ielts/listening",
+    "/ielts/reading",
+    "/ielts/writing",
+    "/ielts/speaking",
+    "/ielts/resources",
     "/login",
     "/register",
   ].map((path) => ({

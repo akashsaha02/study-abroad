@@ -6,7 +6,7 @@ import {
   listeningBand,
   overallBand,
   readingBand,
-} from "@/features/ielts/data";
+} from "@abroadly/shared/ielts";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 

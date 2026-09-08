@@ -32,6 +32,8 @@ export const STORAGE_BUCKETS = {
   universityLogos: "university-logos",
   blogImages: "blog-images",
   testimonialImages: "testimonial-images",
+  ieltsMedia: "ielts-media",
+  ieltsSpeaking: "ielts-speaking",
 } as const;
 
 export const LEAD_STATUSES = [

@@ -101,12 +101,24 @@ export async function proxy(request: NextRequest) {
       pathWithoutLocale.startsWith("/admin") &&
       (!role || !ADMIN_ROLES.includes(role))
     ) {
-      const url = request.nextUrl.clone();
-      url.pathname = withLocale(
-        role === "counselor" ? "/counselor" : "/dashboard",
-        locale
-      );
-      return NextResponse.redirect(url);
+      const isIeltsAdminPath = pathWithoutLocale.startsWith("/admin/ielts");
+      let ieltsStaff = false;
+      if (isIeltsAdminPath && role === "counselor") {
+        const { data: staff } = await supabase
+          .from("ielts_staff")
+          .select("profile_id")
+          .eq("profile_id", user.id)
+          .maybeSingle();
+        ieltsStaff = Boolean(staff);
+      }
+      if (!ieltsStaff) {
+        const url = request.nextUrl.clone();
+        url.pathname = withLocale(
+          role === "counselor" ? "/counselor" : "/dashboard",
+          locale
+        );
+        return NextResponse.redirect(url);
+      }
     }
 
     if (

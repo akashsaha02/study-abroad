@@ -29,6 +29,7 @@ async function buildStudentNav(userId?: string): Promise<NavItem[]> {
 
   return withIcon([
     { href: "/dashboard", label: t("overview"), section: t("mainSection") },
+    { href: "/dashboard/ielts", label: "IELTS prep" },
     { href: "/dashboard/applications", label: t("applications") },
     { href: "/dashboard/documents", label: t("documents") },
     { href: "/dashboard/consultations", label: t("consultations") },

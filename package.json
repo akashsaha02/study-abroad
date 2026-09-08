@@ -19,6 +19,7 @@
     "lint": "npm run lint -w @abroadly/frontend && npm run lint -w @abroadly/backend",
     "check": "node scripts/ci-check.mjs",
     "check:ci": "node scripts/ci-check.mjs",
+    "test:ielts": "tsx --test packages/shared/src/ielts/scoring.test.ts packages/shared/src/ielts/answers.test.ts packages/shared/src/ielts/import.test.ts packages/shared/src/ielts/permissions.test.ts",
     "setup:hooks": "git config core.hooksPath .githooks",
     "seed:test": "node --env-file=.env.local scripts/seed-test-users.mjs",
     "seed:content": "node --env-file=.env.local scripts/seed-demo-content.mjs",

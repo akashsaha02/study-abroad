@@ -54,6 +54,15 @@ const NAV_ICON_MAP: Record<string, IconSvgElement> = {
   "/admin/blog": BookOpen01Icon,
   "/admin/faqs": HelpCircleIcon,
   "/admin/testimonials": Message01Icon,
+  "/dashboard/ielts": FileValidationIcon,
+  "/admin/ielts": FileValidationIcon,
+  "/admin/ielts/questions": File01Icon,
+  "/admin/ielts/questions/import": File01Icon,
+  "/admin/ielts/tests": Task01Icon,
+  "/admin/ielts/attempts": CheckmarkCircle02Icon,
+  "/admin/ielts/analytics": Analytics01Icon,
+  "/admin/ielts/staff": UserGroupIcon,
+  "/admin/ielts/settings": Settings01Icon,
   "/admin/settings": Settings01Icon,
 };
 

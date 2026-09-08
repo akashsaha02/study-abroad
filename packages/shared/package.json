@@ -12,6 +12,8 @@
     "./countries/fk-guard": "./src/countries/fk-guard.ts",
     "./auth": "./src/auth/index.ts",
     "./eligibility": "./src/eligibility/index.ts",
+    "./ielts": "./src/ielts/index.ts",
+    "./validations/ielts": "./src/validations/ielts.ts",
     "./applications": "./src/applications/index.ts",
     "./html": "./src/html.ts",
     "./validations/auth": "./src/validations/auth.ts",
