@@ -1,54 +1,60 @@
 #!/usr/bin/env node
 
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import {
+  BACKEND_KEYS,
+  FRONTEND_KEYS,
+  LOCAL_DEFAULTS,
+  LOCAL_REQUIRED,
+  LOCAL_URL_KEYS,
+  isLocalhostUrl,
+  parseEnv,
+  serializeEnv,
+  stripTrailingSlash,
+} from "./env.mjs";
 
 const root = process.cwd();
 const source = join(root, ".env.local");
-const targets = [join(root, "frontend", ".env.local"), join(root, "backend", ".env.local")];
 
 if (!existsSync(source)) {
   console.error("Missing .env.local at repo root. Copy .env.example to .env.local first.");
   process.exit(1);
 }
 
-const required = [
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-  "NEXT_PUBLIC_APP_URL",
-  "BACKEND_URL",
-  "FRONTEND_URL",
-];
-
-function parseEnv(content) {
-  const entries = new Map();
-  for (const line of content.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) continue;
-    entries.set(trimmed.slice(0, eq), trimmed.slice(eq + 1));
-  }
-  return entries;
-}
-
 const base = parseEnv(readFileSync(source, "utf8"));
 
-if (!base.has("BACKEND_URL")) base.set("BACKEND_URL", "http://localhost:3001");
-if (!base.has("FRONTEND_URL")) base.set("FRONTEND_URL", "http://localhost:3000");
-if (!base.has("NEXT_PUBLIC_APP_URL")) base.set("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
-
-const output = [...base.entries()]
-  .map(([key, value]) => `${key}=${value}`)
-  .join("\n")
-  .concat("\n");
-
-for (const target of targets) {
-  writeFileSync(target, output);
-  console.log(`Synced env → ${target.replace(root, ".")}`);
+for (const [key, value] of Object.entries(LOCAL_DEFAULTS)) {
+  if (!base.has(key)) base.set(key, value);
 }
 
-const missing = required.filter((key) => !base.has(key));
+for (const key of LOCAL_URL_KEYS) {
+  const value = base.get(key);
+  if (value) base.set(key, stripTrailingSlash(value));
+}
+
+const productionLooking = LOCAL_URL_KEYS.filter((key) => {
+  const value = base.get(key);
+  return value && !isLocalhostUrl(value);
+});
+
+if (productionLooking.length > 0) {
+  console.warn(
+    `Warning: ${productionLooking.join(", ")} in .env.local is not localhost. Local /api rewrites and CORS will hit production. Keep local URLs in .env.local; set production values on Vercel and Render.`
+  );
+}
+
+const frontendTarget = join(root, "frontend", ".env.local");
+const backendTarget = join(root, "backend", ".env.local");
+
+writeFileSync(frontendTarget, serializeEnv(base, FRONTEND_KEYS));
+writeFileSync(backendTarget, serializeEnv(base, BACKEND_KEYS));
+
+console.log("Synced env → ./frontend/.env.local (frontend keys only)");
+console.log("Synced env → ./backend/.env.local (backend keys only)");
+
+const missing = LOCAL_REQUIRED.filter((key) => !base.get(key));
 if (missing.length > 0) {
   console.warn(`Warning: missing keys in .env.local: ${missing.join(", ")}`);
+  process.exitCode = 1;
 }

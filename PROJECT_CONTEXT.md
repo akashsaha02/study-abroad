@@ -16,6 +16,7 @@ study-abroad-agency/
 ```
 
 The frontend proxies `/api/*` to the backend via `BACKEND_URL`.
+Local URLs live in `.env.local`. Production URLs are set on Vercel (`BACKEND_URL`) and Render (`FRONTEND_URL`) — see `.env.production.example`.
 
 Reads for HTML happen in Next.js Server Components (feature `queries.ts` files).
 Writes go through Express feature modules. Shared domain code lives in `@abroadly/shared`.

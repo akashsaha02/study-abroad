@@ -1,0 +1,115 @@
+# Deploys after CI passes on main, or on manual dispatch.
+# Leave secrets unset if Vercel/Render already deploy from Git — those jobs skip.
+#
+# GitHub → Settings → Secrets and variables → Actions:
+#   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+#   RENDER_DEPLOY_HOOK_URL
+#   BACKEND_HEALTH_URL (optional, e.g. https://abroadly-api.onrender.com)
+#
+# If you enable these secrets, turn off automatic Git deploys on Vercel/Render
+# so production only ships after CI.
+
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cd-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Deploy frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Require Vercel credentials
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Skipping: set VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID to deploy from GitHub."
+            echo "Vercel Git integration can keep deploying without these secrets."
+            echo "deploy=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          echo "deploy=true" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        if: env.deploy == 'true'
+        run: npm ci --no-audit --no-fund
+
+      - name: Pull Vercel env
+        if: env.deploy == 'true'
+        run: npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build
+        if: env.deploy == 'true'
+        run: npx vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy
+        if: env.deploy == 'true'
+        run: npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+
+  backend:
+    name: Deploy backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      BACKEND_HEALTH_URL: ${{ secrets.BACKEND_HEALTH_URL }}
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Skipping: set RENDER_DEPLOY_HOOK_URL to deploy the API from GitHub."
+            echo "Render Git auto-deploy can keep shipping without this secret."
+            echo "deployed=false" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
+          echo "Render deploy hook triggered."
+          echo "deployed=true" >> "$GITHUB_ENV"
+
+      - name: Health check
+        if: env.deployed == 'true'
+        run: |
+          if [ -z "$BACKEND_HEALTH_URL" ]; then
+            echo "No BACKEND_HEALTH_URL secret; skipping health check."
+            exit 0
+          fi
+          url="${BACKEND_HEALTH_URL%/}/health"
+          echo "Waiting for $url"
+          for attempt in $(seq 1 12); do
+            if curl -fsS "$url"; then
+              echo "Backend healthy."
+              exit 0
+            fi
+            echo "Attempt $attempt failed; retrying in 10s..."
+            sleep 10
+          done
+          echo "Backend health check failed."
+          exit 1

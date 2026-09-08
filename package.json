@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "sync:env": "node scripts/sync-env.mjs",
+    "validate:env": "node scripts/validate-env.mjs",
     "dev": "npm run sync:env && concurrently -n frontend,backend -c blue,green \"npm run dev -w @abroadly/frontend\" \"npm run dev -w @abroadly/backend\"",
     "dev:frontend": "npm run dev -w @abroadly/frontend",
     "dev:backend": "npm run dev -w @abroadly/backend",

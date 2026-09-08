@@ -2,26 +2,29 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
+env:
+  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+  SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-key
+  BACKEND_URL: http://localhost:3001
+  FRONTEND_URL: http://localhost:3000
+
 jobs:
-  quality:
-    name: Lint and build
+  env:
+    name: Validate env
     runs-on: ubuntu-latest
-
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
-      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-key
-      BACKEND_URL: http://localhost:3001
-      FRONTEND_URL: http://localhost:3000
-
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,11 +32,68 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
+
+      - name: Validate env examples
+        run: node scripts/validate-env.mjs
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
-      - name: CI check
-        run: npm run check:ci
+      - name: Lint
+        run: npm run lint -w @abroadly/frontend
+
+      - name: Build
+        run: npm run build -w @abroadly/frontend
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint -w @abroadly/backend
+
+      - name: Typecheck shared
+        run: npx tsc --noEmit -p packages/shared
+
+      - name: Typecheck backend
+        run: npm run build -w @abroadly/backend
+
+  ci:
+    name: CI
+    needs: [env, frontend, backend]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all jobs
+        run: |
+          test "${{ needs.env.result }}" = "success"
+          test "${{ needs.frontend.result }}" = "success"
+          test "${{ needs.backend.result }}" = "success"

@@ -1,8 +1,11 @@
 import cors from "cors";
 import express from "express";
 import { registerModuleRoutes } from "@/modules";
+import { assertEnv } from "@/infrastructure/env";
 import { requestContextMiddleware } from "@/infrastructure/http/request-context";
 import { errorHandler } from "@/shared/http/error-handler";
+
+assertEnv();
 
 const app = express();
 const port = Number(process.env.PORT ?? 3001);

@@ -16,14 +16,17 @@ const ciEnv = {
   ...process.env,
   NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "ci-placeholder-key",
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000",
   SUPABASE_SERVICE_ROLE_KEY: "ci-placeholder-key",
   BACKEND_URL: "http://localhost:3001",
   FRONTEND_URL: "http://localhost:3000",
 };
 
 const steps = [
+  { name: "Validate env examples", command: "node", args: ["scripts/validate-env.mjs"] },
   { name: "Lint frontend", command: "npm", args: ["run", "lint", "-w", "@abroadly/frontend"] },
   { name: "Lint backend", command: "npm", args: ["run", "lint", "-w", "@abroadly/backend"] },
+  { name: "Typecheck shared", command: "npx", args: ["tsc", "--noEmit", "-p", "packages/shared"] },
   { name: "Build backend", command: "npm", args: ["run", "build", "-w", "@abroadly/backend"] },
   { name: "Build frontend", command: "npm", args: ["run", "build", "-w", "@abroadly/frontend"] },
 ];
